@@ -1,0 +1,5 @@
+# Ignore build artifacts
+build/
+
+# Ignore repo setup script
+init_dsp_repo.py
