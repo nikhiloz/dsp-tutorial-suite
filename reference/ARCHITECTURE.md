@@ -4,109 +4,137 @@ Complete architectural overview of the DSP Tutorial Suite based on PlantUML diag
 
 ## System Architecture
 
-> **📊 System Architecture** — [View full-size diagram →](diagrams/architecture.png)
+> **System Architecture** — [View full-size diagram →](diagrams/architecture.png)
 >
 > *Source: [architecture.puml](diagrams/architecture.puml)*
 
-The library is organized in four layers:
+The project is organized in four layers:
 
-### Application Layer
-- Audio Processing pipelines
-- Signal Analysis tools
-- Sensor Fusion applications
+### Chapter Demos (Application Layer)
+30 self-contained demo binaries (`ch01`–`ch30`), each exercising specific library
+modules with rich ASCII output and gnuplot visualisations. Each chapter lives in its
+own subdirectory under `chapters/` with `tutorial.md`, `demo.c`, `README.md`, and `plots/`.
 
-### DSP Core Library
-Four integrated subsystems:
+### DSP Core Library (`libdsp_core.a`)
+23 source modules compiled into a static library. Organized into functional groups:
 
-1. **Signal Processing**
-   - FFT/IFFT core transforms
-   - Digital filtering (FIR/IIR)
-   - Window functions (Hann, Hamming, Blackman, Kaiser)
+1. **Foundation** (3 modules)
+   - `dsp_utils` — Complex arithmetic, window functions (Hann, Hamming, Blackman), helpers
+   - `signal_gen` — Discrete-time signal generation (impulse, cosine, chirp, noise)
+   - `convolution` — Linear/causal convolution, cross/auto-correlation, energy/power
 
-2. **Analysis Module**
-   - Spectral analysis (PSD, periodograms)
-   - Correlation (auto & cross)
-   - Statistical signal measures
+2. **Transforms** (2 modules)
+   - `fft` — Cooley-Tukey Radix-2 FFT/IFFT, real-valued FFT, magnitude/phase extraction
+   - `advanced_fft` — Goertzel algorithm, DTMF detection, sliding DFT
 
-3. **Real-Time Streaming**
-   - Lock-free ring buffers
-   - Overlap-add/overlap-save streaming
-   - Low-latency processing
+3. **Spectral Analysis** (3 modules)
+   - `spectrum` — Periodogram, Welch PSD, cross-PSD, frequency axis utilities
+   - `spectral_est` — MUSIC and Capon (minimum variance) super-resolution methods
+   - `cepstrum` — Real/complex cepstrum, Mel filterbank, MFCC pipeline, DCT-II
 
-4. **Optimization**
-   - SIMD kernels (SSE, AVX for x86; NEON for ARM)
-   - Multithreading with OpenMP
-   - Memory pooling and cache optimization
+4. **Filters** (4 modules)
+   - `filter` — FIR filter (direct convolution, moving average, windowed-sinc lowpass)
+   - `iir` — Biquad design/processing, SOS cascades, Butterworth & Chebyshev I design
+   - `remez` — Parks-McClellan (IRLS) optimal equiripple FIR design
+   - `adaptive` — LMS, NLMS, RLS adaptive filtering algorithms
 
-### System Interface
-- ALSA Audio for real-time I/O
-- File I/O for batch processing
-- Network interfaces for remote processing
+5. **Multirate & Streaming** (2 modules)
+   - `multirate` — Decimation, interpolation, rational resampling, polyphase filters
+   - `streaming` — Overlap-Add and Overlap-Save block FFT convolution
 
-### Platform Abstraction
-- POSIX API for portability
-- Threading primitives
-- Memory management
+6. **Analysis** (4 modules)
+   - `correlation` — FFT-based cross-correlation, autocorrelation, normalized variants
+   - `hilbert` — Hilbert transform FIR design, analytic signal, envelope, instantaneous frequency
+   - `lpc` — Levinson-Durbin recursion, AR modelling, LPC spectral envelope
+   - `averaging` — Coherent averaging, EMA, moving average, median filter
+
+7. **Numeric & 2-D** (2 modules)
+   - `fixed_point` — Q15/Q31 fixed-point arithmetic, saturating ops, FIR-Q15, SQNR
+   - `dsp2d` — 2-D convolution, Sobel/Gaussian/LoG kernels, 2D FFT
+
+8. **Real-Time & Optimisation** (2 modules)
+   - `realtime` — Lock-free ring buffer (SPSC), frame processor, latency measurement
+   - `optimization` — Radix-4 FFT, pre-computed twiddle tables, benchmarking, aligned memory
+
+### Tools & Visualisation
+- `gnuplot` module — Pipe-based PNG plot generation via gnuplot
+- `generate_plots` — Batch tool that generates 70+ plots across all chapters
+- PlantUML diagrams — 4 common + 4 chapter-specific architecture diagrams
+
+### Build System
+- GNU Make with 39 targets (30 demos + 8 test suites + generate_plots)
+- Static library `libdsp_core.a` (23 `.o` files)
+- C99 strict: `-Wall -Wextra -Werror -std=c99 -fPIC`
+- Debug and release configurations
+- Zero external dependencies (only `libc` + `libm`)
 
 ## Signal Processing Pipeline
 
-> **📊 Signal Processing Pipeline** — [View full-size diagram →](../chapters/13-spectral-analysis/signal_flow.png)
+> **Signal Processing Pipeline** — [View full-size diagram →](../chapters/13-spectral-analysis/signal_flow.png)
 >
 > *Source: [signal_flow.puml](../chapters/13-spectral-analysis/signal_flow.puml)*
 
 Typical DSP workflow flows through two domains:
 
 ### Time Domain Operations
-1. **Input Signal**: RAW samples from audio/sensors
+1. **Input Signal**: Generated or loaded sample buffer
 2. **Windowing**: Apply Hann/Hamming/Blackman window to reduce spectral leakage
 3. **Optional Filtering**: Time-domain FIR or IIR filtering
 4. **Post-Processing**: Normalization, scaling, buffer management
 5. **Output Signal**: Processed samples
 
 ### Frequency Domain Operations
-1. **FFT Transform**: Convert to frequency domain
-2. **Spectral Analysis**: Extract magnitude and phase
+1. **FFT Transform**: Convert to frequency domain (Radix-2 or Radix-4)
+2. **Spectral Analysis**: Extract magnitude, phase, PSD
 3. **IFFT Transform**: Convert back to time domain
 
-All operations support:
-- **Streaming mode**: Overlap-add with 50% new samples per frame
+Processing modes:
 - **Batch processing**: Process entire signals at once
-- **Multi-threaded SIMD**: Parallel data processing
-- **Real-time guarantees**: Fixed latency < 1ms
+- **Streaming mode**: Overlap-Add/Save with configurable frame size
+- **Real-time framing**: Ring buffer → frame processor pipeline
 
 ## Module Dependencies
 
-> **📊 Module Dependencies** — [View full-size diagram →](diagrams/modules.png)
+> **Module Dependencies** — [View full-size diagram →](diagrams/modules.png)
 >
 > *Source: [modules.puml](diagrams/modules.puml)*
+
+### Root Dependency: `dsp_utils.h`
+
+9 of 23 modules depend on `dsp_utils.h` for the `Complex` type and window functions:
+`fft`, `advanced_fft`, `signal_gen`, `iir`, `hilbert`, `spectrum`, `streaming`, `realtime`, `optimization`
+
+The remaining 14 modules have no inter-module `#include` dependencies and can be used standalone.
 
 ### Module Responsibilities
 
 | Module | Purpose | Dependencies |
 |--------|---------|---|
-| **dsp_utils** | Core math (complex arithmetic, vectors) | None |
-| **fft** | Fast Fourier Transform | dsp_utils |
-| **filter** | Time-domain FIR filtering | dsp_utils |
-| **iir** | IIR filter design (Butterworth, Chebyshev) | dsp_utils |
-| **convolution** | Fast convolution via FFT | fft |
-| **spectrum** | PSD, Welch's method, cross-PSD | fft, dsp_utils |
-| **correlation** | Cross/auto-correlation (FFT-based) | fft, dsp_utils |
-| **signal_gen** | Signal generation (sine, chirp, noise) | dsp_utils |
-| **gnuplot** | Pipe-based gnuplot plotting helpers | None (ext: gnuplot) |
-| **fixed_point** | Q15/Q31 fixed-point arithmetic, FIR | dsp_utils |
-| **advanced_fft** | Goertzel, DTMF detection, sliding DFT | fft, dsp_utils |
-| **streaming** | Overlap-Add/Save block convolution | fft, dsp_utils |
-| **multirate** | Decimation, interpolation, polyphase filters | filter, dsp_utils |
-| **hilbert** | Hilbert transform, analytic signal, envelope | fft, dsp_utils |
-| **averaging** | Coherent averaging, EMA, MA, median filter | dsp_utils |
-| **remez** | IRLS-based equiripple FIR design | dsp_utils |
-| **adaptive** | LMS, NLMS, RLS adaptive filtering | dsp_utils |
-| **lpc** | Linear prediction, Levinson-Durbin, AR spectrum | dsp_utils |
-| **spectral_est** | MUSIC, Capon parametric spectral estimation | fft, dsp_utils |
-| **cepstrum** | Cepstrum, Mel filterbank, MFCC pipeline | fft, dsp_utils |
-| **dsp2d** | 2-D convolution, FFT, image kernels (Sobel, Gaussian) | fft, dsp_utils |
-| **realtime** | Ring buffer, frame processor, latency measurement | fft, dsp_utils |
-| **optimization** | Radix-4 FFT, twiddle tables, benchmarks, aligned alloc | fft, dsp_utils |
+| **dsp_utils** | Complex arithmetic, windows, helpers (13 functions) | None |
+| **signal_gen** | Signal generation: impulse, cosine, chirp, noise (12 functions) | dsp_utils |
+| **convolution** | Convolution, correlation, energy (7 functions) | None |
+| **fft** | Radix-2 FFT/IFFT, real FFT, magnitude/phase (5 functions) | dsp_utils |
+| **advanced_fft** | Goertzel, DTMF detection, sliding DFT (7 functions) | dsp_utils |
+| **filter** | FIR filter, moving average, lowpass (3 functions) | None |
+| **iir** | Biquad, SOS, Butterworth, Chebyshev (17 functions) | dsp_utils |
+| **spectrum** | Periodogram, Welch PSD, cross-PSD (6 functions) | dsp_utils |
+| **spectral_est** | MUSIC, Capon, eigendecomposition (5 functions) | None |
+| **cepstrum** | Cepstrum, Mel filterbank, MFCCs (8 functions) | None |
+| **correlation** | FFT-based xcorr, autocorr (5 functions) | None |
+| **hilbert** | Analytic signal, envelope, inst frequency (5 functions) | dsp_utils |
+| **lpc** | Levinson-Durbin, AR spectrum (6 functions) | None |
+| **averaging** | Coherent avg, EMA, median filter (5 functions) | None |
+| **remez** | Parks-McClellan equiripple FIR (3 functions) | None |
+| **adaptive** | LMS, NLMS, RLS adaptive filtering (12 functions) | None |
+| **multirate** | Decimation, interpolation, polyphase (4 functions) | None |
+| **streaming** | Overlap-Add/Save block convolution (6 functions) | dsp_utils |
+| **fixed_point** | Q15/Q31 arithmetic, FIR-Q15, SQNR (16 functions) | None |
+| **dsp2d** | 2-D conv, Sobel, FFT2D (10 functions) | None |
+| **realtime** | Ring buffer, frame processor, latency (17 functions) | dsp_utils |
+| **optimization** | Radix-4 FFT, twiddle tables, benchmarks (10 functions) | dsp_utils |
+| **gnuplot** | Pipe-based PNG plot output (8 functions) | None (ext: gnuplot) |
+
+**Total: 23 modules, ~150 public functions, 19 struct/typedef types**
 
 ## FFT Processing Sequence
 
@@ -115,12 +143,11 @@ All operations support:
 *Source: [fft_sequence.puml](../chapters/08-fft-fundamentals/fft_sequence.puml)*
 
 ### Key Features
-
 - **Windowing**: Reduces spectral leakage from signal discontinuities
-- **Butterfly Operations**: Parallel FFT computation with SIMD
-- **Streaming Mode**: Overlap-add with N/2 new samples per frame
-- **Latency**: log(N) frames + window latency
-- **SIMD Speedup**: 4-8x vs scalar implementation
+- **Bit-reversal permutation**: In-place reordering for DIT
+- **Butterfly operations**: O(N log N) complex multiply-add
+- **Radix-2**: Standard Cooley-Tukey (all power-of-2 sizes)
+- **Radix-4**: 25% fewer multiplications (power-of-4 sizes, falls back to radix-2)
 
 ## Real-Time Streaming Architecture
 
@@ -128,154 +155,113 @@ All operations support:
 
 *Source: [realtime_architecture.puml](../chapters/28-real-time-streaming/realtime_architecture.puml)*
 
-### Real-Time Guarantees
+### Design
+- **Lock-free ring buffer**: Single-producer/single-consumer with atomic indices
+- **Frame processor**: Accumulates samples → applies Hann window → runs FFT → extracts peaks
+- **Latency timer**: Microsecond-resolution timing via `clock_gettime(CLOCK_MONOTONIC)`
+- **Stats tracking**: Min/max/average latency across processing cycles
 
-- **Lock-Free Access**: Minimal synchronization overhead
-- **Fixed Latency**: 1-2 milliseconds per frame
-- **Priority Scheduling**: PREEMPT_RT compatible
-- **Memory Locking**: Avoid page faults
-- **CPU Affinity**: Dedicated processing core
-- **Jitter Bound**: < 100 microseconds
+### Ring Buffer API
+- `ring_buffer_create/destroy` — lifecycle
+- `ring_buffer_write/read/peek/skip` — data operations
+- `ring_buffer_available/space` — status queries
+- `ring_buffer_reset` — flush
 
-### Synchronization Mechanisms
-
-- **Condition Variables**: Signal processing thread wake-ups
-- **Lock-Free Queues**: Zero-copy ring buffer exchanges
-- **Memory Barriers**: Ensure data visibility across cores
-
-## Performance Optimization Strategy
+## Performance Optimisation Strategy
 
 ![Performance Optimization Roadmap](../chapters/29-optimisation/optimization_roadmap.png)
 
 *Source: [optimization_roadmap.puml](../chapters/29-optimisation/optimization_roadmap.puml)*
 
-### Five-Stage Optimization Approach
+### Implemented Optimisations
 
-| Stage | Technique | Expected Speedup | Complexity |
-|-------|-----------|---|---|
-| **Baseline** | C99 scalar | 1x | Low |
-| **Compiler** | -O3, LTO, PGO | 1.5-2x | Minimal |
-| **Algorithm** | Radix-4, cache layout | 2-3x | Medium |
-| **SIMD** | AVX2/NEON vectorization | 4-8x | Medium-High |
-| **Multithreading** | OpenMP parallelization | Nx (N cores) | High |
-| **Platform** | Real-time kernel, pinning | Improved predictability | High |
-
-### Target Performance Metrics
-
-- **1024-point FFT**: < 0.5ms on Intel i7
-- **1M-point FFT**: < 1ms on high-end CPU
-- **Memory throughput**: > 10 GB/s with SIMD
-- **Throughput**: > 1M samples/second
-- **Latency**: < 100µs jitter in real-time mode
+| Technique | Implementation | Benefit |
+|-----------|---------------|---------|
+| **Radix-4 FFT** | `fft_radix4()` / `ifft_radix4()` | ~25% fewer multiplications vs radix-2 |
+| **Pre-computed twiddles** | `twiddle_create()` / `fft_with_twiddles()` | Avoid repeated `cos`/`sin` calls |
+| **Aligned memory** | `aligned_alloc_dsp()` (64-byte alignment) | Cache-line friendly allocation |
+| **Benchmarking** | `bench_fft_radix2()` / `bench_fft_radix4()` / `bench_print()` | Measure min/avg/max/MFLOP/s |
+| **Compiler flags** | `-O3 -fPIC` in release mode | Compiler auto-vectorisation |
 
 ## API Reference Structure
 
-> **📊 Public API Reference** — [View full-size diagram →](diagrams/api_reference.png)
+> **Public API Reference** — [View full-size diagram →](diagrams/api_reference.png)
 >
 > *Source: [api_reference.puml](diagrams/api_reference.puml)*
 
-## Project Development Roadmap
+The API is organized by implementation phase:
 
->
+| Phase | Headers | Functions |
+|-------|---------|-----------|
+| Phase 1: Foundation | dsp_utils, signal_gen, convolution | ~32 |
+| Phase 2: Transforms | fft, advanced_fft | ~12 |
+| Phase 2–4: Spectral | spectrum, spectral_est, cepstrum | ~19 |
+| Phase 3: Filters | filter, iir, remez, adaptive, multirate, streaming | ~45 |
+| Phase 4: Analysis | correlation, hilbert, lpc, averaging | ~21 |
+| Phase 5–6: Numeric | fixed_point, dsp2d | ~26 |
+| Phase 7: Real-Time | realtime, optimization | ~27 |
 
-### 6-Phase Development Plan
+## Development Phases
 
-1. **Phase 1: Foundation** ✓ COMPLETE
-   - Ch01 Signals, Ch02 Sampling, Ch04 LTI, Ch05 Z-transform, Ch07 DFT
-   - CMake & Makefile build systems, test framework
+All 7 phases are **complete**:
 
-2. **Phase 2: Filter Story** ✓ COMPLETE
-   - Ch06 Frequency Response, Ch11 IIR Design, Ch12 Filter Structures
-   - IIR library (Butterworth, Chebyshev1, SOS cascades)
-
-3. **Phase 3: Analysis** ✓ COMPLETE
-   - Ch14 PSD & Welch's Method, Ch15 Correlation & Autocorrelation
-   - Spectrum & correlation libraries, gnuplot integration
-
-4. **Phase 4: C-Specific DSP** ✓ COMPLETE
-   - Ch16 Overlap-Add/Save streaming convolution
-   - Ch18 Fixed-point arithmetic (Q15/Q31, SQNR, FIR)
-   - Ch19 Advanced FFT (Goertzel, DTMF detection, Sliding DFT)
-
-5. **Phase 5: Advanced UG DSP** ✓ COMPLETE
-   - Ch17 Multirate DSP (decimation, interpolation, polyphase)
-   - Ch20 Hilbert Transform & Analytic Signal
-   - Ch21 Signal Averaging & Noise Reduction
-   - Ch22 Advanced FIR Design (Parks-McClellan / IRLS)
-
-6. **Phase 6: Postgraduate Topics** ✓ COMPLETE
-   - Ch23 Adaptive Filters (LMS, NLMS, RLS)
-   - Ch24 Linear Prediction & AR Modelling
-   - Ch25 Parametric Spectral Estimation (MUSIC, Capon)
-   - Ch26 Cepstrum Analysis & MFCCs
-   - Ch27 2-D DSP & Image Processing
-
-7. **Phase 7: Systems & Capstone** ✓ COMPLETE
-   - Ch28 Real-time system design (ring buffer, frame processor, latency)
-   - Ch29 DSP optimisation (radix-4 FFT, twiddle tables, aligned memory)
-   - Ch30 Capstone project (expanded: 9 sections, 13 modules)
+1. **Phase 1: Foundation** — Ch01–05, Ch07 (signals, sampling, complex, LTI, Z-transform, DFT)
+2. **Phase 2: Transforms** — Ch06, Ch08–09 (frequency response, FFT, windows)
+3. **Phase 3: Filters** — Ch10–12 (FIR, IIR, filter structures)
+4. **Phase 4: C-Specific DSP** — Ch16, Ch18–19 (streaming, fixed-point, Goertzel)
+5. **Phase 5: Advanced UG** — Ch17, Ch20–22 (multirate, Hilbert, averaging, Remez)
+6. **Phase 6: Postgraduate** — Ch23–27 (adaptive, LPC, MUSIC, MFCC, 2D-DSP)
+7. **Phase 7: Systems & Capstone** — Ch28–30 (real-time, optimisation, capstone)
 
 ## Use Cases
 
-> **📊 Use Cases** — [View full-size diagram →](diagrams/use_cases.png)
+> **Use Cases** — [View full-size diagram →](diagrams/use_cases.png)
 >
 > *Source: [use_cases.puml](diagrams/use_cases.puml)*
 
 ### Primary Applications
 
-**Audio Engineering**
-- Real-time spectrum analysis
-- Audio effects processing (EQ, compression, reverb)
-- Music information retrieval (beat tracking)
+**Education & Learning**
+- Progressive DSP curriculum from undergraduate to postgraduate
+- Self-contained demos with gnuplot visualisations
+- Textbook cross-references (Oppenheim, Proakis, Haykin)
 
-**Embedded Systems**
-- Sensor signal fusion (IMU, accelerometer)
-- Radar/Sonar signal processing
-- Communication signal modulation/demodulation
+**Algorithm Prototyping**
+- Pure C99 implementations for easy porting
+- Zero external dependencies for embedded targets
+- Fixed-point support for MCU deployment
 
-**Research & Development**
-- DSP algorithm prototyping
-- Biomedical signal analysis (ECG, EEG)
-- Software-defined radio (SDR)
+**Audio & Signal Analysis**
+- Spectral analysis (FFT, Welch PSD, MUSIC, Capon)
+- Filter design (FIR, IIR, adaptive)
+- Feature extraction (MFCCs, cepstrum, LPC)
 
-**Real-Time Applications**
-- Live audio processing
-- Frequency estimation
-- Modulation schemes (OFDM, PSK)
+## Test Coverage
 
-## Performance Benchmarks
+98 tests across 8 suites — all passing:
 
->
-
-### Latency Comparison (1024-point FFT)
-
-| Implementation | Latency | Status | Notes |
-|---|---|---|---|
-| dsp_core (baseline) | 12ms | Baseline | Pure C99 |
-| dsp_core (SIMD) | 2ms | Optimized | AVX2/NEON |
-| dsp_core (real-time) | 0.8ms | Production | PREEMPT_RT |
-| FFTW3 | 3.5ms | Reference | Industry standard |
-| GSL | 8ms | Comparison | General library |
-| NumPy | 10ms | Comparison | Python overhead |
-| MATLAB | 18ms | Comparison | JIT overhead |
-| Eigen | 3.2ms | Comparison | Modern C++ |
-
-### Testing Environment
-- CPU: Intel i7-9700K (8 cores @ 3.6GHz)
-- Memory: 32GB DDR4 @ 3000MHz
-- Compiler: GCC 11.3 with -O3 optimization
-- Iterations: 10,000 runs per measurement
+| Suite | Tests | Modules Covered |
+|-------|-------|-----------------|
+| test_fft | 6 | fft |
+| test_filter | 6 | filter |
+| test_iir | 10 | iir, freq_response |
+| test_spectrum_corr | 12 | spectrum, correlation |
+| test_phase4 | 12 | fixed_point, advanced_fft, streaming |
+| test_phase5 | 15 | multirate, hilbert, averaging, remez |
+| test_phase6 | 19 | adaptive, lpc, spectral_est, cepstrum, dsp2d |
+| test_phase7 | 18 | realtime, optimization |
 
 ## Related Documentation
 
-- [API.md](API.md) - Complete function reference
-- [reference/diagrams/](diagrams/) - All PlantUML source files
+- [API.md](API.md) — Complete function reference
+- [CHAPTER_INDEX.md](CHAPTER_INDEX.md) — Chapter-by-chapter quick reference
+- [diagrams/](diagrams/) — PlantUML source files and rendered PNGs
 
 ---
 
-**Note**: All architectural diagrams are rendered as PNG from PlantUML sources in `reference/diagrams/`. 
-To regenerate PNGs after editing `.puml` files:
+**Note**: Architecture diagrams are split between `reference/diagrams/` (common) and
+individual `chapters/XX-*/` directories (chapter-specific). To regenerate PNGs:
 
 ```bash
-java -jar ~/tools/plantuml.jar -tpng reference/diagrams/*.puml
+java -jar ~/tools/plantuml.jar -tpng reference/diagrams/*.puml chapters/*/*.puml
 ```
