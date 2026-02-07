@@ -10,7 +10,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Shows how components interact and their relationships
 - **Purpose**: Understanding the high-level system design
 
-![System Architecture](architecture.png)
+> [🔍 View System Architecture diagram →](architecture.png)
 
 ### 2. **signal_flow.puml** - Signal Processing Data Flow
 - Typical signal processing pipeline from input to output
@@ -18,7 +18,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Windowing, FFT, filtering, and post-processing stages
 - **Purpose**: Understanding the data transformation pipeline
 
-![Signal Processing Pipeline](signal_flow.png)
+> [🔍 View Signal Processing Pipeline diagram →](signal_flow.png)
 
 ### 3. **modules.puml** - Module Dependencies
 - Detailed module structure and interdependencies
@@ -26,7 +26,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Highlights modularity and separation of concerns
 - **Purpose**: Understanding code organization and dependencies
 
-![Module Dependencies](modules.png)
+> [🔍 View Module Dependencies diagram →](modules.png)
 
 ### 4. **fft_sequence.puml** - FFT Processing Sequence
 - Step-by-step call sequence for FFT operations
@@ -34,7 +34,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Includes real-time streaming with overlap-add
 - **Purpose**: Understanding runtime execution flow
 
-![FFT Processing Sequence](fft_sequence.png)
+> [🔍 View FFT Processing Sequence diagram →](fft_sequence.png)
 
 ### 5. **realtime_architecture.puml** - Real-Time Streaming Architecture
 - Complete real-time audio processing pipeline
@@ -42,7 +42,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Low-latency design for audio/sensor applications
 - **Purpose**: Understanding real-time constraints and design patterns
 
-![Real-Time Streaming Architecture](realtime_architecture.png)
+> [🔍 View Real-Time Streaming Architecture diagram →](realtime_architecture.png)
 
 ### 6. **optimization_roadmap.puml** - Performance Optimization Strategy
 - 5-stage optimization approach (Compiler → Algorithm → SIMD → Threading → Platform)
@@ -50,7 +50,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Total potential for 16-128x improvement
 - **Purpose**: Understanding performance enhancement strategy
 
-![Optimization Roadmap](optimization_roadmap.png)
+> [🔍 View Optimization Roadmap diagram →](optimization_roadmap.png)
 
 ### 7. **api_reference.puml** - Public API Structure
 - All public functions organized by module
@@ -58,7 +58,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Relationship between modules
 - **Purpose**: Quick API reference and module overview
 
-![Public API Reference](api_reference.png)
+> [🔍 View Public API Reference diagram →](api_reference.png)
 
 ### 8. **roadmap.puml** - Project Development Roadmap
 - 6-phase project timeline
@@ -66,7 +66,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Duration and key deliverables for each phase
 - **Purpose**: Project planning and progress tracking
 
-![Development Roadmap](roadmap.png)
+> [🔍 View Development Roadmap diagram →](roadmap.png)
 
 ### 9. **benchmarks.puml** - Performance Benchmarks
 - Latency comparison: FFT-DSP vs competitors
@@ -74,7 +74,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Comparison with FFTW, GSL, NumPy, MATLAB, Eigen
 - **Purpose**: Performance goals and competitive analysis
 
-![Performance Benchmarks](benchmarks.png)
+> [🔍 View Performance Benchmarks diagram →](benchmarks.png)
 
 ### 10. **use_cases.puml** - Primary Use Cases
 - Audio processing, embedded systems, research applications
@@ -82,7 +82,7 @@ Complete PlantUML diagrams for the FFT-DSP toolkit project. All diagrams are aut
 - Actor roles and their interactions
 - **Purpose**: Understanding target market and applications
 
-![Use Cases](use_cases.png)
+> [🔍 View Use Cases diagram →](use_cases.png)
 
 ## Rendering Diagrams
 

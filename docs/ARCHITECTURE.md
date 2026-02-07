@@ -4,9 +4,9 @@ Complete architectural overview of the FFT-DSP Toolkit based on PlantUML diagram
 
 ## System Architecture
 
-![System Architecture](diagrams/architecture.png)
-
-*Source: [architecture.puml](diagrams/architecture.puml)*
+> **📊 System Architecture** — [View full-size diagram →](diagrams/architecture.png)
+>
+> *Source: [architecture.puml](diagrams/architecture.puml)*
 
 The toolkit is organized in four layers:
 
@@ -50,9 +50,9 @@ Four integrated subsystems:
 
 ## Signal Processing Pipeline
 
-![Signal Processing Pipeline](diagrams/signal_flow.png)
-
-*Source: [signal_flow.puml](diagrams/signal_flow.puml)*
+> **📊 Signal Processing Pipeline** — [View full-size diagram →](diagrams/signal_flow.png)
+>
+> *Source: [signal_flow.puml](diagrams/signal_flow.puml)*
 
 Typical DSP workflow flows through two domains:
 
@@ -76,9 +76,9 @@ All operations support:
 
 ## Module Dependencies
 
-![Module Dependencies](diagrams/modules.png)
-
-*Source: [modules.puml](diagrams/modules.puml)*
+> **📊 Module Dependencies** — [View full-size diagram →](diagrams/modules.png)
+>
+> *Source: [modules.puml](diagrams/modules.puml)*
 
 ### Module Responsibilities
 
@@ -156,15 +156,15 @@ All operations support:
 
 ## API Reference Structure
 
-![Public API Reference](diagrams/api_reference.png)
-
-*Source: [api_reference.puml](diagrams/api_reference.puml)*
+> **📊 Public API Reference** — [View full-size diagram →](diagrams/api_reference.png)
+>
+> *Source: [api_reference.puml](diagrams/api_reference.puml)*
 
 ## Project Development Roadmap
 
-![Development Roadmap](diagrams/roadmap.png)
-
-*Source: [roadmap.puml](diagrams/roadmap.puml)*
+> **📊 Development Roadmap** — [View full-size diagram →](diagrams/roadmap.png)
+>
+> *Source: [roadmap.puml](diagrams/roadmap.puml)*
 
 ### 6-Phase Development Plan
 
@@ -205,9 +205,9 @@ All operations support:
 
 ## Use Cases
 
-![Use Cases](diagrams/use_cases.png)
-
-*Source: [use_cases.puml](diagrams/use_cases.puml)*
+> **📊 Use Cases** — [View full-size diagram →](diagrams/use_cases.png)
+>
+> *Source: [use_cases.puml](diagrams/use_cases.puml)*
 
 ### Primary Applications
 
@@ -233,9 +233,9 @@ All operations support:
 
 ## Performance Benchmarks
 
-![Performance Benchmarks](diagrams/benchmarks.png)
-
-*Source: [benchmarks.puml](diagrams/benchmarks.puml)*
+> **📊 Performance Benchmarks** — [View full-size diagram →](diagrams/benchmarks.png)
+>
+> *Source: [benchmarks.puml](diagrams/benchmarks.puml)*
 
 ### Latency Comparison (1024-point FFT)
 

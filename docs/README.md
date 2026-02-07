@@ -4,14 +4,14 @@ A lightweight educational toolkit for learning and experimenting with Digital Si
 
 ## Architecture
 
-![System Architecture](diagrams/architecture.png)
+> **📊 System Architecture** — [View full-size diagram →](diagrams/architecture.png)
 
 The FFT uses the Cooley-Tukey butterfly algorithm:
 - **Stage 1**: Split input into even and odd samples
 - **Stage 2**: Compute smaller FFTs recursively
 - **Stage 3**: Combine with twiddle factors W
 
-![Signal Processing Pipeline](diagrams/signal_flow.png)
+> **📊 Signal Pipeline** — [View full-size diagram →](diagrams/signal_flow.png)
 
 ## Features
 - Clean repo structure (`src/`, `include/`, `examples/`, `tests/`, `docs/`)
