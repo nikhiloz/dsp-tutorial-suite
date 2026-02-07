@@ -1,8 +1,9 @@
-/*
- * gnuplot.c - Implementation of gnuplot pipe helper for DSP tutorial
+/**
+ * @file gnuplot.c
+ * @brief Gnuplot pipe helper — opens gnuplot via popen() to produce PNG plots.
  *
- * Opens gnuplot via popen(), sends commands + inline data to produce
- * publication-quality PNG plots.  All output goes to plots/<chapter>/.
+ * Sends commands and inline data to gnuplot to create publication-quality
+ * PNG visualisations.  All output goes to plots/<chapter>/.
  *
  * Default style:
  *   - pngcairo terminal (anti-aliased, TrueType fonts)
@@ -88,6 +89,11 @@ static void setup_defaults(FILE *gp)
 /* Public API                                                         */
 /* ================================================================== */
 
+/**
+ * @brief Initialise the output directory for a chapter's plots.
+ * @param chapter  Chapter subdirectory name (e.g. "ch01").
+ * @return         0 on success, −1 on directory creation failure.
+ */
 int gp_init(const char *chapter)
 {
     char dir[512];
@@ -95,6 +101,14 @@ int gp_init(const char *chapter)
     return mkdirs(dir);
 }
 
+/**
+ * @brief Open a gnuplot pipe configured for PNG output.
+ * @param chapter  Chapter subdirectory name.
+ * @param name     Plot filename (without extension).
+ * @param w        Image width in pixels.
+ * @param h        Image height in pixels.
+ * @return         Open FILE* pipe to gnuplot, or NULL on failure.
+ */
 FILE *gp_open(const char *chapter, const char *name, int w, int h)
 {
     /* Ensure directory exists */
@@ -118,6 +132,10 @@ FILE *gp_open(const char *chapter, const char *name, int w, int h)
     return gp;
 }
 
+/**
+ * @brief Flush and close a gnuplot pipe.
+ * @param gp  Gnuplot pipe (NULL-safe).
+ */
 void gp_close(FILE *gp)
 {
     if (!gp) return;
@@ -128,6 +146,12 @@ void gp_close(FILE *gp)
 
 /* ── Inline data blocks ── */
 
+/**
+ * @brief Send y-only inline data to gnuplot (x = sample index).
+ * @param gp  Open gnuplot pipe.
+ * @param y   Y-axis data array.
+ * @param n   Number of data points.
+ */
 void gp_send_y(FILE *gp, const double *y, int n)
 {
     if (!gp || !y) return;
@@ -137,6 +161,13 @@ void gp_send_y(FILE *gp, const double *y, int n)
     fprintf(gp, "e\n");
 }
 
+/**
+ * @brief Send x-y inline data to gnuplot.
+ * @param gp  Open gnuplot pipe.
+ * @param x   X-axis data (NULL → use sample index).
+ * @param y   Y-axis data array.
+ * @param n   Number of data points.
+ */
 void gp_send_xy(FILE *gp, const double *x, const double *y, int n)
 {
     if (!gp || !y) return;
@@ -149,6 +180,18 @@ void gp_send_xy(FILE *gp, const double *x, const double *y, int n)
 
 /* ── High-level plotters ── */
 
+/**
+ * @brief Plot a single data series and save as PNG.
+ * @param chapter  Chapter subdirectory name.
+ * @param name     Output filename (no extension).
+ * @param title    Plot title string.
+ * @param xlabel   X-axis label.
+ * @param ylabel   Y-axis label.
+ * @param x        X-axis data (NULL → sample index).
+ * @param y        Y-axis data.
+ * @param n        Number of data points.
+ * @param style    Gnuplot style string (e.g. "lines", "impulses").
+ */
 void gp_plot_1(const char *chapter, const char *name,
                const char *title, const char *xlabel, const char *ylabel,
                const double *x, const double *y, int n,
@@ -165,6 +208,16 @@ void gp_plot_1(const char *chapter, const char *name,
     gp_close(gp);
 }
 
+/**
+ * @brief Plot multiple data series on one chart and save as PNG.
+ * @param chapter   Chapter subdirectory name.
+ * @param name      Output filename (no extension).
+ * @param title     Plot title string.
+ * @param xlabel    X-axis label.
+ * @param ylabel    Y-axis label.
+ * @param series    Array of GpSeries structs (label, x, y, n, style).
+ * @param n_series  Number of series.
+ */
 void gp_plot_multi(const char *chapter, const char *name,
                    const char *title, const char *xlabel, const char *ylabel,
                    const GpSeries *series, int n_series)
@@ -194,6 +247,15 @@ void gp_plot_multi(const char *chapter, const char *name,
     gp_close(gp);
 }
 
+/**
+ * @brief Plot a frequency-domain magnitude spectrum in dB and save as PNG.
+ * @param chapter  Chapter subdirectory name.
+ * @param name     Output filename (no extension).
+ * @param title    Plot title string.
+ * @param freq     Normalised frequency array (0 … 0.5).
+ * @param mag_db   Magnitude in dB.
+ * @param n        Number of data points.
+ */
 void gp_plot_spectrum(const char *chapter, const char *name,
                       const char *title,
                       const double *freq, const double *mag_db, int n)

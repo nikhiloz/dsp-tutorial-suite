@@ -12,6 +12,65 @@
  *   make chapters && ./build/bin/ch04
  *
  * Read alongside: chapters/10-digital-filters.md
+ *
+ * ════════════════════════════════════════════════════════════════════
+ *  THEORY: FIR (Finite Impulse Response) Filters
+ * ════════════════════════════════════════════════════════════════════
+ *
+ *  An FIR filter computes each output sample y[n] as a weighted sum
+ *  of the current and past M-1 input samples:
+ *
+ *      y[n] = h[0]·x[n] + h[1]·x[n-1] + … + h[M-1]·x[n-M+1]
+ *
+ *  where h[0..M-1] are the filter "taps" (coefficients) and M is
+ *  the filter order + 1.
+ *
+ *  ┌───────────────────────────────────────────────────────────────┐
+ *  │  FIR Filter Block Diagram  (M taps, delay line structure)    │
+ *  │                                                               │
+ *  │  x[n] ──┬──────►[×h[0]]──┐                                   │
+ *  │         │                 │                                   │
+ *  │        [z⁻¹]              ▼                                   │
+ *  │         │              [  +  ]──┐                              │
+ *  │         ├──►[×h[1]]──►   ▲     │                              │
+ *  │         │                │     │                              │
+ *  │        [z⁻¹]             │     │                              │
+ *  │         │                │     │                              │
+ *  │         ├──►[×h[2]]──────┘     │                              │
+ *  │         │                      ▼                              │
+ *  │        [z⁻¹]                [  +  ]──┐                        │
+ *  │         │                      ▲     │                        │
+ *  │         ⋮                      │     │                        │
+ *  │        [z⁻¹]                   │     │                        │
+ *  │         │                      │     ▼                        │
+ *  │         └──►[×h[M-1]]──────────┘   y[n]                      │
+ *  │                                                               │
+ *  │  Each [z⁻¹] is a one-sample delay (memory element).          │
+ *  │  Each [×h[k]] multiplies by the k-th tap coefficient.        │
+ *  │  All products are summed to produce y[n].                    │
+ *  └───────────────────────────────────────────────────────────────┘
+ *
+ *  Windowed-sinc design method:
+ *  ─────────────────────────────
+ *  An ideal lowpass filter has the impulse response:
+ *
+ *      h_ideal[n] = sin(2π f_c n) / (π n)     (a sinc function)
+ *
+ *  This is infinite in length, so we truncate it to M samples and
+ *  apply a window (Hamming, Blackman, etc.) to control the side
+ *  lobes in the resulting frequency response.  A wider window /
+ *  more taps → sharper transition band but more computation.
+ *
+ *  Frequency-domain interpretation:
+ *  ──────────────────────────────────
+ *  The FIR frequency response is:
+ *
+ *      H(e^{jω}) = Σ h[k] · e^{-jωk}       (the DTFT of h)
+ *                  k=0..M-1
+ *
+ *  For a symmetric FIR (h[k] = h[M-1-k]), the phase is exactly
+ *  linear: φ(ω) = −ω(M-1)/2.  Linear phase means no waveform
+ *  distortion — all frequencies are delayed equally.
  */
 
 #include <stdio.h>
@@ -29,7 +88,27 @@
 int main(void) {
     printf("=== Chapter 4: Digital Filters ===\n\n");
 
-    /* ── Part 1: Moving average on a step signal ─────────────────── */
+    /*
+     * ── Part 1: Moving average on a step signal ─────────────────
+     *
+     * Theory: The moving average is the simplest FIR filter:
+     *   h[k] = 1/M  for k = 0 … M-1.
+     *
+     * It averages the last M samples, which smooths out rapid
+     * changes.  Applied to a step function (0→1 at n=4), the
+     * output ramps linearly over M samples before settling to 1.
+     *
+     *   Step input:               Filtered output:
+     *   │         ████████        │           ╱────────
+     *   │         █               │         ╱
+     *   │         █               │       ╱
+     *   └──────────────── n       └──────────────── n
+     *         n=4                      settling = M samples
+     *
+     * In the frequency domain, the moving average has a sinc-shaped
+     * magnitude response — it passes low frequencies and attenuates
+     * high ones, but with poor stop-band rejection (−13 dB/lobe).
+     */
     printf("── Part 1: 5-tap moving average on a step signal ──\n\n");
 
     double step_in[16], step_out[16];
@@ -52,7 +131,22 @@ int main(void) {
     printf("\n  The moving average smoothly ramps from 0 to 1.\n");
     printf("  Settling time = %d samples (= filter order).\n\n", 5);
 
-    /* ── Part 2: Lowpass filter coefficients ──────────────────────── */
+    /*
+     * ── Part 2: Lowpass filter coefficients ──────────────────────
+     *
+     * Theory: We design a lowpass filter using the windowed-sinc
+     * method.  The ideal lowpass impulse response is:
+     *
+     *   h_ideal[n] = 2 f_c · sinc(2 f_c (n − M/2))
+     *
+     * where f_c = cutoff / fs is the normalised cutoff frequency.
+     * Truncating to TAPS samples and applying a window produces a
+     * practical filter.  Key properties to verify:
+     *
+     *   • Symmetry:  h[k] = h[M-1-k]  → linear phase guaranteed
+     *   • DC gain:   Σ h[k] = 1.0     → unit gain at 0 Hz
+     *   • Centre tap: h[M/2]          → largest coefficient
+     */
     printf("── Part 2: 31-tap lowpass filter coefficients ──\n\n");
 
     #define TAPS 31
@@ -81,7 +175,31 @@ int main(void) {
     }
     printf("  Sum of coefficients: %.6f  (should be 1.0 for unity DC gain)\n\n", coeff_sum);
 
-    /* ── Part 3: Noise reduction ─────────────────────────────────── */
+    /*
+     * ── Part 3: Noise reduction ─────────────────────────────────
+     *
+     * Theory: The classic use case for a lowpass filter is removing
+     * high-frequency noise from a signal of interest.
+     *
+     *   Spectrum before filtering:
+     *   │  ██                                   (200 Hz signal)
+     *   │                     ██  ██             (2800 & 3500 Hz noise)
+     *   │─────────────────────────────── f (Hz)
+     *   0        500  1000      2800 3500  4000
+     *                  ▲
+     *              cutoff = 500 Hz
+     *
+     *   Spectrum after filtering:
+     *   │  ██
+     *   │                     ..  ..  (attenuated by >40 dB)
+     *   │─────────────────────────────── f (Hz)
+     *   0        500  1000      2800 3500  4000
+     *
+     * We measure the improvement by comparing the RMS of the
+     * filtered signal against the clean original.
+     * Note: the first TAPS-1 output samples are in the "settling"
+     * transient and are excluded from the RMS calculation.
+     */
     printf("── Part 3: Lowpass filtering a noisy signal ──\n\n");
 
     double clean[N], noisy[N], filtered[N];

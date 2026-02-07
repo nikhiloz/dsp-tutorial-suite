@@ -9,6 +9,40 @@
  *  4. Autocorrelation of white noise (delta function)
  *  5. Correlation-based time-delay estimation
  *
+ * ---- Cross-Correlation Concept ----
+ *
+ *  R_xy[m] = Σ x[n] · y[n + m]     (slide y over x)
+ *             n
+ *
+ *   x: ──┐    ┌──                     fixed reference
+ *        └────┘
+ *   y:      ──┐    ┌──                slide by lag m
+ *             └────┘
+ *           ◄─── m ───►
+ *
+ * ---- FFT-Based Fast Correlation ----
+ *
+ *   x[n] ──► FFT ──► X[k]
+ *                          ╲
+ *                           ╳──► X[k]·Y*[k] ──► IFFT ──► R_xy[m]
+ *                          ╱
+ *   y[n] ──► FFT ──► Y[k] ──► conj
+ *
+ *   Complexity: O(N·log N) vs O(N²) for direct computation
+ *
+ * ---- Autocorrelation for Pitch ----
+ *
+ *   Periodic signal → autocorrelation has peaks at multiples of T₀
+ *
+ *   R_xx[m]:  1.0
+ *              ╱╲       ╱╲       ╱╲
+ *             ╱  ╲     ╱  ╲     ╱  ╲
+ *            ╱    ╲   ╱    ╲   ╱    ╲
+ *           ╱      ╲ ╱      ╲ ╱      ╲
+ *          0       T₀      2T₀     3T₀      lag
+ *
+ *   Pitch f₀ = fs / T₀
+ *
  * Build:  make           (builds ch15 among all targets)
  * Run:    build/bin/ch15
  */
@@ -256,6 +290,13 @@ static void demo_noise_autocorr(void)
 
 /* ------------------------------------------------------------------ */
 /*  Demo 5: Time-delay estimation                                     */
+/*                                                                    */
+/*   x[n] = chirp(n) + noise₁                                        */
+/*   y[n] = 0.8·x[n - Δ] + noise₂                                   */
+/*                                                                    */
+/*   R_xy peaks at lag = Δ  →  delay = Δ / fs  (seconds)             */
+/*                                                                    */
+/*   Chirp provides broadband excitation for robust estimation.       */
 /* ------------------------------------------------------------------ */
 static void demo_time_delay(void)
 {

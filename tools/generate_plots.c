@@ -1,5 +1,6 @@
-/*
- * generate_plots.c - Generate all gnuplot visualizations for the DSP tutorial
+/**
+ * @file generate_plots.c
+ * @brief Generate all gnuplot visualisations for the DSP tutorial suite.
  *
  * Produces PNG plots in plots/chXX/ for every chapter.  These are
  * referenced from the chapter .md tutorial files.
@@ -25,6 +26,8 @@
  *   Ch11  IIR design    : Butterworth orders, Chebyshev ripple, filtering
  *   Ch12  structures    : DF1 vs DF2T, coefficient sensitivity
  *   Ch13  spectral      : rect vs Hann windowed spectrum
+ *   Ch14  PSD/Welch     : periodogram vs Welch, resolution trade-off
+ *   Ch15  correlation   : autocorr pitch, white noise autocorr
  *   Ch30  capstone      : full pipeline time + frequency domain
  */
 
@@ -40,6 +43,8 @@
 #include "filter.h"
 #include "iir.h"
 #include "convolution.h"
+#include "spectrum.h"
+#include "correlation.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -1165,6 +1170,204 @@ static void plot_ch30(void)
 }
 
 /* ================================================================== */
+/*  Ch14: PSD & Welch's Method plots                                  */
+/*                                                                    */
+/*  Generates:                                                        */
+/*    - Periodogram vs Welch comparison                               */
+/*    - Resolution trade-off (short/medium/long segments)             */
+/* ================================================================== */
+
+static void plot_ch14(void)
+{
+    printf("Ch14 PSD/Welch ...\n");
+
+    const int    N  = 4096;
+    const double fs = 8000.0;
+    const double f1 = 500.0;
+
+    double *x     = (double *)malloc((size_t)N * sizeof(double));
+    double *noise = (double *)malloc((size_t)N * sizeof(double));
+
+    gen_sine(x, N, 1.0, f1, fs, 0.0);
+    gen_gaussian_noise(noise, N, 0.0, 2.0, 42);
+    signal_add(x, noise, N);
+
+    /* --- Periodogram --- */
+    int nfft     = 4096;
+    int n_bins_p = nfft / 2 + 1;
+    double *psd_p   = (double *)calloc((size_t)n_bins_p, sizeof(double));
+    double *db_p    = (double *)malloc((size_t)n_bins_p * sizeof(double));
+    double *freq_p  = (double *)malloc((size_t)n_bins_p * sizeof(double));
+
+    periodogram(x, N, psd_p, nfft);
+    psd_to_db(psd_p, db_p, n_bins_p, -120.0);
+    psd_freq_axis(freq_p, n_bins_p, fs);
+
+    /* --- Welch --- */
+    int seg_len  = 512;
+    int nfft_w   = 512;
+    int overlap  = 256;
+    int n_bins_w = nfft_w / 2 + 1;
+    double *psd_w  = (double *)calloc((size_t)n_bins_w, sizeof(double));
+    double *db_w   = (double *)malloc((size_t)n_bins_w * sizeof(double));
+    double *freq_w = (double *)malloc((size_t)n_bins_w * sizeof(double));
+
+    welch_psd(x, N, psd_w, nfft_w, seg_len, overlap, hann_window);
+    psd_to_db(psd_w, db_w, n_bins_w, -120.0);
+    psd_freq_axis(freq_w, n_bins_w, fs);
+
+    /* Plot both on one graph */
+    GpSeries s[2];
+    s[0].label = "Periodogram (high variance)";
+    s[0].x     = freq_p;
+    s[0].y     = db_p;
+    s[0].n     = n_bins_p;
+    s[0].style = "lines";
+
+    s[1].label = "Welch (512-pt, 50%% overlap)";
+    s[1].x     = freq_w;
+    s[1].y     = db_w;
+    s[1].n     = n_bins_w;
+    s[1].style = "lines";
+
+    gp_plot_multi("ch14", "periodogram_vs_welch",
+                  "Periodogram vs Welch PSD (500 Hz + Noise)",
+                  "Frequency (Hz)", "PSD (dB)",
+                  s, 2);
+
+    /* --- Resolution trade-off --- */
+    int seg_lens[3]     = {128, 512, 2048};
+    const char *labs[3] = {"128-pt", "512-pt", "2048-pt"};
+
+    FILE *gp = gp_open("ch14", "resolution_tradeoff", 900, 500);
+    if (gp) {
+        fprintf(gp, "set title 'Welch PSD — Segment Length vs Resolution'\n");
+        fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
+        fprintf(gp, "set ylabel 'PSD (dB)'\n");
+        fprintf(gp, "set grid\n");
+        fprintf(gp, "set xrange [0:2000]\n");
+        fprintf(gp, "plot ");
+        for (int si = 0; si < 3; si++) {
+            if (si > 0) fprintf(gp, ", ");
+            fprintf(gp, "'-' using 1:2 with lines lw 2 title '%s'", labs[si]);
+        }
+        fprintf(gp, "\n");
+
+        /* Two close tones for resolution demo */
+        double *x2    = (double *)malloc((size_t)N * sizeof(double));
+        double *n2    = (double *)malloc((size_t)N * sizeof(double));
+        double tones[2] = {900.0, 1100.0};
+        double tamps[2] = {1.0, 1.0};
+        gen_multi_tone(x2, N, tones, tamps, 2, fs);
+        gen_gaussian_noise(n2, N, 0.0, 1.0, 99);
+        signal_add(x2, n2, N);
+
+        for (int si = 0; si < 3; si++) {
+            int sl = seg_lens[si];
+            int nf = next_power_of_2(sl);
+            int nb = nf / 2 + 1;
+            int ov = sl / 2;
+
+            double *pw = (double *)calloc((size_t)nb, sizeof(double));
+            double *dw = (double *)malloc((size_t)nb * sizeof(double));
+            double *fw = (double *)malloc((size_t)nb * sizeof(double));
+
+            welch_psd(x2, N, pw, nf, sl, ov, hann_window);
+            psd_to_db(pw, dw, nb, -120.0);
+            psd_freq_axis(fw, nb, fs);
+
+            for (int k = 0; k < nb; k++)
+                fprintf(gp, "%.2f %.4f\n", fw[k], dw[k]);
+            fprintf(gp, "e\n");
+
+            free(pw); free(dw); free(fw);
+        }
+        gp_close(gp);
+        free(x2); free(n2);
+    }
+
+    free(x); free(noise);
+    free(psd_p); free(db_p); free(freq_p);
+    free(psd_w); free(db_w); free(freq_w);
+}
+
+/* ================================================================== */
+/*  Ch15: Correlation plots                                           */
+/*                                                                    */
+/*  Generates:                                                        */
+/*    - Autocorrelation of periodic signal (pitch detection)          */
+/*    - White noise autocorrelation (delta)                           */
+/* ================================================================== */
+
+static void plot_ch15(void)
+{
+    printf("Ch15 Correlation ...\n");
+
+    /* --- Autocorrelation for pitch: harmonic signal at 440 Hz --- */
+    const int    N  = 2048;
+    const double fs = 16000.0;
+    const double f0 = 440.0;
+
+    double *x     = (double *)malloc((size_t)N * sizeof(double));
+    double *noise = (double *)malloc((size_t)N * sizeof(double));
+
+    double freqs[3] = {f0, 2*f0, 3*f0};
+    double amps[3]  = {1.0, 0.5, 0.25};
+    gen_multi_tone(x, N, freqs, amps, 3, fs);
+    gen_gaussian_noise(noise, N, 0.0, 0.3, 55);
+    signal_add(x, noise, N);
+
+    int r_len = 2 * N - 1;
+    double *r = (double *)malloc((size_t)r_len * sizeof(double));
+    autocorr_normalized(x, N, r);
+
+    int centre   = N - 1;
+    int max_lag  = (int)(fs / 50.0);
+    int plot_len = max_lag + 50;
+    if (plot_len > N) plot_len = N;
+
+    double *lags = (double *)malloc((size_t)plot_len * sizeof(double));
+    double *rpos = (double *)malloc((size_t)plot_len * sizeof(double));
+    for (int i = 0; i < plot_len; i++) {
+        lags[i] = (double)i;
+        rpos[i] = r[centre + i];
+    }
+
+    gp_plot_1("ch15", "autocorr_pitch",
+              "Autocorrelation — Pitch Detection (A4 = 440 Hz)",
+              "Lag (samples)", "Normalised Autocorrelation",
+              lags, rpos, plot_len, "lines");
+
+    free(x); free(noise); free(r); free(lags); free(rpos);
+
+    /* --- White noise autocorrelation — impulse at lag 0 --- */
+    const int Nw = 4096;
+    double *w = (double *)malloc((size_t)Nw * sizeof(double));
+    gen_gaussian_noise(w, Nw, 0.0, 1.0, 123);
+
+    int rw_len = 2 * Nw - 1;
+    double *rw = (double *)malloc((size_t)rw_len * sizeof(double));
+    autocorr_normalized(w, Nw, rw);
+
+    int cw = Nw - 1;
+    int ph = 100;
+    int pw_len = 2 * ph + 1;
+    double *wlags = (double *)malloc((size_t)pw_len * sizeof(double));
+    double *wrp   = (double *)malloc((size_t)pw_len * sizeof(double));
+    for (int i = 0; i < pw_len; i++) {
+        wlags[i] = (double)(i - ph);
+        wrp[i]   = rw[cw + i - ph];
+    }
+
+    gp_plot_1("ch15", "noise_autocorr",
+              "Autocorrelation of White Noise — Impulse at Lag 0",
+              "Lag (samples)", "Normalised Autocorrelation",
+              wlags, wrp, pw_len, "impulses");
+
+    free(w); free(rw); free(wlags); free(wrp);
+}
+
+/* ================================================================== */
 /*  Main: generate all plots                                          */
 /* ================================================================== */
 
@@ -1187,6 +1390,8 @@ int main(void)
     plot_ch11();
     plot_ch12();
     plot_ch13();
+    plot_ch14();
+    plot_ch15();
     plot_ch30();
 
     printf("\n  Done! All plots saved to plots/\n");

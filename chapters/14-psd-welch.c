@@ -9,6 +9,27 @@
  *  4. Effect of segment length on Welch resolution
  *  5. Cross-PSD of correlated signals
  *
+ * ---- Periodogram vs Welch's Method ----
+ *
+ *  Periodogram (single shot — high variance):
+ *
+ *    x[0..N-1] ──► Window ──► FFT ──► |X[k]|² / N ──► PSD[k]
+ *
+ *  Welch's Method (averaged — low variance):
+ *
+ *    x[0..N-1]
+ *      │
+ *      ├─ Seg 0: [0      .. L-1]   ──► Window ──► FFT ──► |X₀|²
+ *      ├─ Seg 1: [L-D    .. 2L-D-1]──► Window ──► FFT ──► |X₁|²
+ *      ├─ Seg 2: [2(L-D) .. 3L-2D-1]──► Window ──► FFT ──► |X₂|²
+ *      │   ...                          (D = overlap)
+ *      └─ Seg K-1                     ──► Window ──► FFT ──► |Xₖ₋₁|²
+ *                                                    │
+ *                          PSD[k] = (1/K) Σ |Xᵢ[k]|² ◄──────┘
+ *
+ *  Variance reduction:  Var(Welch) ≈ Var(Periodogram) / K
+ *  Resolution trade-off: Δf = fs / L  (shorter L → coarser)
+ *
  * Build:  make           (builds ch14 among all targets)
  * Run:    build/bin/ch14
  */
@@ -116,6 +137,17 @@ static void demo_periodogram_noisy(void)
 
 /* ------------------------------------------------------------------ */
 /*  Demo 3: Welch's method — averaged, lower variance                 */
+/*                                                                    */
+/*  Welch segmentation with 50% overlap:                              */
+/*                                                                    */
+/*   x: |=====seg0=====|                                              */
+/*      |        |=====seg1=====|                                     */
+/*      |              |=====seg2=====|                               */
+/*      |                    |=====seg3=====|                         */
+/*      0      256    512    768   1024                               */
+/*            overlap──┘                                              */
+/*                                                                    */
+/*  Each segment: window → FFT → |·|² → average across segments       */
 /* ------------------------------------------------------------------ */
 static void demo_welch(void)
 {
@@ -242,6 +274,12 @@ static void demo_welch_resolution(void)
 
 /* ------------------------------------------------------------------ */
 /*  Demo 5: Cross-PSD of correlated signals                           */
+/*                                                                    */
+/*   x[n] = s[n] + noise_x[n]                                        */
+/*   y[n] = s[n] + noise_y[n]                                        */
+/*                                                                    */
+/*   Cross-PSD(x,y) ≈ |S(f)|²   (common signal survives)             */
+/*   Independent noise averages to zero as K → ∞                      */
 /* ------------------------------------------------------------------ */
 static void demo_cross_psd(void)
 {

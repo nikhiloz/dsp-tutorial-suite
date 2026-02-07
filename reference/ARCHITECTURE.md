@@ -15,7 +15,7 @@ The library is organized in four layers:
 - Signal Analysis tools
 - Sensor Fusion applications
 
-### FFT-DSP Core Library
+### DSP Core Library
 Four integrated subsystems:
 
 1. **Signal Processing**
@@ -86,13 +86,13 @@ All operations support:
 |--------|---------|---|
 | **dsp_utils** | Core math (complex arithmetic, vectors) | None |
 | **fft** | Fast Fourier Transform | dsp_utils |
-| **filter** | Time-domain filtering (FIR/IIR) | dsp_utils |
-| **window** | Window functions for spectral analysis | dsp_utils |
+| **filter** | Time-domain FIR filtering | dsp_utils |
+| **iir** | IIR filter design (Butterworth, Chebyshev) | dsp_utils |
 | **convolution** | Fast convolution via FFT | fft |
-| **spectrum** | Power spectral density & analysis | fft |
-| **ring_buffer** | Lock-free circular FIFO buffers | dsp_utils |
-| **streaming** | Real-time overlap-add/save | ring_buffer, fft, filter |
-| **signal_gen** | Signal generation (sine, chirp, noise) | dsp_utils, window |
+| **spectrum** | PSD, Welch's method, cross-PSD | fft, dsp_utils |
+| **correlation** | Cross/auto-correlation (FFT-based) | fft, dsp_utils |
+| **signal_gen** | Signal generation (sine, chirp, noise) | dsp_utils |
+| **gnuplot** | Pipe-based gnuplot plotting helpers | None (ext: gnuplot) |
 
 ## FFT Processing Sequence
 
@@ -168,40 +168,30 @@ All operations support:
 
 ### 6-Phase Development Plan
 
-1. **Phase 1: Build Infrastructure** ✓ COMPLETE
-   - CMake & Makefile build systems
-   - Test framework (zero dependencies)
-   - CI/CD pipelines (GitHub Actions)
+1. **Phase 1: Foundation** ✓ COMPLETE
+   - Ch01 Signals, Ch02 Sampling, Ch04 LTI, Ch05 Z-transform, Ch07 DFT
+   - CMake & Makefile build systems, test framework
 
-2. **Phase 2: Core DSP Algorithms** (In Progress)
-   - Window functions
-   - Convolution & correlation
-   - Spectral analysis tools
-   - Signal generation
+2. **Phase 2: Filter Story** ✓ COMPLETE
+   - Ch06 Frequency Response, Ch11 IIR Design, Ch12 Filter Structures
+   - IIR library (Butterworth, Chebyshev1, SOS cascades)
 
-3. **Phase 3: Real-Time Streaming** (Planned)
-   - Ring buffer implementation
-   - Overlap-add/save streaming
-   - ALSA audio integration
-   - Low-latency design
+3. **Phase 3: Analysis** ✓ COMPLETE
+   - Ch14 PSD & Welch's Method, Ch15 Correlation & Autocorrelation
+   - Spectrum & correlation libraries, gnuplot integration
 
-4. **Phase 4: Performance Optimization** (Planned)
-   - SIMD kernels (x86/ARM)
-   - Multithreading
-   - Memory pooling
-   - Benchmarking suite
+4. **Phase 4: Advanced Transforms** (In Progress)
+   - Ch18 Fixed-point arithmetic & quantisation
+   - Ch19 Advanced FFT (Goertzel, real-FFT, Radix-4)
+   - Ch16 Overlap-add/save streaming
 
-5. **Phase 5: Documentation** (Planned)
-   - API reference
-   - User guide
-   - Code examples
-   - Performance analysis
+5. **Phase 5: Applications** (Planned)
+   - Adaptive filters, audio effects, modulation
+   - Real-time streaming pipeline
 
-6. **Phase 6: Advanced Features** (Stretch Goals)
-   - GPU acceleration
-   - Adaptive algorithms
-   - Wavelets
-   - ML integration
+6. **Phase 6: Optimisation & Capstone** (Planned)
+   - SIMD kernels, multithreading, benchmarking
+   - Ch30 Capstone project
 
 ## Use Cases
 
@@ -241,9 +231,9 @@ All operations support:
 
 | Implementation | Latency | Status | Notes |
 |---|---|---|---|
-| FFT-DSP (baseline) | 12ms | Baseline | Pure C99 |
-| FFT-DSP (SIMD) | 2ms | Optimized | AVX2/NEON |
-| FFT-DSP (real-time) | 0.8ms | Production | PREEMPT_RT |
+| dsp_core (baseline) | 12ms | Baseline | Pure C99 |
+| dsp_core (SIMD) | 2ms | Optimized | AVX2/NEON |
+| dsp_core (real-time) | 0.8ms | Production | PREEMPT_RT |
 | FFTW3 | 3.5ms | Reference | Industry standard |
 | GSL | 8ms | Comparison | General library |
 | NumPy | 10ms | Comparison | Python overhead |

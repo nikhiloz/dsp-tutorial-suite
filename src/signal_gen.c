@@ -24,8 +24,15 @@
 #endif
 
 /* ── Elementary signals ──────────────────────────────────────────── */
-
-void gen_impulse(double *out, int n, int delay)
+/**
+ * @brief Generate a unit impulse (Kronecker delta) sequence.
+ *
+ * out[i] = 1 if i == delay, 0 otherwise.
+ *
+ * @param out    Output buffer, length @p n (caller-allocated).
+ * @param n      Number of samples.
+ * @param delay  Sample index where the impulse occurs.
+ */void gen_impulse(double *out, int n, int delay)
 {
     memset(out, 0, (size_t)n * sizeof(double));
     if (delay >= 0 && delay < n) {
@@ -33,6 +40,15 @@ void gen_impulse(double *out, int n, int delay)
     }
 }
 
+/**
+ * @brief Generate a unit step sequence.
+ *
+ * out[i] = 1 for i ≥ start, 0 otherwise.
+ *
+ * @param out    Output buffer, length @p n (caller-allocated).
+ * @param n      Number of samples.
+ * @param start  Sample index where the step begins.
+ */
 void gen_step(double *out, int n, int start)
 {
     for (int i = 0; i < n; i++) {
@@ -40,6 +56,13 @@ void gen_step(double *out, int n, int start)
     }
 }
 
+/**
+ * @brief Generate a real exponential sequence: x[n] = amplitude · base^n.
+ * @param out        Output buffer, length @p n (caller-allocated).
+ * @param n          Number of samples.
+ * @param amplitude  Initial value (x[0]).
+ * @param base       Growth/decay base (|base| < 1 decays, > 1 grows).
+ */
 void gen_exponential(double *out, int n, double amplitude, double base)
 {
     double val = amplitude;
@@ -50,8 +73,15 @@ void gen_exponential(double *out, int n, double amplitude, double base)
 }
 
 /* ── Sinusoidal signals ──────────────────────────────────────────── */
-
-void gen_cosine(double *out, int n, double amplitude,
+/**
+ * @brief Generate a cosine signal: x[n] = A · cos(ωn + φ).
+ * @param out         Output buffer, length @p n (caller-allocated).
+ * @param n           Number of samples.
+ * @param amplitude   Peak amplitude A.
+ * @param freq_hz     Frequency in Hz.
+ * @param sample_rate Sampling rate in Hz.
+ * @param phase_rad   Initial phase in radians.
+ */void gen_cosine(double *out, int n, double amplitude,
                 double freq_hz, double sample_rate, double phase_rad)
 {
     double omega = 2.0 * M_PI * freq_hz / sample_rate;
@@ -60,7 +90,15 @@ void gen_cosine(double *out, int n, double amplitude,
     }
 }
 
-/* x[n] = A * sin(ωn + φ) */
+/**
+ * @brief Generate a sine signal: x[n] = A · sin(ωn + φ).
+ * @param out         Output buffer, length @p n (caller-allocated).
+ * @param n           Number of samples.
+ * @param amplitude   Peak amplitude A.
+ * @param freq_hz     Frequency in Hz.
+ * @param sample_rate Sampling rate in Hz.
+ * @param phase_rad   Initial phase in radians.
+ */
 void gen_sine(double *out, int n, double amplitude,
               double freq_hz, double sample_rate, double phase_rad)
 {
@@ -70,7 +108,18 @@ void gen_sine(double *out, int n, double amplitude,
     }
 }
 
-/* x[n] = A * e^{j(ωn + φ)} — complex exponential on the unit circle */
+/**
+ * @brief Generate a complex exponential: x[n] = A · e^{j(ωn + φ)}.
+ *
+ * Produces samples on the unit circle in the complex plane.
+ *
+ * @param out         Output buffer of Complex, length @p n (caller-allocated).
+ * @param n           Number of samples.
+ * @param amplitude   Peak amplitude A.
+ * @param freq_hz     Frequency in Hz.
+ * @param sample_rate Sampling rate in Hz.
+ * @param phase_rad   Initial phase in radians.
+ */
 void gen_complex_exp(Complex *out, int n, double amplitude,
                      double freq_hz, double sample_rate, double phase_rad)
 {
@@ -82,8 +131,19 @@ void gen_complex_exp(Complex *out, int n, double amplitude,
 }
 
 /* ── Composite signals ───────────────────────────────────────────── */
-
-void gen_chirp(double *out, int n, double amplitude,
+/**
+ * @brief Generate a linear chirp (frequency sweep) signal.
+ *
+ * Instantaneous frequency sweeps linearly from @p f0_hz to @p f1_hz
+ * over @p n samples.
+ *
+ * @param out         Output buffer, length @p n (caller-allocated).
+ * @param n           Number of samples.
+ * @param amplitude   Peak amplitude.
+ * @param f0_hz       Start frequency in Hz.
+ * @param f1_hz       End frequency in Hz.
+ * @param sample_rate Sampling rate in Hz.
+ */void gen_chirp(double *out, int n, double amplitude,
                double f0_hz, double f1_hz, double sample_rate)
 {
     /*
@@ -99,6 +159,15 @@ void gen_chirp(double *out, int n, double amplitude,
     }
 }
 
+/**
+ * @brief Generate a multi-tone signal (sum of sinusoids).
+ * @param out         Output buffer, length @p n (caller-allocated, zeroed first).
+ * @param n           Number of samples.
+ * @param freqs_hz    Array of tone frequencies in Hz.
+ * @param amplitudes  Array of corresponding amplitudes.
+ * @param num_tones   Number of tones (length of @p freqs_hz and @p amplitudes).
+ * @param sample_rate Sampling rate in Hz.
+ */
 void gen_multi_tone(double *out, int n,
                     const double *freqs_hz, const double *amplitudes,
                     int num_tones, double sample_rate)
@@ -113,7 +182,15 @@ void gen_multi_tone(double *out, int n,
 }
 
 /* ── Noise ───────────────────────────────────────────────────────── */
-/* Uniform white noise in [-A, +A] */void gen_white_noise(double *out, int n, double amplitude, unsigned int seed)
+
+/**
+ * @brief Generate uniform white noise in [−A, +A].
+ * @param out        Output buffer, length @p n (caller-allocated).
+ * @param n          Number of samples.
+ * @param amplitude  Maximum absolute value A.
+ * @param seed       Random seed (0 = use current time).
+ */
+void gen_white_noise(double *out, int n, double amplitude, unsigned int seed)
 {
     if (seed == 0) seed = (unsigned int)time(NULL);
     srand(seed);
@@ -123,6 +200,14 @@ void gen_multi_tone(double *out, int n,
     }
 }
 
+/**
+ * @brief Generate Gaussian (normal) noise using the Box-Muller transform.
+ * @param out     Output buffer, length @p n (caller-allocated).
+ * @param n       Number of samples.
+ * @param mean    Mean of the distribution.
+ * @param stddev  Standard deviation.
+ * @param seed    Random seed (0 = use current time).
+ */
 void gen_gaussian_noise(double *out, int n, double mean, double stddev,
                         unsigned int seed)
 {
@@ -155,14 +240,26 @@ void gen_gaussian_noise(double *out, int n, double mean, double stddev,
 }
 
 /* ── Utility ─────────────────────────────────────────────────────── */
-/* Element-wise addition: a[i] += b[i] */void signal_add(double *a, const double *b, int n)
+
+/**
+ * @brief Element-wise signal addition: a[i] += b[i].
+ * @param a  Accumulator signal (modified in-place).
+ * @param b  Signal to add.
+ * @param n  Number of samples.
+ */
+void signal_add(double *a, const double *b, int n)
 {
     for (int i = 0; i < n; i++) {
         a[i] += b[i];
     }
 }
 
-/* Scalar multiply: x[i] *= scale */
+/**
+ * @brief Scale a signal by a constant factor: x[i] *= scale.
+ * @param x      Signal buffer (modified in-place).
+ * @param n      Number of samples.
+ * @param scale  Scalar multiplier.
+ */
 void signal_scale(double *x, int n, double scale)
 {
     for (int i = 0; i < n; i++) {

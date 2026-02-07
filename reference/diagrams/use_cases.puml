@@ -35,7 +35,7 @@ title <size:20><b>Use Case Diagram</b></size>\n<size:14><color:#546E7A>Applicati
 :Researcher: as RES #FFF3E0
 :IoT Device: as IOT #F3E5F5
 
-rectangle "  <b>DSP Tutorial Suite</b>  " as TOOLKIT {
+rectangle "  <b>DSP Tutorial Suite</b>  " as SUITE {
 
     package "Audio Processing" #E3F2FD {
         usecase "<b>Real-Time Equalizer</b>\n<size:10>10-band parametric EQ</size>\n<size:10>with live preview</size>" as UC1 #BBDEFB
@@ -90,7 +90,7 @@ UC4 ..> UC5 : test signals
 UC10 ..> UC5 : benchmark input
 UC11 ..> UC4 : visualize
 
-note right of TOOLKIT #FFFDE7
+note right of SUITE #FFFDE7
   <b>All use cases are C-only</b>
   Zero external dependencies
   POSIX-compliant

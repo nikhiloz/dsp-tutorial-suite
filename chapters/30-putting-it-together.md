@@ -170,7 +170,7 @@ Each test:
 
 ---
 
-*Congratulations — you've completed the FFT-DSP tutorial. You now
+*Congratulations — you've completed the DSP Tutorial Suite. You now
 understand complex arithmetic, the Cooley-Tukey FFT, window functions,
 FIR filter design, spectral analysis, and have a foundation for
 real-time processing and optimisation.*

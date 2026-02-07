@@ -39,6 +39,35 @@
  *  Tutorial: see chapters/10-digital-filters.md § "Convolution"
  * ════════════════════════════════════════════════════════════════════ */
 
+/**
+ * @brief Apply an FIR filter to an input signal via direct convolution.
+ *
+ * Computes y[n] = Σ_{k=0}^{order-1} h[k] · x[n−k], assuming
+ * x[n] = 0 for n < 0 (causal zero-padding).
+ *
+ *  ASCII FIR convolution (order = 4 example):
+ *
+ *    x[n]  x[n-1] x[n-2] x[n-3]
+ *      │      │      │      │
+ *      ▼      ▼      ▼      ▼
+ *    ┌────┐ ┌────┐ ┌────┐ ┌────┐
+ *    │h[0]│ │h[1]│ │h[2]│ │h[3]│   ← coefficients
+ *    └──┬─┘ └──┬─┘ └──┬─┘ └──┬─┘
+ *       │      │      │      │
+ *       ▼      ▼      ▼      ▼
+ *      (×)    (×)    (×)    (×)     ← multiply
+ *       │      │      │      │
+ *       └──┬───┘      └──┬───┘
+ *          └──────┬───────┘
+ *                 ▼
+ *                (Σ) ──▶ y[n]       ← accumulate
+ *
+ * @param in     Input signal array, length @p n.
+ * @param out    Output signal array, length @p n (caller-allocated).
+ * @param n      Number of samples in @p in and @p out.
+ * @param h      FIR filter coefficients, length @p order.
+ * @param order  Number of filter taps (coefficients).
+ */
 void fir_filter(const double *in, double *out, int n,
                 const double *h, int order)
 {
@@ -67,6 +96,15 @@ void fir_filter(const double *in, double *out, int n,
  *  Tutorial: see chapters/10-digital-filters.md § "Moving Average"
  * ════════════════════════════════════════════════════════════════════ */
 
+/**
+ * @brief Generate coefficients for a simple moving-average FIR filter.
+ *
+ * Each coefficient is set to 1/taps, so the filter averages the
+ * last @p taps input samples.
+ *
+ * @param h     Output coefficient array, length @p taps (caller-allocated).
+ * @param taps  Number of filter taps (averaging window length).
+ */
 void fir_moving_average(double *h, int taps) {
     double coeff = 1.0 / taps;
     for (int i = 0; i < taps; i++) {
@@ -91,6 +129,16 @@ void fir_moving_average(double *h, int taps) {
  *  Tutorial: see chapters/10-digital-filters.md § "Windowed-Sinc"
  * ════════════════════════════════════════════════════════════════════ */
 
+/**
+ * @brief Design a windowed-sinc lowpass FIR filter.
+ *
+ * Generates a truncated sinc impulse response, applies a Hamming
+ * window, and normalises for unity DC gain.
+ *
+ * @param h       Output coefficient array, length @p taps (caller-allocated).
+ * @param taps    Number of filter taps (must be odd for symmetric kernel).
+ * @param cutoff  Normalised cutoff frequency (0.0 – 0.5, where 0.5 = Nyquist).
+ */
 void fir_lowpass(double *h, int taps, double cutoff) {
     int center = taps / 2;
 

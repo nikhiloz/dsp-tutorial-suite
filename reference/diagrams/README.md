@@ -69,7 +69,7 @@ Complete PlantUML diagrams for the DSP Tutorial Suite project. All diagrams are 
 > [🔍 View Development Roadmap diagram →](roadmap.png)
 
 ### 9. **benchmarks.puml** - Performance Benchmarks
-- Latency comparison: FFT-DSP vs competitors
+- Latency comparison: dsp_core vs competitors
 - Shows baseline, SIMD-optimized, and real-time kernel versions
 - Comparison with FFTW, GSL, NumPy, MATLAB, Eigen
 - **Purpose**: Performance goals and competitive analysis
