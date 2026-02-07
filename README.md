@@ -236,6 +236,12 @@ java -jar ~/tools/plantuml.jar -tpng reference/diagrams/*.puml chapters/*/*.puml
 
 MIT
 
+## Related Repositories
+
+| Repository | Description |
+|-----------|-------------|
+| [SDR_Notes](https://github.com/nikhiloz/SDR_Notes) | Companion SDR learning notes — RF fundamentals, hardware guides, protocol decoding, and practical projects that apply DSP concepts from this tutorial |
+
 ## References
 
 - Oppenheim & Willsky, *Signals and Systems* (3rd ed.)
