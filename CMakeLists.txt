@@ -27,6 +27,8 @@ set(DSP_SOURCES
     src/filter.c
     src/iir.c
     src/gnuplot.c
+    src/spectrum.c
+    src/correlation.c
     src/dsp_utils.c
     src/signal_gen.c
     src/convolution.c
@@ -86,6 +88,12 @@ target_link_libraries(ch12 dsp_core_static m)
 add_executable(ch13 chapters/13-spectral-analysis.c)
 target_link_libraries(ch13 dsp_core_static m)
 
+add_executable(ch14 chapters/14-psd-welch.c)
+target_link_libraries(ch14 dsp_core_static m)
+
+add_executable(ch15 chapters/15-correlation.c)
+target_link_libraries(ch15 dsp_core_static m)
+
 add_executable(ch30 chapters/30-putting-it-together.c)
 target_link_libraries(ch30 dsp_core_static m)
 
@@ -105,14 +113,19 @@ target_include_directories(test_iir PRIVATE tests)
 target_link_libraries(test_iir dsp_core_static m)
 add_test(NAME iir_tests COMMAND test_iir)
 
+add_executable(test_spectrum_corr tests/test_spectrum_corr.c)
+target_include_directories(test_spectrum_corr PRIVATE tests)
+target_link_libraries(test_spectrum_corr dsp_core_static m)
+add_test(NAME spectrum_corr_tests COMMAND test_spectrum_corr)
+
 # Plot generator tool
 add_executable(generate_plots tools/generate_plots.c)
 target_link_libraries(generate_plots dsp_core_static m)
 
 # Build output directories
 set_target_properties(
-    ch01 ch02 ch03 ch04 ch05 ch06 ch07 ch08 ch09 ch10 ch11 ch12 ch13 ch30
-    test_fft test_filter test_iir generate_plots
+    ch01 ch02 ch03 ch04 ch05 ch06 ch07 ch08 ch09 ch10 ch11 ch12 ch13 ch14 ch15 ch30
+    test_fft test_filter test_iir test_spectrum_corr generate_plots
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

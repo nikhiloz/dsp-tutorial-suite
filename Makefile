@@ -14,10 +14,10 @@ LIB_DIR := $(BUILD_DIR)/lib
 OBJ_DIR := $(BUILD_DIR)/obj
 
 # Source files
-SOURCES := src/fft.c src/filter.c src/dsp_utils.c src/signal_gen.c src/convolution.c src/iir.c src/gnuplot.c
+SOURCES := src/fft.c src/filter.c src/dsp_utils.c src/signal_gen.c src/convolution.c src/iir.c src/gnuplot.c src/spectrum.c src/correlation.c
 OBJECTS := $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
-TESTS := tests/test_fft.c tests/test_filter.c tests/test_iir.c
+TESTS := tests/test_fft.c tests/test_filter.c tests/test_iir.c tests/test_spectrum_corr.c
 
 # Chapter demos
 CHAPTER_DEMOS := chapters/01-signals-and-sequences.c \
@@ -33,6 +33,8 @@ CHAPTER_DEMOS := chapters/01-signals-and-sequences.c \
 	chapters/11-iir-filter-design.c \
 	chapters/12-filter-structures.c \
 	chapters/13-spectral-analysis.c \
+	chapters/14-psd-welch.c \
+	chapters/15-correlation.c \
 	chapters/30-putting-it-together.c
 
 # Targets
@@ -62,10 +64,13 @@ debug: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
 	$(BIN_DIR)/ch11 \
 	$(BIN_DIR)/ch12 \
 	$(BIN_DIR)/ch13 \
+	$(BIN_DIR)/ch14 \
+	$(BIN_DIR)/ch15 \
 	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter \
 	$(BIN_DIR)/test_iir \
+	$(BIN_DIR)/test_spectrum_corr \
 	$(BIN_DIR)/generate_plots
 
 # Release build
@@ -83,10 +88,13 @@ release: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
 	$(BIN_DIR)/ch11 \
 	$(BIN_DIR)/ch12 \
 	$(BIN_DIR)/ch13 \
+	$(BIN_DIR)/ch14 \
+	$(BIN_DIR)/ch15 \
 	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter \
 	$(BIN_DIR)/test_iir \
+	$(BIN_DIR)/test_spectrum_corr \
 	$(BIN_DIR)/generate_plots
 
 # Static library
@@ -137,6 +145,12 @@ $(BIN_DIR)/ch12: chapters/12-filter-structures.c $(OBJECTS) | $(BIN_DIR)
 $(BIN_DIR)/ch13: chapters/13-spectral-analysis.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
+$(BIN_DIR)/ch14: chapters/14-psd-welch.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
+
+$(BIN_DIR)/ch15: chapters/15-correlation.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
+
 $(BIN_DIR)/ch30: chapters/30-putting-it-together.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
@@ -145,7 +159,7 @@ $(BIN_DIR)/generate_plots: tools/generate_plots.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
 # Build only chapter demos
-chapters: $(BIN_DIR)/ch01 $(BIN_DIR)/ch02 $(BIN_DIR)/ch03 $(BIN_DIR)/ch04 $(BIN_DIR)/ch05 $(BIN_DIR)/ch06 $(BIN_DIR)/ch07 $(BIN_DIR)/ch08 $(BIN_DIR)/ch09 $(BIN_DIR)/ch10 $(BIN_DIR)/ch11 $(BIN_DIR)/ch12 $(BIN_DIR)/ch13 $(BIN_DIR)/ch30
+chapters: $(BIN_DIR)/ch01 $(BIN_DIR)/ch02 $(BIN_DIR)/ch03 $(BIN_DIR)/ch04 $(BIN_DIR)/ch05 $(BIN_DIR)/ch06 $(BIN_DIR)/ch07 $(BIN_DIR)/ch08 $(BIN_DIR)/ch09 $(BIN_DIR)/ch10 $(BIN_DIR)/ch11 $(BIN_DIR)/ch12 $(BIN_DIR)/ch13 $(BIN_DIR)/ch14 $(BIN_DIR)/ch15 $(BIN_DIR)/ch30
 
 # Tests
 $(BIN_DIR)/test_fft: tests/test_fft.c $(OBJECTS) | $(BIN_DIR)
@@ -157,14 +171,19 @@ $(BIN_DIR)/test_filter: tests/test_filter.c $(OBJECTS) | $(BIN_DIR)
 $(BIN_DIR)/test_iir: tests/test_iir.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) -Itests $< $(OBJECTS) $(LDFLAGS) -o $@
 
+$(BIN_DIR)/test_spectrum_corr: tests/test_spectrum_corr.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) -Itests $< $(OBJECTS) $(LDFLAGS) -o $@
+
 # Run tests
-test: $(BIN_DIR)/test_fft $(BIN_DIR)/test_filter $(BIN_DIR)/test_iir
+test: $(BIN_DIR)/test_fft $(BIN_DIR)/test_filter $(BIN_DIR)/test_iir $(BIN_DIR)/test_spectrum_corr
 	@echo "=== Running FFT tests ==="
 	$(BIN_DIR)/test_fft
 	@echo "\n=== Running Filter tests ==="
 	$(BIN_DIR)/test_filter
 	@echo "\n=== Running IIR tests ==="
 	$(BIN_DIR)/test_iir
+	@echo "\n=== Running Spectrum & Correlation tests ==="
+	$(BIN_DIR)/test_spectrum_corr
 
 # Run chapter demos
 run: chapters
@@ -192,6 +211,10 @@ run: chapters
 	$(BIN_DIR)/ch12
 	@echo "\n=== Ch13: Spectral Analysis ==="
 	$(BIN_DIR)/ch13
+	@echo "\n=== Ch14: PSD & Welch ==="
+	$(BIN_DIR)/ch14
+	@echo "\n=== Ch15: Correlation ==="
+	$(BIN_DIR)/ch15
 	@echo "\n=== Ch30: Putting It Together ==="
 	$(BIN_DIR)/ch30
 
