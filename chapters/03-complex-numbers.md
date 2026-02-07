@@ -157,3 +157,12 @@ to see how `Complex`, `complex_mag`, and `db_from_magnitude` work together.
 
 **Previous:** [Chapter 00 — Overview](00-overview.md)
 | **Next:** [Chapter 02 — FFT Fundamentals →](08-fft-fundamentals.md)
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Twiddle Factors
+![DFT twiddle factors on the unit circle](../plots/ch03/twiddle_factors.png)

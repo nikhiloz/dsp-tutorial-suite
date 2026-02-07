@@ -208,3 +208,15 @@ Everything connects through H(z).
 
 - [Ch 06: Frequency Response, Poles & Zeros](06-frequency-response.md) — visual analysis of magnitude/phase plots.
 - [Ch 07: The DFT](07-dft-theory.md) — the Z-transform evaluated at N equally-spaced points on the unit circle.
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Lowpass Frequency Response
+![First-order lowpass magnitude response](../plots/ch05/lowpass_response.png)
+
+### Resonance Peak
+![Pole near unit circle creates resonance](../plots/ch05/resonance.png)

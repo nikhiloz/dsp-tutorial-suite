@@ -174,3 +174,15 @@ Each test:
 understand complex arithmetic, the Cooley-Tukey FFT, window functions,
 FIR filter design, spectral analysis, and have a foundation for
 real-time processing and optimisation.*
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Pipeline Time Domain
+![Full pipeline: original, filtered, and reconstructed signals](../plots/ch30/pipeline_time.png)
+
+### Pipeline Frequency Domain
+![Spectrum before and after filtering](../plots/ch30/pipeline_spectrum.png)

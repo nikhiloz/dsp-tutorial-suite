@@ -251,3 +251,24 @@ property that makes Fourier analysis, filtering, and convolution work.
 
 - [Ch 02: Sampling, Aliasing & the Nyquist Theorem](02-sampling-and-aliasing.md) — why discrete-time signals exist, and the rules that govern them.
 - [Ch 03: Complex Numbers](03-complex-numbers.md) — the mathematical engine behind frequency analysis.
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Unit Impulse
+![Unit impulse signal](../plots/ch01/impulse.png)
+
+### Cosine Wave
+![Cosine signal at various frequencies](../plots/ch01/cosine.png)
+
+### Exponential Signals
+![Growing and decaying exponentials](../plots/ch01/exponentials.png)
+
+### Chirp Signal
+![Linear chirp (frequency sweep)](../plots/ch01/chirp.png)
+
+### Multi-tone Signal
+![Sum of three sinusoids](../plots/ch01/multitone.png)

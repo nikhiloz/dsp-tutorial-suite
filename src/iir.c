@@ -634,18 +634,19 @@ void biquad_freq_response(const Biquad *bq,
 void sos_freq_response(const SOSCascade *sos,
                        double *mag, double *phase, int n_points)
 {
+    if (n_points <= 0) return;
+
     /* Initialise to gain only */
     for (int i = 0; i < n_points; i++) {
         mag[i]   = fabs(sos->gain);
-        phase[i] = (sos->gain < 0) ? M_PI : 0.0;
+        if (phase) phase[i] = (sos->gain < 0) ? M_PI : 0.0;
     }
 
     /* Multiply each section's response */
-    double *sec_mag   = (double *)calloc((size_t)n_points, sizeof(double));
-    double *sec_phase = (double *)calloc((size_t)n_points, sizeof(double));
-    if (!sec_mag || !sec_phase) {
-        free(sec_mag);
-        free(sec_phase);
+    size_t np = (size_t)n_points;
+    double *sec_mag   = (double *)calloc(np, sizeof(double));
+    double *sec_phase = phase ? (double *)calloc(np, sizeof(double)) : NULL;
+    if (!sec_mag) {
         return;
     }
 
@@ -653,7 +654,7 @@ void sos_freq_response(const SOSCascade *sos,
         biquad_freq_response(&sos->sections[s], sec_mag, sec_phase, n_points);
         for (int i = 0; i < n_points; i++) {
             mag[i]   *= sec_mag[i];
-            phase[i] += sec_phase[i];
+            if (phase) phase[i] += sec_phase[i];
         }
     }
 

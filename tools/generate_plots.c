@@ -1,0 +1,1197 @@
+/*
+ * generate_plots.c - Generate all gnuplot visualizations for the DSP tutorial
+ *
+ * Produces PNG plots in plots/chXX/ for every chapter.  These are
+ * referenced from the chapter .md tutorial files.
+ *
+ * Build:  make release    (builds generate_plots alongside other targets)
+ * Run:    make plots      (generates all PNGs in plots/)
+ *   or:   ./build/bin/generate_plots
+ *
+ * Requires: gnuplot >= 5.0 (apt install gnuplot)
+ *
+ * Plot inventory (~30 plots across 14 chapters):
+ *
+ *   Ch01  signals       : impulse, exponentials, cosine, chirp, multitone
+ *   Ch02  sampling      : aliasing, quantization, sinc reconstruction
+ *   Ch03  complex       : twiddle factors on unit circle
+ *   Ch04  LTI           : convolution smoothing, cross-correlation
+ *   Ch05  z-transform   : lowpass response, resonance sharpness
+ *   Ch06  freq response : FIR vs IIR, pole Q factor, group delay
+ *   Ch07  DFT           : spectrum, zero-padding, standard signals
+ *   Ch08  FFT           : two-tone magnitude spectrum
+ *   Ch09  windows       : window shapes, spectral leakage comparison
+ *   Ch10  FIR filters   : sinc kernel, noise reduction
+ *   Ch11  IIR design    : Butterworth orders, Chebyshev ripple, filtering
+ *   Ch12  structures    : DF1 vs DF2T, coefficient sensitivity
+ *   Ch13  spectral      : rect vs Hann windowed spectrum
+ *   Ch30  capstone      : full pipeline time + frequency domain
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+#include "gnuplot.h"
+#include "signal_gen.h"
+#include "dsp_utils.h"
+#include "fft.h"
+#include "filter.h"
+#include "iir.h"
+#include "convolution.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+/* ================================================================== */
+/*  Helper: evaluate H(z) at z = e^{jω} for a simple system          */
+/* ================================================================== */
+
+/*
+ * Evaluate FIR polynomial B(z) = b[0] + b[1]*z^{-1} + ...
+ * at z = e^{jω} using Horner's method.
+ */
+static Complex eval_poly(const double *b, int len, Complex z)
+{
+    double mag_sq = z.re * z.re + z.im * z.im;
+    Complex z_inv;
+    if (mag_sq < 1e-30) { z_inv.re = 0; z_inv.im = 0; }
+    else { z_inv.re = z.re / mag_sq; z_inv.im = -z.im / mag_sq; }
+
+    Complex r = { b[len - 1], 0.0 };
+    for (int i = len - 2; i >= 0; i--) {
+        r = complex_mul(r, z_inv);
+        r.re += b[i];
+    }
+    return r;
+}
+
+/*
+ * Evaluate IIR transfer function H(z) = B(z) / A(z)
+ * where A(z) = 1 + a[0]*z^{-1} + a[1]*z^{-2} + ...
+ */
+static Complex eval_hz(const double *b, int blen,
+                       const double *a, int alen, Complex z)
+{
+    Complex num = eval_poly(b, blen, z);
+    if (alen <= 0) return num;
+
+    double af[32];
+    af[0] = 1.0;
+    for (int i = 0; i < alen && i < 31; i++) af[i + 1] = a[i];
+    Complex den = eval_poly(af, alen + 1, z);
+
+    double d2 = den.re * den.re + den.im * den.im;
+    if (d2 < 1e-30) { Complex inf = {1e10, 0}; return inf; }
+    Complex h;
+    h.re = (num.re * den.re + num.im * den.im) / d2;
+    h.im = (num.im * den.re - num.re * den.im) / d2;
+    return h;
+}
+
+static double quantize_sample(double x, int bits)
+{
+    double levels = (double)(1 << bits);
+    double half = levels / 2.0;
+    double q = floor(x * half + 0.5) / half;
+    if (q > 1.0) q = 1.0;
+    if (q < -1.0) q = -1.0;
+    return q;
+}
+
+static double sinc_val(double x)
+{
+    if (fabs(x) < 1e-12) return 1.0;
+    return sin(M_PI * x) / (M_PI * x);
+}
+
+/* ================================================================== */
+/*  Chapter 1: Discrete-Time Signals & Sequences                      */
+/* ================================================================== */
+
+static void plot_ch01(void)
+{
+    printf("  Ch01: signals ...\n");
+    gp_init("ch01");
+
+    /* 1. Unit impulse */
+    {
+        double sig[32];
+        gen_impulse(sig, 32, 0);
+        gp_plot_1("ch01", "impulse", "Unit Impulse {/Symbol d}[n]",
+                  "Sample n", "Amplitude", NULL, sig, 32, "impulses");
+    }
+
+    /* 2. Exponentials overlay: decaying, growing, alternating */
+    {
+        double decay[20], grow[20], alt[20];
+        gen_exponential(decay, 20, 1.0, 0.85);
+        gen_exponential(grow,  20, 0.01, 1.15);
+        gen_exponential(alt,   20, 1.0, -0.9);
+        GpSeries s[] = {
+            { "Decaying (0.85)^n", NULL, decay, 20, "linespoints" },
+            { "Growing (1.15)^n",  NULL, grow,  20, "linespoints" },
+            { "Alternating (-0.9)^n", NULL, alt, 20, "linespoints" },
+        };
+        gp_plot_multi("ch01", "exponentials",
+                      "Real Exponential Signals",
+                      "Sample n", "x[n]", s, 3);
+    }
+
+    /* 3. Cosine wave */
+    {
+        double sig[40];
+        gen_cosine(sig, 40, 1.0, 100.0, 1000.0, 0.0);
+        gp_plot_1("ch01", "cosine", "Cosine: 100 Hz at f_s = 1000 Hz",
+                  "Sample n", "x[n]", NULL, sig, 40, "linespoints");
+    }
+
+    /* 4. Chirp */
+    {
+        double sig[128];
+        gen_chirp(sig, 128, 1.0, 50.0, 450.0, 1000.0);
+        gp_plot_1("ch01", "chirp", "Linear Chirp: 50 {/Symbol \\256} 450 Hz",
+                  "Sample n", "x[n]", NULL, sig, 128, "lines");
+    }
+
+    /* 5. Multi-tone */
+    {
+        double sig[128];
+        double freqs[] = { 100.0, 250.0, 400.0 };
+        double amps[]  = { 1.0,   0.5,   0.3  };
+        gen_multi_tone(sig, 128, freqs, amps, 3, 1000.0);
+        gp_plot_1("ch01", "multitone",
+                  "Multi-tone: 100 + 250 + 400 Hz",
+                  "Sample n", "x[n]", NULL, sig, 128, "lines");
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 2: Sampling, Aliasing & Nyquist                           */
+/* ================================================================== */
+
+static void plot_ch02(void)
+{
+    printf("  Ch02: sampling ...\n");
+    gp_init("ch02");
+
+    /* 1. Aliasing: 300 Hz vs 700 Hz vs 1300 Hz at fs=1000 */
+    {
+        double s1[64], s2[64], s3[64];
+        gen_sine(s1, 64, 1.0, 300.0, 1000.0, 0.0);
+        gen_sine(s2, 64, 1.0, 700.0, 1000.0, 0.0);
+        gen_sine(s3, 64, 1.0, 1300.0, 1000.0, 0.0);
+        GpSeries s[] = {
+            { "300 Hz (original)",   NULL, s1, 64, "linespoints" },
+            { "700 Hz (alias)",      NULL, s2, 64, "linespoints" },
+            { "1300 Hz (alias)",     NULL, s3, 64, "linespoints" },
+        };
+        gp_plot_multi("ch02", "aliasing",
+                      "Aliasing: Three Frequencies, Same Samples (f_s = 1000 Hz)",
+                      "Sample n", "x[n]", s, 3);
+    }
+
+    /* 2. Quantization: original vs 4-bit */
+    {
+        double orig[64], quant[64], noise[64];
+        gen_sine(orig, 64, 0.9, 50.0, 1000.0, 0.0);
+        for (int i = 0; i < 64; i++) {
+            quant[i] = quantize_sample(orig[i], 4);
+            noise[i] = orig[i] - quant[i];
+        }
+        GpSeries s[] = {
+            { "Original",         NULL, orig,  64, "lines" },
+            { "4-bit Quantized",  NULL, quant, 64, "linespoints" },
+            { "Quant. Error",     NULL, noise, 64, "impulses" },
+        };
+        gp_plot_multi("ch02", "quantization",
+                      "4-bit Quantization (16 levels)",
+                      "Sample n", "Amplitude", s, 3);
+    }
+
+    /* 3. Sinc reconstruction */
+    {
+        int ns = 16, factor = 8;
+        double fs = 200.0, freq = 50.0;
+        double samples[16];
+        gen_sine(samples, ns, 1.0, freq, fs, 0.0);
+
+        int nr = ns * factor;
+        double recon[128], true_sig[128], x_recon[128], x_samp[16];
+        for (int k = 0; k < nr; k++) {
+            double t = (double)k / factor;
+            double val = 0.0;
+            for (int n = 0; n < ns; n++) val += samples[n] * sinc_val(t - n);
+            recon[k] = val;
+            true_sig[k] = sin(2.0 * M_PI * freq * (double)k / (fs * factor));
+            x_recon[k] = (double)k / factor;
+        }
+        for (int i = 0; i < ns; i++) x_samp[i] = (double)i;
+
+        GpSeries s[] = {
+            { "Discrete Samples", x_samp, samples,  ns, "points" },
+            { "Sinc Reconstruction", x_recon, recon,  nr, "lines" },
+            { "True Signal",     x_recon, true_sig, nr, "lines" },
+        };
+        gp_plot_multi("ch02", "reconstruction",
+                      "Sinc Interpolation Reconstruction",
+                      "Sample Index", "Amplitude", s, 3);
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 3: Complex Numbers                                        */
+/* ================================================================== */
+
+static void plot_ch03(void)
+{
+    printf("  Ch03: complex numbers ...\n");
+    gp_init("ch03");
+
+    /* Twiddle factors W_8^k on unit circle */
+    {
+        double xr[8], xi[8];
+        for (int k = 0; k < 8; k++) {
+            double angle = -2.0 * M_PI * k / 8.0;
+            xr[k] = cos(angle);
+            xi[k] = sin(angle);
+        }
+
+        FILE *gp = gp_open("ch03", "twiddle_factors", 600, 600);
+        if (gp) {
+            fprintf(gp, "set title 'Twiddle Factors W_8^k on the Unit Circle'\n");
+            fprintf(gp, "set xlabel 'Real'\n");
+            fprintf(gp, "set ylabel 'Imaginary'\n");
+            fprintf(gp, "set size ratio 1\n");
+            fprintf(gp, "set xrange [-1.4:1.4]\n");
+            fprintf(gp, "set yrange [-1.4:1.4]\n");
+            /* Draw unit circle */
+            fprintf(gp, "set parametric\n");
+            fprintf(gp, "set trange [0:2*pi]\n");
+            fprintf(gp, "plot cos(t), sin(t) w lines lw 1 lc rgb '#CCCCCC' "
+                        "title 'Unit Circle', "
+                        "'-' w points pt 7 ps 2 lc rgb '#2166AC' "
+                        "title 'W_8^k'\n");
+            gp_send_xy(gp, xr, xi, 8);
+            gp_close(gp);
+        }
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 4: LTI Systems & Convolution                              */
+/* ================================================================== */
+
+static void plot_ch04(void)
+{
+    printf("  Ch04: LTI systems ...\n");
+    gp_init("ch04");
+
+    /* 1. Moving average convolution: input rect → smoothed output */
+    {
+        double x[] = {0, 0, 1, 1, 1, 1, 0, 0};
+        double h[] = {1.0/3, 1.0/3, 1.0/3};
+        double y[10];
+        convolve(x, 8, h, 3, y);
+
+        GpSeries s[] = {
+            { "Input (rect pulse)",  NULL, x, 8,  "impulses" },
+            { "3-pt Moving Average", NULL, y, 10, "linespoints" },
+        };
+        gp_plot_multi("ch04", "convolution",
+                      "Convolution: Rectangular Pulse * Moving Average",
+                      "Sample n", "Amplitude", s, 2);
+    }
+
+    /* 2. Cross-correlation delay estimation */
+    {
+        double x[32], y[32];
+        memset(x, 0, sizeof(x));
+        memset(y, 0, sizeof(y));
+        x[4] = 1.0; x[5] = 0.8; x[6] = 0.5; x[7] = 0.2;
+        y[14] = 1.0; y[15] = 0.8; y[16] = 0.5; y[17] = 0.2;
+
+        double r[63];
+        int rlen = cross_correlate(x, 32, y, 32, r);
+
+        /* Extract lags -31..+31 mapped to r[0..62] */
+        double lags[63], rval[63];
+        for (int i = 0; i < rlen; i++) {
+            lags[i] = (double)(i - 31);
+            rval[i] = r[i];
+        }
+        GpSeries s[] = {
+            { "Cross-Correlation", lags, rval, rlen, "lines" },
+        };
+        gp_plot_multi("ch04", "cross_correlation",
+                      "Cross-Correlation: Delay = 10 Samples",
+                      "Lag (samples)", "R_{xy}[l]", s, 1);
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 5: Z-Transform                                            */
+/* ================================================================== */
+
+static void plot_ch05(void)
+{
+    printf("  Ch05: z-transform ...\n");
+    gp_init("ch05");
+
+    /* 1. Frequency response of 2-point average lowpass */
+    {
+        double b[] = {0.5, 0.5};
+        int np = 200;
+        double freq[200], mag[200];
+        for (int i = 0; i < np; i++) {
+            double omega = M_PI * (double)i / (double)(np - 1);
+            freq[i] = omega / M_PI;
+            Complex z = complex_from_polar(1.0, omega);
+            Complex Hz = eval_poly(b, 2, z);
+            double m = complex_mag(Hz);
+            mag[i] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
+        }
+        gp_plot_spectrum("ch05", "lowpass_response",
+                         "Frequency Response: (1 + z^{-1})/2  (2-Point Average)",
+                         freq, mag, np);
+    }
+
+    /* 2. Resonance: pole radius {0.5, 0.8, 0.95, 0.99} at θ=π/4 */
+    {
+        double theta = M_PI / 4.0;
+        double radii[] = {0.5, 0.8, 0.95, 0.99};
+        char *labels[] = {"r = 0.50", "r = 0.80", "r = 0.95", "r = 0.99"};
+        int np = 200;
+        double freq[200];
+        double mag0[200], mag1[200], mag2[200], mag3[200];
+        double *mags[] = { mag0, mag1, mag2, mag3 };
+
+        for (int i = 0; i < np; i++) {
+            double omega = M_PI * (double)i / (double)(np - 1);
+            freq[i] = omega / M_PI;
+            for (int ri = 0; ri < 4; ri++) {
+                double r = radii[ri];
+                double a[] = { -2.0 * r * cos(theta), r * r };
+                double b[] = { 1.0 };
+                Complex z = complex_from_polar(1.0, omega);
+                Complex Hz = eval_hz(b, 1, a, 2, z);
+                double m = complex_mag(Hz);
+                mags[ri][i] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
+                if (mags[ri][i] < -40.0) mags[ri][i] = -40.0;
+                if (mags[ri][i] > 40.0) mags[ri][i] = 40.0;
+            }
+        }
+        GpSeries s[] = {
+            { labels[0], freq, mag0, np, "lines" },
+            { labels[1], freq, mag1, np, "lines" },
+            { labels[2], freq, mag2, np, "lines" },
+            { labels[3], freq, mag3, np, "lines" },
+        };
+        gp_plot_multi("ch05", "resonance",
+                      "Resonance Sharpness vs Pole Radius ({/Symbol q} = {/Symbol p}/4)",
+                      "Normalised Frequency ({/Symbol w}/{/Symbol p})",
+                      "Magnitude (dB)", s, 4);
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 6: Frequency Response                                     */
+/* ================================================================== */
+
+static void plot_ch06(void)
+{
+    printf("  Ch06: frequency response ...\n");
+    gp_init("ch06");
+
+    /* 1. FIR vs IIR magnitude + phase */
+    {
+        double b_fir[] = {0.2, 0.2, 0.2, 0.2, 0.2};
+        double b_iir[] = {0.1};
+        double a_iir[] = {-0.9};
+        int np = 200;
+        double freq[200], fir_mag[200], iir_mag[200];
+        double fir_phase[200], iir_phase[200];
+
+        for (int i = 0; i < np; i++) {
+            double omega = M_PI * (double)i / (double)(np - 1);
+            freq[i] = omega / M_PI;
+            Complex z = complex_from_polar(1.0, omega);
+
+            Complex Hfir = eval_poly(b_fir, 5, z);
+            Complex Hiir = eval_hz(b_iir, 1, a_iir, 1, z);
+
+            double mf = complex_mag(Hfir);
+            double mi = complex_mag(Hiir);
+            fir_mag[i] = (mf > 1e-10) ? 20.0 * log10(mf) : -60.0;
+            iir_mag[i] = (mi > 1e-10) ? 20.0 * log10(mi) : -60.0;
+            fir_phase[i] = complex_phase(Hfir) * 180.0 / M_PI;
+            iir_phase[i] = complex_phase(Hiir) * 180.0 / M_PI;
+        }
+
+        /* Magnitude */
+        GpSeries sm[] = {
+            { "FIR 5-tap",    freq, fir_mag, np, "lines" },
+            { "IIR 1st-order", freq, iir_mag, np, "lines" },
+        };
+        gp_plot_multi("ch06", "fir_vs_iir_magnitude",
+                      "FIR vs IIR: Magnitude Response",
+                      "Normalised Frequency ({/Symbol w}/{/Symbol p})",
+                      "Magnitude (dB)", sm, 2);
+
+        /* Phase */
+        GpSeries sp[] = {
+            { "FIR 5-tap",    freq, fir_phase, np, "lines" },
+            { "IIR 1st-order", freq, iir_phase, np, "lines" },
+        };
+        gp_plot_multi("ch06", "fir_vs_iir_phase",
+                      "FIR vs IIR: Phase Response",
+                      "Normalised Frequency ({/Symbol w}/{/Symbol p})",
+                      "Phase (degrees)", sp, 2);
+    }
+
+    /* 2. Pole radius Q factor */
+    {
+        double theta = M_PI / 4.0;
+        double radii[] = {0.5, 0.8, 0.95, 0.99};
+        char *labels[] = {"r = 0.50", "r = 0.80", "r = 0.95", "r = 0.99"};
+        int np = 300;
+        double freq[300], m0[300], m1[300], m2[300], m3[300];
+        double *arrs[] = { m0, m1, m2, m3 };
+
+        for (int i = 0; i < np; i++) {
+            double omega = M_PI * (double)i / (double)(np - 1);
+            freq[i] = omega / M_PI;
+            for (int ri = 0; ri < 4; ri++) {
+                double r = radii[ri];
+                double a[] = { -2.0 * r * cos(theta), r * r };
+                double b[] = { 1.0 };
+                Complex z = complex_from_polar(1.0, omega);
+                Complex Hz = eval_hz(b, 1, a, 2, z);
+                double m = complex_mag(Hz);
+                arrs[ri][i] = (m > 1e-10) ? 20.0 * log10(m) : -60.0;
+                if (arrs[ri][i] < -40.0) arrs[ri][i] = -40.0;
+                if (arrs[ri][i] > 50.0) arrs[ri][i] = 50.0;
+            }
+        }
+        GpSeries s[] = {
+            { labels[0], freq, m0, np, "lines" },
+            { labels[1], freq, m1, np, "lines" },
+            { labels[2], freq, m2, np, "lines" },
+            { labels[3], freq, m3, np, "lines" },
+        };
+        gp_plot_multi("ch06", "pole_radius_q",
+                      "Resonance Q Factor: Effect of Pole Radius",
+                      "Normalised Frequency ({/Symbol w}/{/Symbol p})",
+                      "Magnitude (dB)", s, 4);
+    }
+
+    /* 3. Group delay: FIR constant vs IIR varying */
+    {
+        double b_fir[] = {0.1, 0.2, 0.4, 0.2, 0.1};
+        int np = 150;
+        double freq[150], gd_fir[150], gd_iir[150];
+        double dw = 0.001;
+
+        for (int i = 0; i < np; i++) {
+            double omega = M_PI * (double)i / (double)(np - 1);
+            freq[i] = omega / M_PI;
+
+            /* FIR group delay: d(phase)/d(omega) via central diff */
+            Complex z1 = complex_from_polar(1.0, omega - dw);
+            Complex z2 = complex_from_polar(1.0, omega + dw);
+            Complex H1 = eval_poly(b_fir, 5, z1);
+            Complex H2 = eval_poly(b_fir, 5, z2);
+            double p1 = complex_phase(H1), p2 = complex_phase(H2);
+            /* Unwrap */
+            double dp = p2 - p1;
+            while (dp > M_PI) dp -= 2.0 * M_PI;
+            while (dp < -M_PI) dp += 2.0 * M_PI;
+            gd_fir[i] = -dp / (2.0 * dw);
+
+            /* IIR group delay */
+            double a_iir[] = {-0.9};
+            double b_iir[] = {0.1};
+            H1 = eval_hz(b_iir, 1, a_iir, 1, z1);
+            H2 = eval_hz(b_iir, 1, a_iir, 1, z2);
+            p1 = complex_phase(H1); p2 = complex_phase(H2);
+            dp = p2 - p1;
+            while (dp > M_PI) dp -= 2.0 * M_PI;
+            while (dp < -M_PI) dp += 2.0 * M_PI;
+            gd_iir[i] = -dp / (2.0 * dw);
+        }
+        GpSeries s[] = {
+            { "FIR (symmetric, constant)", freq, gd_fir, np, "lines" },
+            { "IIR (1st-order, varying)",  freq, gd_iir, np, "lines" },
+        };
+        gp_plot_multi("ch06", "group_delay",
+                      "Group Delay: FIR vs IIR",
+                      "Normalised Frequency ({/Symbol w}/{/Symbol p})",
+                      "Group Delay (samples)", s, 2);
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 7: DFT Theory                                            */
+/* ================================================================== */
+
+static void plot_ch07(void)
+{
+    printf("  Ch07: DFT theory ...\n");
+    gp_init("ch07");
+
+    /* 1. DFT spectrum of 250 Hz sine at fs=2000, N=16 */
+    {
+        int N = 16;
+        double sig[16];
+        gen_sine(sig, N, 1.0, 250.0, 2000.0, 0.0);
+
+        Complex X[16];
+        fft_real(sig, X, N);
+
+        double bins[9], mag[9]; /* 0..N/2 */
+        for (int k = 0; k <= N / 2; k++) {
+            bins[k] = (double)k;
+            mag[k]  = complex_mag(X[k]) / (N / 2.0);
+        }
+        gp_plot_1("ch07", "dft_spectrum",
+                  "16-point DFT of 250 Hz Sine (f_s = 2000 Hz)",
+                  "Frequency Bin k", "|X[k]| (normalised)",
+                  bins, mag, N / 2 + 1, "impulses");
+    }
+
+    /* 2. Zero-padding: N=8 vs N=32 */
+    {
+        double sig8[8];
+        gen_sine(sig8, 8, 1.0, 1.0, 8.0, 0.0);  /* 1 Hz at fs=8 */
+
+        /* N = 8 */
+        Complex X8[8];
+        fft_real(sig8, X8, 8);
+        double b8[5], m8[5];
+        for (int k = 0; k <= 4; k++) {
+            b8[k] = (double)k / 8.0;
+            m8[k] = complex_mag(X8[k]);
+        }
+
+        /* N = 32 (zero-padded) */
+        double sig32[32];
+        memset(sig32, 0, sizeof(sig32));
+        memcpy(sig32, sig8, 8 * sizeof(double));
+        Complex X32[32];
+        fft_real(sig32, X32, 32);
+        double b32[17], m32[17];
+        for (int k = 0; k <= 16; k++) {
+            b32[k] = (double)k / 32.0;
+            m32[k] = complex_mag(X32[k]);
+        }
+
+        GpSeries s[] = {
+            { "N = 8 (coarse)",     b8,  m8,  5,  "linespoints" },
+            { "N = 32 (zero-padded)", b32, m32, 17, "linespoints" },
+        };
+        gp_plot_multi("ch07", "zero_padding",
+                      "Zero-Padding: Spectral Interpolation",
+                      "Normalised Frequency (f/f_s)",
+                      "|X[k]|", s, 2);
+    }
+
+    /* 3. Standard signals DFT — 4-panel (impulse, DC, alternating, cosine) */
+    {
+        int N = 16;
+        double imp[16], dc[16], alt[16], cos_sig[16];
+        gen_impulse(imp, N, 0);
+        for (int i = 0; i < N; i++) { dc[i] = 1.0; alt[i] = (i % 2 == 0) ? 1.0 : -1.0; }
+        gen_cosine(cos_sig, N, 1.0, 2.0, 16.0, 0.0);
+
+        Complex Xi[16], Xd[16], Xa[16], Xc[16];
+        fft_real(imp, Xi, N);
+        fft_real(dc, Xd, N);
+        fft_real(alt, Xa, N);
+        fft_real(cos_sig, Xc, N);
+
+        FILE *gp = gp_open("ch07", "standard_signals_dft", 900, 700);
+        if (gp) {
+            fprintf(gp, "set multiplot layout 2,2 title "
+                        "'DFT of Standard Signals (N = 16)'\n");
+            const char *names[] = {"Impulse {/Symbol d}[n]", "DC (constant)",
+                                   "Alternating (-1)^n", "Cosine (2 Hz)"};
+            Complex *spectra[] = {Xi, Xd, Xa, Xc};
+            for (int p = 0; p < 4; p++) {
+                fprintf(gp, "set title '%s'\n", names[p]);
+                fprintf(gp, "set xlabel 'Bin k'\n");
+                fprintf(gp, "set ylabel '|X[k]|'\n");
+                fprintf(gp, "plot '-' w impulses lw 2 notitle\n");
+                for (int k = 0; k <= N / 2; k++)
+                    fprintf(gp, "%d\t%.6f\n", k, complex_mag(spectra[p][k]));
+                fprintf(gp, "e\n");
+            }
+            fprintf(gp, "unset multiplot\n");
+            gp_close(gp);
+        }
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 8: FFT Fundamentals                                       */
+/* ================================================================== */
+
+static void plot_ch08(void)
+{
+    printf("  Ch08: FFT fundamentals ...\n");
+    gp_init("ch08");
+
+    /* Two-tone: 440 Hz + 1000 Hz at fs=4000, N=256 */
+    {
+        int N = 256;
+        double sig[256];
+        double f1[] = {440.0, 1000.0};
+        double a1[] = {1.0, 0.7};
+        gen_multi_tone(sig, N, f1, a1, 2, 4000.0);
+
+        Complex X[256];
+        fft_real(sig, X, N);
+
+        int nb = N / 2 + 1;
+        double freq[129], mag_db[129];
+        for (int k = 0; k < nb; k++) {
+            freq[k] = (double)k * 4000.0 / N;
+            double m = complex_mag(X[k]) / (N / 2.0);
+            mag_db[k] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
+        }
+
+        FILE *gp = gp_open("ch08", "fft_two_tones", 800, 500);
+        if (gp) {
+            fprintf(gp, "set title '256-Point FFT: 440 Hz + 1000 Hz'\n");
+            fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
+            fprintf(gp, "set ylabel 'Magnitude (dB)'\n");
+            fprintf(gp, "set xrange [0:2000]\n");
+            fprintf(gp, "set yrange [-60:5]\n");
+            fprintf(gp, "plot '-' w lines lw 2 notitle\n");
+            gp_send_xy(gp, freq, mag_db, nb);
+            gp_close(gp);
+        }
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 9: Window Functions                                       */
+/* ================================================================== */
+
+static void plot_ch09(void)
+{
+    printf("  Ch09: windows ...\n");
+    gp_init("ch09");
+
+    int N = 64;
+    double rect[64], hann[64], hamm[64], black[64];
+
+    /* Generate window shapes */
+    for (int i = 0; i < N; i++) {
+        rect[i]  = 1.0;
+        hann[i]  = 0.5 * (1.0 - cos(2.0 * M_PI * i / (N - 1)));
+        hamm[i]  = 0.54 - 0.46 * cos(2.0 * M_PI * i / (N - 1));
+        black[i] = 0.42 - 0.5 * cos(2.0 * M_PI * i / (N - 1))
+                        + 0.08 * cos(4.0 * M_PI * i / (N - 1));
+    }
+
+    /* 1. Window shapes */
+    {
+        GpSeries s[] = {
+            { "Rectangular", NULL, rect,  N, "lines" },
+            { "Hann",        NULL, hann,  N, "lines" },
+            { "Hamming",     NULL, hamm,  N, "lines" },
+            { "Blackman",    NULL, black, N, "lines" },
+        };
+        gp_plot_multi("ch09", "window_shapes",
+                      "Window Functions (N = 64)",
+                      "Sample n", "w[n]", s, 4);
+    }
+
+    /* 2. Spectral leakage comparison: 440 Hz off-bin at fs=4000, N=256 */
+    {
+        int SN = 256;
+        double sig[256];
+        gen_sine(sig, SN, 1.0, 440.0, 4000.0, 0.0);
+
+        double w_rect[256], w_hann[256], w_hamm[256], w_black[256];
+        for (int i = 0; i < SN; i++) {
+            w_rect[i]  = 1.0;
+            w_hann[i]  = 0.5 * (1.0 - cos(2.0 * M_PI * i / (SN - 1)));
+            w_hamm[i]  = 0.54 - 0.46 * cos(2.0 * M_PI * i / (SN - 1));
+            w_black[i] = 0.42 - 0.5 * cos(2.0 * M_PI * i / (SN - 1))
+                              + 0.08 * cos(4.0 * M_PI * i / (SN - 1));
+        }
+
+        double *wins[] = { w_rect, w_hann, w_hamm, w_black };
+        char *wnames[] = { "Rectangular", "Hann", "Hamming", "Blackman" };
+        int nb = SN / 2 + 1;
+        double freq[129], m0[129], m1[129], m2[129], m3[129];
+        double *marrs[] = { m0, m1, m2, m3 };
+
+        for (int wi = 0; wi < 4; wi++) {
+            double windowed[256];
+            for (int i = 0; i < SN; i++) windowed[i] = sig[i] * wins[wi][i];
+            Complex X[256];
+            fft_real(windowed, X, SN);
+            for (int k = 0; k < nb; k++) {
+                if (wi == 0) freq[k] = (double)k * 4000.0 / SN;
+                double m = complex_mag(X[k]) / (SN / 2.0);
+                marrs[wi][k] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
+            }
+        }
+
+        GpSeries s[] = {
+            { wnames[0], freq, m0, nb, "lines" },
+            { wnames[1], freq, m1, nb, "lines" },
+            { wnames[2], freq, m2, nb, "lines" },
+            { wnames[3], freq, m3, nb, "lines" },
+        };
+
+        FILE *gp = gp_open("ch09", "spectral_leakage", 900, 500);
+        if (gp) {
+            fprintf(gp, "set title 'Spectral Leakage: 440 Hz with Different Windows'\n");
+            fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
+            fprintf(gp, "set ylabel 'Magnitude (dB)'\n");
+            fprintf(gp, "set xrange [0:1000]\n");
+            fprintf(gp, "set yrange [-100:5]\n");
+            fprintf(gp, "plot ");
+            for (int i = 0; i < 4; i++) {
+                if (i) fprintf(gp, ", ");
+                fprintf(gp, "'-' w lines lw 2 title '%s'", s[i].label);
+            }
+            fprintf(gp, "\n");
+            for (int i = 0; i < 4; i++)
+                gp_send_xy(gp, s[i].x, s[i].y, s[i].n);
+            gp_close(gp);
+        }
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 10: FIR Digital Filters                                   */
+/* ================================================================== */
+
+static void plot_ch10(void)
+{
+    printf("  Ch10: FIR filters ...\n");
+    gp_init("ch10");
+
+    /* 1. 31-tap lowpass kernel */
+    {
+        int ntaps = 31;
+        double h[31];
+        fir_lowpass(h, ntaps, 0.2);
+        gp_plot_1("ch10", "lowpass_kernel",
+                  "31-Tap Lowpass FIR Kernel (f_c = 0.2)",
+                  "Tap n", "h[n]", NULL, h, ntaps, "impulses");
+    }
+
+    /* 2. Noise reduction: clean + noise → filter */
+    {
+        int N = 256;
+        double clean[256], noisy[256], noise[256], filtered[256];
+        gen_sine(clean, N, 1.0, 200.0, 4000.0, 0.0);
+        gen_white_noise(noise, N, 0.5, 42);
+        for (int i = 0; i < N; i++) noisy[i] = clean[i] + noise[i];
+
+        int ntaps = 31;
+        double h[31];
+        fir_lowpass(h, ntaps, 0.2);
+        fir_filter(noisy, filtered, N, h, ntaps);
+
+        GpSeries s[] = {
+            { "Clean Signal",  NULL, clean,    N, "lines" },
+            { "Noisy Signal",  NULL, noisy,    N, "lines" },
+            { "Filtered (FIR)", NULL, filtered, N, "lines" },
+        };
+        gp_plot_multi("ch10", "noise_reduction",
+                      "FIR Lowpass Noise Reduction",
+                      "Sample n", "Amplitude", s, 3);
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 11: IIR Filter Design                                     */
+/* ================================================================== */
+
+static void plot_ch11(void)
+{
+    printf("  Ch11: IIR design ...\n");
+    gp_init("ch11");
+
+    /* 1. Butterworth LP: orders 2, 4, 6 */
+    {
+        int orders[] = {2, 4, 6};
+        char *labels[] = {"Order 2", "Order 4", "Order 6"};
+        int np = 300;
+        double freq[300], m0[300], m1[300], m2[300];
+        double *marrs[] = { m0, m1, m2 };
+
+        for (int oi = 0; oi < 3; oi++) {
+            SOSCascade sos;
+            butterworth_lowpass(orders[oi], 0.2, &sos);
+            sos_freq_response(&sos, marrs[oi], NULL, np);
+            /* Convert to dB */
+            for (int i = 0; i < np; i++) {
+                if (i == 0) freq[i] = 0.0;
+                else freq[i] = 0.5 * (double)i / (double)(np - 1);
+                marrs[oi][i] = (marrs[oi][i] > 1e-10)
+                    ? 20.0 * log10(marrs[oi][i]) : -100.0;
+            }
+        }
+        GpSeries s[] = {
+            { labels[0], freq, m0, np, "lines" },
+            { labels[1], freq, m1, np, "lines" },
+            { labels[2], freq, m2, np, "lines" },
+        };
+        FILE *gp = gp_open("ch11", "butterworth_orders", 800, 500);
+        if (gp) {
+            fprintf(gp, "set title 'Butterworth Lowpass: Order Comparison (f_c = 0.2)'\n");
+            fprintf(gp, "set xlabel 'Normalised Frequency (f/f_s)'\n");
+            fprintf(gp, "set ylabel 'Magnitude (dB)'\n");
+            fprintf(gp, "set yrange [-80:5]\n");
+            fprintf(gp, "set xrange [0:0.5]\n");
+            /* Add -3 dB reference line */
+            fprintf(gp, "set arrow from 0,-3 to 0.5,-3 nohead lt 0 lw 1\n");
+            fprintf(gp, "set arrow from 0.2,-80 to 0.2,5 nohead lt 0 lw 1\n");
+            fprintf(gp, "plot ");
+            for (int i = 0; i < 3; i++) {
+                if (i) fprintf(gp, ", ");
+                fprintf(gp, "'-' w lines lw 2 title '%s'", s[i].label);
+            }
+            fprintf(gp, "\n");
+            for (int i = 0; i < 3; i++)
+                gp_send_xy(gp, s[i].x, s[i].y, s[i].n);
+            gp_close(gp);
+        }
+    }
+
+    /* 2. Chebyshev Type I: ripple comparison */
+    {
+        double ripples[] = {0.5, 1.0, 3.0};
+        char *labels[] = {"0.5 dB ripple", "1.0 dB ripple", "3.0 dB ripple"};
+        int np = 300;
+        double freq[300], m0[300], m1[300], m2[300];
+        double *marrs[] = { m0, m1, m2 };
+
+        for (int ri = 0; ri < 3; ri++) {
+            SOSCascade sos;
+            chebyshev1_lowpass(4, ripples[ri], 0.2, &sos);
+            sos_freq_response(&sos, marrs[ri], NULL, np);
+            for (int i = 0; i < np; i++) {
+                if (ri == 0) freq[i] = 0.5 * (double)i / (double)(np - 1);
+                marrs[ri][i] = (marrs[ri][i] > 1e-10)
+                    ? 20.0 * log10(marrs[ri][i]) : -100.0;
+            }
+        }
+        GpSeries s[] = {
+            { labels[0], freq, m0, np, "lines" },
+            { labels[1], freq, m1, np, "lines" },
+            { labels[2], freq, m2, np, "lines" },
+        };
+        FILE *gp = gp_open("ch11", "chebyshev_ripple", 800, 500);
+        if (gp) {
+            fprintf(gp, "set title 'Chebyshev Type I (Order 4, f_c = 0.2): "
+                        "Ripple Comparison'\n");
+            fprintf(gp, "set xlabel 'Normalised Frequency (f/f_s)'\n");
+            fprintf(gp, "set ylabel 'Magnitude (dB)'\n");
+            fprintf(gp, "set yrange [-80:5]\n");
+            fprintf(gp, "set xrange [0:0.5]\n");
+            fprintf(gp, "plot ");
+            for (int i = 0; i < 3; i++) {
+                if (i) fprintf(gp, ", ");
+                fprintf(gp, "'-' w lines lw 2 title '%s'", s[i].label);
+            }
+            fprintf(gp, "\n");
+            for (int i = 0; i < 3; i++)
+                gp_send_xy(gp, s[i].x, s[i].y, s[i].n);
+            gp_close(gp);
+        }
+    }
+
+    /* 3. IIR noise filtering: time domain */
+    {
+        int N = 256;
+        double clean[256], noisy[256], noise[256], filtered[256];
+        gen_sine(clean, N, 1.0, 200.0, 4000.0, 0.0);
+        gen_white_noise(noise, N, 0.4, 77);
+        for (int i = 0; i < N; i++) noisy[i] = clean[i] + noise[i];
+
+        SOSCascade sos;
+        butterworth_lowpass(4, 0.15, &sos);
+        sos_process_block(&sos, noisy, filtered, N);
+
+        GpSeries s[] = {
+            { "Clean",   NULL, clean,    N, "lines" },
+            { "Noisy",   NULL, noisy,    N, "lines" },
+            { "IIR Filtered", NULL, filtered, N, "lines" },
+        };
+        gp_plot_multi("ch11", "iir_filtering",
+                      "IIR Butterworth Noise Reduction (Order 4)",
+                      "Sample n", "Amplitude", s, 3);
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 12: Filter Structures                                     */
+/* ================================================================== */
+
+static void plot_ch12(void)
+{
+    printf("  Ch12: filter structures ...\n");
+    gp_init("ch12");
+
+    /* 1. DF1 vs DF2T impulse response */
+    {
+        SOSCascade sos;
+        butterworth_lowpass(4, 0.2, &sos);
+
+        int N = 40;
+        /* Use first section */
+        Biquad *bq = &sos.sections[0];
+        BiquadDF1State  st1 = {0};
+        BiquadDF2TState st2 = {0};
+        double y1[40], y2[40];
+
+        for (int i = 0; i < N; i++) {
+            double x = (i == 0) ? 1.0 : 0.0;
+            y1[i] = biquad_process_df1(bq, &st1, x);
+            y2[i] = biquad_process_df2t(bq, &st2, x);
+        }
+
+        GpSeries s[] = {
+            { "Direct Form I",   NULL, y1, N, "linespoints" },
+            { "Direct Form II Transposed", NULL, y2, N, "linespoints" },
+        };
+        gp_plot_multi("ch12", "df1_vs_df2t",
+                      "Biquad Impulse Response: DF1 vs DF2T",
+                      "Sample n", "y[n]", s, 2);
+    }
+
+    /* 2. Coefficient sensitivity */
+    {
+        SOSCascade orig, pert;
+        butterworth_lowpass(4, 0.2, &orig);
+        butterworth_lowpass(4, 0.2, &pert);
+
+        /* Perturb a1 coefficients by 0.1% */
+        for (int i = 0; i < pert.n_sections; i++) {
+            pert.sections[i].a1 *= 1.001;
+            pert.sections[i].a2 *= 1.001;
+        }
+
+        int np = 300;
+        double mag_orig[300], mag_pert[300], freq[300];
+        sos_freq_response(&orig, mag_orig, NULL, np);
+        sos_freq_response(&pert, mag_pert, NULL, np);
+
+        for (int i = 0; i < np; i++) {
+            freq[i] = 0.5 * (double)i / (double)(np - 1);
+            mag_orig[i] = (mag_orig[i] > 1e-10)
+                ? 20.0 * log10(mag_orig[i]) : -100.0;
+            mag_pert[i] = (mag_pert[i] > 1e-10)
+                ? 20.0 * log10(mag_pert[i]) : -100.0;
+        }
+
+        GpSeries s[] = {
+            { "Original Coefficients",    freq, mag_orig, np, "lines" },
+            { "Perturbed (+0.1%)",        freq, mag_pert, np, "lines" },
+        };
+        gp_plot_multi("ch12", "coefficient_sensitivity",
+                      "Coefficient Sensitivity: 0.1% Perturbation",
+                      "Normalised Frequency (f/f_s)",
+                      "Magnitude (dB)", s, 2);
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 13: Spectral Analysis                                     */
+/* ================================================================== */
+
+static void plot_ch13(void)
+{
+    printf("  Ch13: spectral analysis ...\n");
+    gp_init("ch13");
+
+    /* Windowed vs unwindowed spectrum: 440 + 1000 + 2500 Hz */
+    {
+        int N = 256;
+        double sig[256];
+        double freqs[] = {440.0, 1000.0, 2500.0};
+        double amps[]  = {1.0, 0.7, 0.4};
+        gen_multi_tone(sig, N, freqs, amps, 3, 8000.0);
+
+        /* Add noise */
+        double noise[256];
+        gen_white_noise(noise, N, 0.2, 42);
+        for (int i = 0; i < N; i++) sig[i] += noise[i];
+
+        int nb = N / 2 + 1;
+        double freq_axis[129], mag_rect[129], mag_hann[129];
+
+        /* Rectangular window */
+        {
+            Complex X[256];
+            fft_real(sig, X, N);
+            for (int k = 0; k < nb; k++) {
+                freq_axis[k] = (double)k * 8000.0 / N;
+                double m = complex_mag(X[k]) / (N / 2.0);
+                mag_rect[k] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
+            }
+        }
+        /* Hann window */
+        {
+            double windowed[256];
+            for (int i = 0; i < N; i++) {
+                double w = 0.5 * (1.0 - cos(2.0 * M_PI * i / (N - 1)));
+                windowed[i] = sig[i] * w;
+            }
+            Complex X[256];
+            fft_real(windowed, X, N);
+            for (int k = 0; k < nb; k++) {
+                double m = complex_mag(X[k]) / (N / 2.0);
+                mag_hann[k] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
+            }
+        }
+
+        GpSeries s[] = {
+            { "Rectangular (no window)", freq_axis, mag_rect, nb, "lines" },
+            { "Hann Window",             freq_axis, mag_hann, nb, "lines" },
+        };
+        FILE *gp = gp_open("ch13", "windowed_spectrum", 900, 500);
+        if (gp) {
+            fprintf(gp, "set title 'Spectral Analysis: Rectangular vs "
+                        "Hann Window'\n");
+            fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
+            fprintf(gp, "set ylabel 'Magnitude (dB)'\n");
+            fprintf(gp, "set yrange [-80:5]\n");
+            fprintf(gp, "set xrange [0:4000]\n");
+            fprintf(gp, "plot ");
+            for (int i = 0; i < 2; i++) {
+                if (i) fprintf(gp, ", ");
+                fprintf(gp, "'-' w lines lw 2 title '%s'", s[i].label);
+            }
+            fprintf(gp, "\n");
+            for (int i = 0; i < 2; i++)
+                gp_send_xy(gp, s[i].x, s[i].y, s[i].n);
+            gp_close(gp);
+        }
+    }
+}
+
+/* ================================================================== */
+/*  Chapter 30: Putting It All Together (Capstone)                    */
+/* ================================================================== */
+
+static void plot_ch30(void)
+{
+    printf("  Ch30: capstone pipeline ...\n");
+    gp_init("ch30");
+
+    int N = 512;
+    double clean[512], noisy[512], noise[512], filtered[512];
+
+    /* Signal: 200 + 500 Hz, noise at 2800 + 3500 Hz */
+    double sig_f[] = {200.0, 500.0};
+    double sig_a[] = {1.0, 0.6};
+    gen_multi_tone(clean, N, sig_f, sig_a, 2, 8000.0);
+
+    double nf[] = {2800.0, 3500.0};
+    double na[] = {0.5, 0.3};
+    gen_multi_tone(noise, N, nf, na, 2, 8000.0);
+    for (int i = 0; i < N; i++) noisy[i] = clean[i] + noise[i];
+
+    /* Filter: 31-tap lowpass at 800 Hz → cutoff = 800/4000 = 0.2 */
+    int ntaps = 31;
+    double h[31];
+    fir_lowpass(h, ntaps, 0.2);
+    fir_filter(noisy, filtered, N, h, ntaps);
+
+    /* 1. Time domain: clean / noisy / filtered */
+    {
+        /* Show first 200 samples for clarity */
+        GpSeries s[] = {
+            { "Clean",    NULL, clean,    200, "lines" },
+            { "Noisy",    NULL, noisy,    200, "lines" },
+            { "Filtered", NULL, filtered, 200, "lines" },
+        };
+        gp_plot_multi("ch30", "pipeline_time",
+                      "End-to-End Pipeline: Time Domain",
+                      "Sample n", "Amplitude", s, 3);
+    }
+
+    /* 2. Spectrum: before and after filtering */
+    {
+        int nb = N / 2 + 1;
+        double freq_axis[257], mag_before[257], mag_after[257];
+
+        Complex Xb[512], Xa[512];
+        fft_real(noisy, Xb, N);
+        fft_real(filtered, Xa, N);
+
+        for (int k = 0; k < nb; k++) {
+            freq_axis[k] = (double)k * 8000.0 / N;
+            double mb = complex_mag(Xb[k]) / (N / 2.0);
+            double ma = complex_mag(Xa[k]) / (N / 2.0);
+            mag_before[k] = (mb > 1e-10) ? 20.0 * log10(mb) : -100.0;
+            mag_after[k]  = (ma > 1e-10) ? 20.0 * log10(ma) : -100.0;
+        }
+
+        GpSeries s[] = {
+            { "Before Filtering", freq_axis, mag_before, nb, "lines" },
+            { "After Filtering",  freq_axis, mag_after,  nb, "lines" },
+        };
+        FILE *gp = gp_open("ch30", "pipeline_spectrum", 900, 500);
+        if (gp) {
+            fprintf(gp, "set title 'Spectrum: Before vs After Lowpass "
+                        "Filtering'\n");
+            fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
+            fprintf(gp, "set ylabel 'Magnitude (dB)'\n");
+            fprintf(gp, "set yrange [-80:5]\n");
+            fprintf(gp, "set xrange [0:4000]\n");
+            fprintf(gp, "plot ");
+            for (int i = 0; i < 2; i++) {
+                if (i) fprintf(gp, ", ");
+                fprintf(gp, "'-' w lines lw 2 title '%s'", s[i].label);
+            }
+            fprintf(gp, "\n");
+            for (int i = 0; i < 2; i++)
+                gp_send_xy(gp, s[i].x, s[i].y, s[i].n);
+            gp_close(gp);
+        }
+    }
+}
+
+/* ================================================================== */
+/*  Main: generate all plots                                          */
+/* ================================================================== */
+
+int main(void)
+{
+    printf("╔══════════════════════════════════════════════════════════╗\n");
+    printf("║  DSP Tutorial Suite — Generating All Gnuplot Plots     ║\n");
+    printf("╚══════════════════════════════════════════════════════════╝\n\n");
+
+    plot_ch01();
+    plot_ch02();
+    plot_ch03();
+    plot_ch04();
+    plot_ch05();
+    plot_ch06();
+    plot_ch07();
+    plot_ch08();
+    plot_ch09();
+    plot_ch10();
+    plot_ch11();
+    plot_ch12();
+    plot_ch13();
+    plot_ch30();
+
+    printf("\n  Done! All plots saved to plots/\n");
+    printf("  View with: eog plots/ch01/impulse.png\n");
+    printf("  or:        xdg-open plots/ch11/butterworth_orders.png\n\n");
+
+    return 0;
+}

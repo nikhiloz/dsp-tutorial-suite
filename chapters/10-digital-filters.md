@@ -226,3 +226,15 @@ make test
 
 **Previous:** [Chapter 03 — Window Functions](09-window-functions.md)
 | **Next:** [Chapter 05 — Spectral Analysis →](13-spectral-analysis.md)
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Lowpass FIR Kernel
+![FIR lowpass filter coefficients (sinc-windowed)](../plots/ch10/lowpass_kernel.png)
+
+### Noise Reduction
+![Original noisy signal vs FIR-filtered output](../plots/ch10/noise_reduction.png)

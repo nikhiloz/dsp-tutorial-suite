@@ -14,7 +14,7 @@ LIB_DIR := $(BUILD_DIR)/lib
 OBJ_DIR := $(BUILD_DIR)/obj
 
 # Source files
-SOURCES := src/fft.c src/filter.c src/dsp_utils.c src/signal_gen.c src/convolution.c src/iir.c
+SOURCES := src/fft.c src/filter.c src/dsp_utils.c src/signal_gen.c src/convolution.c src/iir.c src/gnuplot.c
 OBJECTS := $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
 TESTS := tests/test_fft.c tests/test_filter.c tests/test_iir.c
@@ -65,7 +65,8 @@ debug: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
 	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter \
-	$(BIN_DIR)/test_iir
+	$(BIN_DIR)/test_iir \
+	$(BIN_DIR)/generate_plots
 
 # Release build
 release: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
@@ -85,7 +86,8 @@ release: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
 	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter \
-	$(BIN_DIR)/test_iir
+	$(BIN_DIR)/test_iir \
+	$(BIN_DIR)/generate_plots
 
 # Static library
 $(LIB_DIR)/libdsp_core.a: $(OBJECTS)
@@ -136,6 +138,10 @@ $(BIN_DIR)/ch13: chapters/13-spectral-analysis.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
 $(BIN_DIR)/ch30: chapters/30-putting-it-together.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
+
+# Plot generator
+$(BIN_DIR)/generate_plots: tools/generate_plots.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
 # Build only chapter demos
@@ -189,6 +195,11 @@ run: chapters
 	@echo "\n=== Ch30: Putting It Together ==="
 	$(BIN_DIR)/ch30
 
+# Generate all gnuplot PNG visualizations (requires gnuplot)
+plots: $(BIN_DIR)/generate_plots
+	@echo "=== Generating all plots ==="
+	$(BIN_DIR)/generate_plots
+
 # Code formatting
 format:
 	clang-format -i src/*.c include/*.h chapters/*.c tests/test_*.c
@@ -233,6 +244,7 @@ help:
 	@echo "  make test        - Run unit tests"
 	@echo "  make run         - Run all chapter demos"
 	@echo "  make chapters    - Build chapter demos only"
+	@echo "  make plots       - Generate all gnuplot visualizations"
 	@echo "  make memcheck    - Run tests with valgrind"
 	@echo "  make profile     - Profile ch08 (FFT) with perf"
 	@echo "  make format      - Format code with clang-format"
@@ -242,4 +254,4 @@ help:
 	@echo "  make distclean   - Remove all generated files"
 	@echo "  make help        - Show this help message"
 
-.PHONY: all debug release test run chapters memcheck profile format lint clean distclean install help
+.PHONY: all debug release test run chapters plots memcheck profile format lint clean distclean install help

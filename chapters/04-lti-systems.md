@@ -223,3 +223,15 @@ energy in frequency.
 
 - [Ch 05: Z-Transform](05-z-transform.md) — the algebraic framework that turns convolution into multiplication.
 - [Ch 06: Frequency Response, Poles & Zeros](06-frequency-response.md) — what convolution looks like in the frequency domain.
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Discrete Convolution
+![Input, impulse response, and convolution output](../plots/ch04/convolution.png)
+
+### Cross-Correlation
+![Cross-correlation showing signal alignment](../plots/ch04/cross_correlation.png)

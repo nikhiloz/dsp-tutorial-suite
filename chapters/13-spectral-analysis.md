@@ -181,3 +181,12 @@ Modifications to try:
 
 **Previous:** [Chapter 04 — Digital Filters](10-digital-filters.md)
 | **Next:** [Chapter 06 — Real-Time Streaming →](28-real-time-streaming.md)
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Windowed Spectrum
+![Hann-windowed FFT spectrum of a multi-tone signal](../plots/ch13/windowed_spectrum.png)

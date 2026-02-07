@@ -164,3 +164,15 @@ compare the output. The peaks should change width.
 
 **Previous:** [Chapter 02 — FFT Fundamentals](08-fft-fundamentals.md)
 | **Next:** [Chapter 04 — Digital Filters →](10-digital-filters.md)
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Window Shapes
+![Rectangular, Hamming, Hann, and Blackman windows](../plots/ch09/window_shapes.png)
+
+### Spectral Leakage
+![Window effect on spectral leakage](../plots/ch09/spectral_leakage.png)

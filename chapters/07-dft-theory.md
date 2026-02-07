@@ -201,3 +201,18 @@ algorithm for computing the DFT.
 
 - [Ch 08: FFT Algorithms](08-fft-fundamentals.md) — Cooley-Tukey Radix-2 DIT, the O(N log N) breakthrough.
 - [Ch 09: Window Functions](09-window-functions.md) — controlling spectral leakage in finite-length DFTs.
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### DFT of a Pure Tone
+![DFT magnitude spectrum of a single sinusoid](../plots/ch07/dft_spectrum.png)
+
+### Standard Signals DFT
+![DFT of impulse, DC, and alternating signals](../plots/ch07/standard_signals_dft.png)
+
+### Zero-Padding Effect
+![Spectral interpolation via zero-padding](../plots/ch07/zero_padding.png)

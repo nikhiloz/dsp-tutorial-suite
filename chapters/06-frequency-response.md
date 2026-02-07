@@ -196,3 +196,21 @@ This geometry forces unity magnitude.
 
 **Next:** [Ch 10 — FIR Filter Design](10-digital-filters.md) (design filters to spec),
 then [Ch 11 — IIR Filter Design](11-iir-filter-design.md) (Butterworth, Chebyshev).
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### FIR vs IIR Magnitude Response
+![Magnitude comparison of FIR and IIR filters](../plots/ch06/fir_vs_iir_magnitude.png)
+
+### FIR vs IIR Phase Response
+![Phase comparison of FIR and IIR filters](../plots/ch06/fir_vs_iir_phase.png)
+
+### Group Delay
+![FIR constant group delay vs IIR variable delay](../plots/ch06/group_delay.png)
+
+### Pole Radius and Resonance
+![Effect of pole radius on Q factor](../plots/ch06/pole_radius_q.png)

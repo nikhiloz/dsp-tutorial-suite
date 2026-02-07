@@ -207,3 +207,18 @@ ways to implement each biquad section.
 
 **Next:** [Ch 12 — Filter Structures](12-filter-structures.md) — how to
 implement biquads efficiently (Direct Form I/II, Transposed, Cascaded).
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Butterworth Filter Orders
+![Butterworth LP response for orders 2, 4, 6, 8](../plots/ch11/butterworth_orders.png)
+
+### Chebyshev Ripple Comparison
+![Chebyshev Type I with varying passband ripple](../plots/ch11/chebyshev_ripple.png)
+
+### IIR Filtering Result
+![Time-domain IIR filtering of a noisy signal](../plots/ch11/iir_filtering.png)

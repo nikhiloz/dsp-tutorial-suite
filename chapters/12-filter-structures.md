@@ -213,3 +213,15 @@ Always use cascaded second-order sections.*
 
 **Next:** [Ch 13 — Spectral Analysis](13-spectral-analysis.md) — apply filters
 and window functions to real-world spectral estimation.
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Direct Form I vs Direct Form II Transposed
+![DF1 and DF2T produce identical outputs](../plots/ch12/df1_vs_df2t.png)
+
+### Coefficient Sensitivity
+![Effect of coefficient quantization on frequency response](../plots/ch12/coefficient_sensitivity.png)

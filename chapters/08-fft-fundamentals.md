@@ -235,3 +235,12 @@ make test
 
 **Previous:** [Chapter 01 — Complex Numbers](03-complex-numbers.md)
 | **Next:** [Chapter 03 — Window Functions →](09-window-functions.md)
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### FFT of Two Tones
+![FFT resolving two closely-spaced sinusoids](../plots/ch08/fft_two_tones.png)

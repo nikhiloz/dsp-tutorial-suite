@@ -214,3 +214,18 @@ sampling, as long as the Nyquist condition is met.**
 
 - [Ch 03: Complex Numbers](03-complex-numbers.md) — the mathematical engine that makes frequency analysis possible.
 - [Ch 04: LTI Systems & Convolution](04-lti-systems.md) — how filters process signals sample by sample.
+
+---
+
+## Generated Plots
+
+> Regenerate with `make plots` from the project root.
+
+### Aliasing Demonstration
+![Aliasing: under-sampled vs properly-sampled sine](../plots/ch02/aliasing.png)
+
+### Quantization Effects
+![Quantization at different bit depths](../plots/ch02/quantization.png)
+
+### Signal Reconstruction
+![Sinc interpolation reconstruction](../plots/ch02/reconstruction.png)

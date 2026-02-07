@@ -26,6 +26,7 @@ set(DSP_SOURCES
     src/fft.c
     src/filter.c
     src/iir.c
+    src/gnuplot.c
     src/dsp_utils.c
     src/signal_gen.c
     src/convolution.c
@@ -104,9 +105,14 @@ target_include_directories(test_iir PRIVATE tests)
 target_link_libraries(test_iir dsp_core_static m)
 add_test(NAME iir_tests COMMAND test_iir)
 
+# Plot generator tool
+add_executable(generate_plots tools/generate_plots.c)
+target_link_libraries(generate_plots dsp_core_static m)
+
 # Build output directories
 set_target_properties(
-    ch01 ch02 ch03 ch04 ch05 ch06 ch07 ch08 ch09 ch10 ch11 ch12 ch13 ch30 test_fft test_filter test_iir
+    ch01 ch02 ch03 ch04 ch05 ch06 ch07 ch08 ch09 ch10 ch11 ch12 ch13 ch30
+    test_fft test_filter test_iir generate_plots
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
