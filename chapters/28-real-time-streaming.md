@@ -177,5 +177,5 @@ pipeline.
 
 ---
 
-**Previous:** [Chapter 05 — Spectral Analysis](05-spectral-analysis.md)
-| **Next:** [Chapter 07 — Optimisation →](07-optimisation.md)
+**Previous:** [Chapter 05 — Spectral Analysis](13-spectral-analysis.md)
+| **Next:** [Chapter 07 — Optimisation →](29-optimisation.md)

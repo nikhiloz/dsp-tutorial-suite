@@ -1,5 +1,5 @@
 /**
- * @file 03-window-functions.c
+ * @file 09-window-functions.c
  * @brief Chapter 3 demo — Compare window functions and their effect on spectra.
  *
  * Demonstrates:
@@ -10,7 +10,7 @@
  * Build & run:
  *   make chapters && ./build/bin/ch03
  *
- * Read alongside: chapters/03-window-functions.md
+ * Read alongside: chapters/09-window-functions.md
  */
 
 #include <stdio.h>

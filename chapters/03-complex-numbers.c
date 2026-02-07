@@ -1,5 +1,5 @@
 /**
- * @file 01-complex-numbers.c
+ * @file 03-complex-numbers.c
  * @brief Chapter 1 demo — Complex number arithmetic in action.
  *
  * Demonstrates:
@@ -11,7 +11,7 @@
  * Build & run:
  *   make chapters && ./build/bin/ch01
  *
- * Read alongside: chapters/01-complex-numbers.md
+ * Read alongside: chapters/03-complex-numbers.md
  */
 
 #include <stdio.h>

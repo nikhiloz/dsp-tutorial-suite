@@ -1,5 +1,5 @@
 /**
- * @file 04-digital-filters.c
+ * @file 10-digital-filters.c
  * @brief Chapter 4 demo — FIR filter design and noise reduction.
  *
  * Demonstrates:
@@ -11,7 +11,7 @@
  * Build & run:
  *   make chapters && ./build/bin/ch04
  *
- * Read alongside: chapters/04-digital-filters.md
+ * Read alongside: chapters/10-digital-filters.md
  */
 
 #include <stdio.h>

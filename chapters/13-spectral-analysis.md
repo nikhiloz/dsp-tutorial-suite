@@ -25,7 +25,7 @@ Each stage has a purpose:
 
 ## 5.2 Walk-Through: The FFT Demo
 
-[`05-spectral-analysis.c`](05-spectral-analysis.c) implements this full
+[`13-spectral-analysis.c`](13-spectral-analysis.c) implements this full
 pipeline. Let's trace each step.
 
 ### Signal Generation (lines 25–35)
@@ -179,5 +179,5 @@ Modifications to try:
 
 ---
 
-**Previous:** [Chapter 04 — Digital Filters](04-digital-filters.md)
-| **Next:** [Chapter 06 — Real-Time Streaming →](06-real-time-streaming.md)
+**Previous:** [Chapter 04 — Digital Filters](10-digital-filters.md)
+| **Next:** [Chapter 06 — Real-Time Streaming →](28-real-time-streaming.md)

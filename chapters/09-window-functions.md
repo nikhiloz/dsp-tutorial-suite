@@ -107,7 +107,7 @@ void apply_window(double *signal, int n, window_fn w) {
 }
 ```
 
-Usage in the chapter demo ([`03-window-functions.c`](03-window-functions.c)):
+Usage in the chapter demo ([`09-window-functions.c`](09-window-functions.c)):
 
 ```c
 /* Apply Hann window before FFT to reduce leakage */
@@ -121,7 +121,7 @@ apply_window(signal, N, hann_window);
 ## 3.5 Windows in Filter Design
 
 Windows aren't only for FFT analysis — they appear in filter design too.
-The [windowed-sinc lowpass](04-digital-filters.md) in Chapter 04 uses
+The [windowed-sinc lowpass](10-digital-filters.md) in Chapter 04 uses
 the Hamming window to taper the ideal sinc impulse response.
 
 See [`src/filter.c`](../src/filter.c) lines 103–105 where the filter
@@ -139,7 +139,7 @@ make
 ./build/bin/fft_demo
 ```
 
-The demo uses `hann_window`. Try editing [`03-window-functions.c`](03-window-functions.c)
+The demo uses `hann_window`. Try editing [`09-window-functions.c`](09-window-functions.c)
 to use `hamming_window` or `blackman_window` instead, rebuild, and
 compare the output. The peaks should change width.
 
@@ -162,5 +162,5 @@ compare the output. The peaks should change width.
 
 ---
 
-**Previous:** [Chapter 02 — FFT Fundamentals](02-fft-fundamentals.md)
-| **Next:** [Chapter 04 — Digital Filters →](04-digital-filters.md)
+**Previous:** [Chapter 02 — FFT Fundamentals](08-fft-fundamentals.md)
+| **Next:** [Chapter 04 — Digital Filters →](10-digital-filters.md)

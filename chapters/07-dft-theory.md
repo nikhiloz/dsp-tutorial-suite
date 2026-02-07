@@ -1,6 +1,6 @@
 # Chapter 7: The Discrete Fourier Transform (DFT)
 
-> **Prerequisites:** [Ch 03 — Complex Numbers](01-complex-numbers.md), [Ch 05 — Z-Transform](05-z-transform.md)
+> **Prerequisites:** [Ch 03 — Complex Numbers](03-complex-numbers.md), [Ch 05 — Z-Transform](05-z-transform.md)
 > **Library module:** [`fft.h`](../include/fft.h) (DFT via FFT algorithm), [`dsp_utils.h`](../include/dsp_utils.h)
 > **Runnable demo:** [`07-dft-theory.c`](07-dft-theory.c) — `make chapters && ./build/bin/ch07s`
 
@@ -199,5 +199,5 @@ algorithm for computing the DFT.
 
 ## What's Next?
 
-- [Ch 08: FFT Algorithms](02-fft-fundamentals.md) — Cooley-Tukey Radix-2 DIT, the O(N log N) breakthrough.
-- [Ch 09: Window Functions](03-window-functions.md) — controlling spectral leakage in finite-length DFTs.
+- [Ch 08: FFT Algorithms](08-fft-fundamentals.md) — Cooley-Tukey Radix-2 DIT, the O(N log N) breakthrough.
+- [Ch 09: Window Functions](09-window-functions.md) — controlling spectral leakage in finite-length DFTs.

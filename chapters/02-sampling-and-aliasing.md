@@ -212,5 +212,5 @@ sampling, as long as the Nyquist condition is met.**
 
 ## What's Next?
 
-- [Ch 03: Complex Numbers](01-complex-numbers.md) — the mathematical engine that makes frequency analysis possible.
+- [Ch 03: Complex Numbers](03-complex-numbers.md) — the mathematical engine that makes frequency analysis possible.
 - [Ch 04: LTI Systems & Convolution](04-lti-systems.md) — how filters process signals sample by sample.

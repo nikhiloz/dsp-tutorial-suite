@@ -1,5 +1,5 @@
 /**
- * @file 05-spectral-analysis.c
+ * @file 13-spectral-analysis.c
  * @brief Chapter 5 demo — Full spectral analysis pipeline.
  *
  * Demonstrates:
@@ -11,7 +11,7 @@
  * Build & run:
  *   make chapters && ./build/bin/ch05
  *
- * Read alongside: chapters/05-spectral-analysis.md
+ * Read alongside: chapters/13-spectral-analysis.md
  */
 
 #include <stdio.h>

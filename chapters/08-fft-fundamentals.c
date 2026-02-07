@@ -1,5 +1,5 @@
 /**
- * @file 02-fft-fundamentals.c
+ * @file 08-fft-fundamentals.c
  * @brief Chapter 2 demo — Step-by-step FFT on small signals.
  *
  * Demonstrates:
@@ -11,7 +11,7 @@
  * Build & run:
  *   make chapters && ./build/bin/ch02
  *
- * Read alongside: chapters/02-fft-fundamentals.md
+ * Read alongside: chapters/08-fft-fundamentals.md
  */
 
 #include <stdio.h>

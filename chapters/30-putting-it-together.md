@@ -14,7 +14,7 @@ Spectral analysis (05).
 
 ### The Code
 
-Full source: [`08-putting-it-together.c`](08-putting-it-together.c).
+Full source: [`30-putting-it-together.c`](30-putting-it-together.c).
 
 ### Step-by-Step Trace
 
@@ -50,7 +50,7 @@ the desired low-frequency content.
 
 ### The Code
 
-Full source: [`08-putting-it-together.c`](08-putting-it-together.c) (combines both demos).
+Full source: [`30-putting-it-together.c`](30-putting-it-together.c) (combines both demos).
 
 ### Step-by-Step Trace
 
@@ -165,7 +165,7 @@ Each test:
 
 ---
 
-**Previous:** [Chapter 07 — Optimisation](07-optimisation.md)
+**Previous:** [Chapter 07 — Optimisation](29-optimisation.md)
 | **Back to start:** [Chapter 00 — Overview](00-overview.md)
 
 ---

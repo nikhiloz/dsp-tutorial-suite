@@ -53,7 +53,7 @@ The impulse is the simplest non-trivial signal — a single `1` surrounded by ze
 Despite its simplicity, it is **the most important signal in DSP**:
 
 - The **impulse response** `h[n]` of a system completely characterises that system.
-- The FFT of an impulse is flat (all frequencies equal) — see [Ch 08](02-fft-fundamentals.md).
+- The FFT of an impulse is flat (all frequencies equal) — see [Ch 08](08-fft-fundamentals.md).
 - Convolution with an impulse gives back the original signal: `x[n] * δ[n] = x[n]`.
 
 ```c
@@ -154,7 +154,7 @@ $$
 x[n] = A \cdot e^{j(\omega n + \phi)} = A[\cos(\omega n + \phi) + j\sin(\omega n + \phi)]
 $$
 
-This is Euler's formula in action (see [Ch 03](01-complex-numbers.md)). The
+This is Euler's formula in action (see [Ch 03](03-complex-numbers.md)). The
 complex exponential wraps a cosine (real part) and sine (imaginary part) into
 one object. It traces a circle in the complex plane.
 
@@ -250,4 +250,4 @@ property that makes Fourier analysis, filtering, and convolution work.
 ## What's Next?
 
 - [Ch 02: Sampling, Aliasing & the Nyquist Theorem](02-sampling-and-aliasing.md) — why discrete-time signals exist, and the rules that govern them.
-- [Ch 03: Complex Numbers](01-complex-numbers.md) — the mathematical engine behind frequency analysis.
+- [Ch 03: Complex Numbers](03-complex-numbers.md) — the mathematical engine behind frequency analysis.

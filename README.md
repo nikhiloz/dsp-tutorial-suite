@@ -1,28 +1,81 @@
 # DSP Tutorial Suite
 
-**A hands-on C tutorial for Digital Signal Processing — from complex numbers to real-time FFT.**
+**A comprehensive C tutorial for Digital Signal Processing — from first principles to postgraduate topics.**
 
-This repository is a progressive learning resource. Every source file is
-written to be *read*, with detailed comments that cross-reference the
-tutorial chapters and diagrams. You can study the theory, look at the
-diagram, then open the matching `.c` file and see exactly how the math
-becomes code.
+This repository is a progressive learning resource covering 30 chapters of DSP, from
+discrete-time signals through adaptive filters. Every source file is written to be
+*read*, with detailed comments that cross-reference tutorial chapters, textbook
+sections, and diagrams. Zero external dependencies — just C99 and `math.h`.
 
 ---
 
 ## What You'll Learn
 
-| Chapter | Topic | Key Source Files |
-|---------|-------|-----------------|
-| [00 – Overview](chapters/00-overview.md) | Project structure, build system, how to navigate | — |
-| [01 – Complex Numbers](chapters/01-complex-numbers.md) | The building block of all frequency-domain work | [`dsp_utils.h`](include/dsp_utils.h), [`dsp_utils.c`](src/dsp_utils.c) |
-| [02 – FFT Fundamentals](chapters/02-fft-fundamentals.md) | Cooley-Tukey Radix-2 DIT, butterfly operations | [`fft.h`](include/fft.h), [`fft.c`](src/fft.c) |
-| [03 – Window Functions](chapters/03-window-functions.md) | Why windowing matters, Hann / Hamming / Blackman | [`dsp_utils.c`](src/dsp_utils.c) |
-| [04 – Digital Filters](chapters/04-digital-filters.md) | FIR convolution, moving average, lowpass design | [`filter.h`](include/filter.h), [`filter.c`](src/filter.c) |
-| [05 – Spectral Analysis](chapters/05-spectral-analysis.md) | Putting FFT + windows together to analyse signals | [`05-spectral-analysis.c`](chapters/05-spectral-analysis.c) |
-| [06 – Real-Time Streaming](chapters/06-real-time-streaming.md) | Overlap-add, ring buffers, latency budgets | *(planned)* |
-| [07 – Optimisation](chapters/07-optimisation.md) | SIMD, cache layout, multithreading | *(planned)* |
-| [08 – Putting It Together](chapters/08-putting-it-together.md) | End-to-end project walkthrough | [`08-putting-it-together.c`](chapters/08-putting-it-together.c) |
+### Part I — Foundations
+
+| Ch | Topic | Demo | Key Files |
+|----|-------|------|-----------|
+| [00](chapters/00-overview.md) | Project overview & build system | — | — |
+| [01](chapters/01-signals-and-sequences.md) | Discrete-time signals & sequences | `ch01` | [`signal_gen.h`](include/signal_gen.h) |
+| [02](chapters/02-sampling-and-aliasing.md) | Sampling, aliasing & Nyquist theorem | `ch02` | — |
+| [03](chapters/03-complex-numbers.md) | Complex numbers & Euler's formula | `ch03` | [`dsp_utils.h`](include/dsp_utils.h) |
+| [04](chapters/04-lti-systems.md) | LTI systems & discrete convolution | `ch04` | [`convolution.h`](include/convolution.h) |
+
+### Part II — Transform Domain
+
+| Ch | Topic | Demo | Key Files |
+|----|-------|------|-----------|
+| [05](chapters/05-z-transform.md) | The Z-Transform | `ch05` | — |
+| 06 | Frequency response, poles & zeros | — | *planned* |
+| [07](chapters/07-dft-theory.md) | The DFT — theory & properties | `ch07` | — |
+| [08](chapters/08-fft-fundamentals.md) | FFT algorithms (Cooley-Tukey Radix-2) | `ch08` | [`fft.h`](include/fft.h), [`fft.c`](src/fft.c) |
+| [09](chapters/09-window-functions.md) | Window functions & spectral leakage | `ch09` | [`dsp_utils.c`](src/dsp_utils.c) |
+
+### Part III — Filter Design
+
+| Ch | Topic | Demo | Key Files |
+|----|-------|------|-----------|
+| [10](chapters/10-digital-filters.md) | FIR filter design | `ch10` | [`filter.h`](include/filter.h), [`filter.c`](src/filter.c) |
+| 11 | IIR filter design | — | *planned* |
+| 12 | Filter structures (biquads, SOS) | — | *planned* |
+
+### Part IV — Analysis
+
+| Ch | Topic | Demo | Key Files |
+|----|-------|------|-----------|
+| [13](chapters/13-spectral-analysis.md) | Spectral analysis | `ch13` | — |
+| 14 | Power spectral density (Welch) | — | *planned* |
+| 15 | Correlation & autocorrelation | — | *planned* |
+
+### Part V — Advanced (UG Final Year)
+
+| Ch | Topic | Status |
+|----|-------|--------|
+| 16 | Overlap-add/save & streaming | 🔜 |
+| 17 | Multirate DSP | 🔜 |
+| 18 | Fixed-point arithmetic & quantization | 🔜 |
+| 19 | Advanced FFT (Goertzel, Radix-4) | 🔜 |
+| 20 | Quadrature signals & Hilbert transform | 🔜 |
+| 21 | Signal averaging & noise reduction | 🔜 |
+| 22 | Advanced FIR (Parks-McClellan) | 🔜 |
+
+### Part VI — Postgraduate
+
+| Ch | Topic | Status |
+|----|-------|--------|
+| 23 | Adaptive filters (LMS / RLS) | 🔜 |
+| 24 | Linear prediction & parametric modelling | 🔜 |
+| 25 | Parametric spectral estimation (MUSIC, ESPRIT) | 🔜 |
+| 26 | Cepstrum analysis & MFCCs | 🔜 |
+
+### Part VII — Applied / Capstone
+
+| Ch | Topic | Demo | Status |
+|----|-------|------|--------|
+| 27 | 2D DSP & image processing | — | 🔜 |
+| [28](chapters/28-real-time-streaming.md) | Real-time system design | — | 📋 design |
+| [29](chapters/29-optimisation.md) | SIMD & hardware optimisation | — | 📋 design |
+| [30](chapters/30-putting-it-together.md) | End-to-end projects | `ch30` | ✅ |
 
 ## Quick Start
 
@@ -32,14 +85,18 @@ git clone git@github.com:nikhiloz/dsp-tutorial-suite.git
 cd dsp-tutorial-suite
 
 # Build everything (C99, no external deps)
-make
+make release
 
-# Run the demos
-./build/bin/fft_demo
-./build/bin/filter_demo
+# Run a specific chapter demo
+./build/bin/ch01    # Signals & sequences
+./build/bin/ch07    # DFT theory
+./build/bin/ch08    # FFT fundamentals
 
 # Run the test suite (12 tests)
 make test
+
+# Run all chapter demos
+make run
 ```
 
 ### Requirements
@@ -56,16 +113,20 @@ dsp-tutorial-suite/
 ├── include/          ← Public headers (start reading here)
 │   ├── dsp_utils.h       Complex type, windows, helpers
 │   ├── fft.h             FFT / IFFT API
-│   └── filter.h          FIR filter API
+│   ├── filter.h          FIR filter API
+│   ├── signal_gen.h      Signal generation (sine, noise, chirp)
+│   └── convolution.h     Convolution & correlation
 ├── src/              ← Implementations (heavily commented)
-│   ├── dsp_utils.c
+│   ├── dsp_utils.c       Complex arithmetic, 3 window functions
 │   ├── fft.c             Cooley-Tukey Radix-2 DIT
-│   └── filter.c          Direct convolution + sinc design
+│   ├── filter.c          Direct convolution + sinc design
+│   ├── signal_gen.c      Signal generators (Box-Muller noise, chirp)
+│   └── convolution.c     Linear/causal conv, cross/auto-correlation
 ├── tests/            ← Unit tests (zero-dependency framework)
 │   ├── test_framework.h
 │   ├── test_fft.c        6 FFT tests
 │   └── test_filter.c     6 FIR filter tests
-├── chapters/         ← START HERE — progressive tutorial
+├── chapters/         ← START HERE — progressive tutorial (30 chapters)
 ├── reference/        ← Architecture, API reference, diagrams
 │   ├── ARCHITECTURE.md
 │   ├── API.md
@@ -127,7 +188,9 @@ MIT — see [LICENSE](LICENSE).
 
 ## References
 
-- Oppenheim & Schafer, *Discrete-Time Signal Processing*
-- Haykin, *Signals and Systems*
-- Proakis & Manolakis, *Digital Signal Processing*
+- Oppenheim & Willsky, *Signals and Systems* (3rd ed.)
+- Oppenheim & Schafer, *Discrete-Time Signal Processing* (3rd ed.)
+- Proakis & Manolakis, *Digital Signal Processing* (4th ed.)
+- Haykin, *Adaptive Filter Theory* (5th ed.)
+- Lyons, *Understanding DSP* (3rd ed.)
 - Smith, *The Scientist and Engineer's Guide to DSP* (free online)

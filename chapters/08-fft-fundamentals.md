@@ -197,7 +197,7 @@ The demo generates a signal with 440 Hz and 1000 Hz components, applies
 a Hann window, computes a 256-point FFT, and prints the magnitude
 spectrum. You should see peaks near those two frequencies.
 
-Trace the code in [`02-fft-fundamentals.c`](02-fft-fundamentals.c) to see
+Trace the code in [`08-fft-fundamentals.c`](08-fft-fundamentals.c) to see
 each step.
 
 ## 2.7 Testing
@@ -233,5 +233,5 @@ make test
 
 ---
 
-**Previous:** [Chapter 01 — Complex Numbers](01-complex-numbers.md)
-| **Next:** [Chapter 03 — Window Functions →](03-window-functions.md)
+**Previous:** [Chapter 01 — Complex Numbers](03-complex-numbers.md)
+| **Next:** [Chapter 03 — Window Functions →](09-window-functions.md)

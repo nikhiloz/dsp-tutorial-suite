@@ -137,7 +137,7 @@ make
 ./build/bin/fft_demo
 ```
 
-Look at the output and trace back to [`01-complex-numbers.c`](01-complex-numbers.c)
+Look at the output and trace back to [`03-complex-numbers.c`](03-complex-numbers.c)
 to see how `Complex`, `complex_mag`, and `db_from_magnitude` work together.
 
 ## 1.6 Exercises
@@ -156,4 +156,4 @@ to see how `Complex`, `complex_mag`, and `db_from_magnitude` work together.
 ---
 
 **Previous:** [Chapter 00 — Overview](00-overview.md)
-| **Next:** [Chapter 02 — FFT Fundamentals →](02-fft-fundamentals.md)
+| **Next:** [Chapter 02 — FFT Fundamentals →](08-fft-fundamentals.md)

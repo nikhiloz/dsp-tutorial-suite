@@ -22,15 +22,15 @@ TESTS := tests/test_fft.c tests/test_filter.c
 # Chapter demos
 CHAPTER_DEMOS := chapters/01-signals-and-sequences.c \
 	chapters/02-sampling-and-aliasing.c \
+	chapters/03-complex-numbers.c \
 	chapters/04-lti-systems.c \
 	chapters/05-z-transform.c \
 	chapters/07-dft-theory.c \
-	chapters/01-complex-numbers.c \
-	chapters/02-fft-fundamentals.c \
-	chapters/03-window-functions.c \
-	chapters/04-digital-filters.c \
-	chapters/05-spectral-analysis.c \
-	chapters/08-putting-it-together.c
+	chapters/08-fft-fundamentals.c \
+	chapters/09-window-functions.c \
+	chapters/10-digital-filters.c \
+	chapters/13-spectral-analysis.c \
+	chapters/30-putting-it-together.c
 
 # Targets
 all: release
@@ -46,33 +46,33 @@ $(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
 # Debug build
 debug: CFLAGS_RELEASE = $(CFLAGS_DEBUG)
 debug: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
-	$(BIN_DIR)/ch01s \
-	$(BIN_DIR)/ch02s \
-	$(BIN_DIR)/ch04s \
-	$(BIN_DIR)/ch05s \
-	$(BIN_DIR)/ch07s \
 	$(BIN_DIR)/ch01 \
 	$(BIN_DIR)/ch02 \
 	$(BIN_DIR)/ch03 \
 	$(BIN_DIR)/ch04 \
 	$(BIN_DIR)/ch05 \
+	$(BIN_DIR)/ch07 \
 	$(BIN_DIR)/ch08 \
+	$(BIN_DIR)/ch09 \
+	$(BIN_DIR)/ch10 \
+	$(BIN_DIR)/ch13 \
+	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter
 
 # Release build
 release: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
-	$(BIN_DIR)/ch01s \
-	$(BIN_DIR)/ch02s \
-	$(BIN_DIR)/ch04s \
-	$(BIN_DIR)/ch05s \
-	$(BIN_DIR)/ch07s \
 	$(BIN_DIR)/ch01 \
 	$(BIN_DIR)/ch02 \
 	$(BIN_DIR)/ch03 \
 	$(BIN_DIR)/ch04 \
 	$(BIN_DIR)/ch05 \
+	$(BIN_DIR)/ch07 \
 	$(BIN_DIR)/ch08 \
+	$(BIN_DIR)/ch09 \
+	$(BIN_DIR)/ch10 \
+	$(BIN_DIR)/ch13 \
+	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter
 
@@ -85,41 +85,41 @@ $(LIB_DIR)/libfft_dsp.so: $(OBJECTS)
 	$(CC) -shared -fPIC $(OBJECTS) $(LDFLAGS) -o $@
 
 # Chapter demos
-$(BIN_DIR)/ch01s: chapters/01-signals-and-sequences.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch01: chapters/01-signals-and-sequences.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch02s: chapters/02-sampling-and-aliasing.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch02: chapters/02-sampling-and-aliasing.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch04s: chapters/04-lti-systems.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch03: chapters/03-complex-numbers.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch05s: chapters/05-z-transform.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch04: chapters/04-lti-systems.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch07s: chapters/07-dft-theory.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch05: chapters/05-z-transform.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch01: chapters/01-complex-numbers.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch07: chapters/07-dft-theory.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch02: chapters/02-fft-fundamentals.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch08: chapters/08-fft-fundamentals.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch03: chapters/03-window-functions.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch09: chapters/09-window-functions.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch04: chapters/04-digital-filters.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch10: chapters/10-digital-filters.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch05: chapters/05-spectral-analysis.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch13: chapters/13-spectral-analysis.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch08: chapters/08-putting-it-together.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch30: chapters/30-putting-it-together.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
 # Build only chapter demos
-chapters: $(BIN_DIR)/ch01s $(BIN_DIR)/ch02s $(BIN_DIR)/ch04s $(BIN_DIR)/ch05s $(BIN_DIR)/ch07s $(BIN_DIR)/ch01 $(BIN_DIR)/ch02 $(BIN_DIR)/ch03 $(BIN_DIR)/ch04 $(BIN_DIR)/ch05 $(BIN_DIR)/ch08
+chapters: $(BIN_DIR)/ch01 $(BIN_DIR)/ch02 $(BIN_DIR)/ch03 $(BIN_DIR)/ch04 $(BIN_DIR)/ch05 $(BIN_DIR)/ch07 $(BIN_DIR)/ch08 $(BIN_DIR)/ch09 $(BIN_DIR)/ch10 $(BIN_DIR)/ch13 $(BIN_DIR)/ch30
 
 # Tests
 $(BIN_DIR)/test_fft: tests/test_fft.c $(OBJECTS) | $(BIN_DIR)
@@ -137,28 +137,28 @@ test: $(BIN_DIR)/test_fft $(BIN_DIR)/test_filter
 
 # Run chapter demos
 run: chapters
-	@echo "=== Ch01s: Signals & Sequences ==="
-	$(BIN_DIR)/ch01s
-	@echo "\n=== Ch02s: Sampling & Aliasing ==="
-	$(BIN_DIR)/ch02s
-	@echo "\n=== Ch04s: LTI Systems & Convolution ==="
-	$(BIN_DIR)/ch04s
-	@echo "\n=== Ch05s: Z-Transform ==="
-	$(BIN_DIR)/ch05s
-	@echo "\n=== Ch07s: DFT Theory ==="
-	$(BIN_DIR)/ch07s
-	@echo "\n=== Ch01: Complex Numbers ==="
+	@echo "=== Ch01: Signals & Sequences ==="
 	$(BIN_DIR)/ch01
-	@echo "\n=== Ch02: FFT Fundamentals ==="
+	@echo "\n=== Ch02: Sampling & Aliasing ==="
 	$(BIN_DIR)/ch02
-	@echo "\n=== Ch03: Window Functions ==="
+	@echo "\n=== Ch03: Complex Numbers ==="
 	$(BIN_DIR)/ch03
-	@echo "\n=== Ch04: Digital Filters ==="
+	@echo "\n=== Ch04: LTI Systems & Convolution ==="
 	$(BIN_DIR)/ch04
-	@echo "\n=== Ch05: Spectral Analysis ==="
+	@echo "\n=== Ch05: Z-Transform ==="
 	$(BIN_DIR)/ch05
-	@echo "\n=== Ch08: Putting It Together ==="
+	@echo "\n=== Ch07: DFT Theory ==="
+	$(BIN_DIR)/ch07
+	@echo "\n=== Ch08: FFT Fundamentals ==="
 	$(BIN_DIR)/ch08
+	@echo "\n=== Ch09: Window Functions ==="
+	$(BIN_DIR)/ch09
+	@echo "\n=== Ch10: Digital Filters ==="
+	$(BIN_DIR)/ch10
+	@echo "\n=== Ch13: Spectral Analysis ==="
+	$(BIN_DIR)/ch13
+	@echo "\n=== Ch30: Putting It Together ==="
+	$(BIN_DIR)/ch30
 
 # Code formatting
 format:
@@ -174,8 +174,8 @@ memcheck: debug
 	valgrind --leak-check=full --error-exitcode=1 $(BIN_DIR)/test_filter
 
 # Profiling (Linux only)
-profile: $(BIN_DIR)/ch02
-	perf record -g $(BIN_DIR)/ch02
+profile: $(BIN_DIR)/ch08
+	perf record -g $(BIN_DIR)/ch08
 	perf report
 
 # Clean
@@ -205,7 +205,7 @@ help:
 	@echo "  make run         - Run all chapter demos"
 	@echo "  make chapters    - Build chapter demos only"
 	@echo "  make memcheck    - Run tests with valgrind"
-	@echo "  make profile     - Profile ch02 (FFT) with perf"
+	@echo "  make profile     - Profile ch08 (FFT) with perf"
 	@echo "  make format      - Format code with clang-format"
 	@echo "  make lint        - Static analysis with clang-tidy"
 	@echo "  make install     - Install headers & libraries to /usr/local"

@@ -159,5 +159,5 @@ the benefit. Only parallelise when the data is large enough.
 
 ---
 
-**Previous:** [Chapter 06 — Real-Time Streaming](06-real-time-streaming.md)
-| **Next:** [Chapter 08 — Putting It Together →](08-putting-it-together.md)
+**Previous:** [Chapter 06 — Real-Time Streaming](28-real-time-streaming.md)
+| **Next:** [Chapter 08 — Putting It Together →](30-putting-it-together.md)

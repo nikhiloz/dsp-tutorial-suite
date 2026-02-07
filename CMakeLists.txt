@@ -45,38 +45,38 @@ set_target_properties(fft_dsp_static PROPERTIES
 )
 
 # Chapter demos
-add_executable(ch01s chapters/01-signals-and-sequences.c)
-target_link_libraries(ch01s fft_dsp_static m)
-
-add_executable(ch02s chapters/02-sampling-and-aliasing.c)
-target_link_libraries(ch02s fft_dsp_static m)
-
-add_executable(ch04s chapters/04-lti-systems.c)
-target_link_libraries(ch04s fft_dsp_static m)
-
-add_executable(ch05s chapters/05-z-transform.c)
-target_link_libraries(ch05s fft_dsp_static m)
-
-add_executable(ch07s chapters/07-dft-theory.c)
-target_link_libraries(ch07s fft_dsp_static m)
-
-add_executable(ch01 chapters/01-complex-numbers.c)
+add_executable(ch01 chapters/01-signals-and-sequences.c)
 target_link_libraries(ch01 fft_dsp_static m)
 
-add_executable(ch02 chapters/02-fft-fundamentals.c)
+add_executable(ch02 chapters/02-sampling-and-aliasing.c)
 target_link_libraries(ch02 fft_dsp_static m)
 
-add_executable(ch03 chapters/03-window-functions.c)
+add_executable(ch03 chapters/03-complex-numbers.c)
 target_link_libraries(ch03 fft_dsp_static m)
 
-add_executable(ch04 chapters/04-digital-filters.c)
+add_executable(ch04 chapters/04-lti-systems.c)
 target_link_libraries(ch04 fft_dsp_static m)
 
-add_executable(ch05 chapters/05-spectral-analysis.c)
+add_executable(ch05 chapters/05-z-transform.c)
 target_link_libraries(ch05 fft_dsp_static m)
 
-add_executable(ch08 chapters/08-putting-it-together.c)
+add_executable(ch07 chapters/07-dft-theory.c)
+target_link_libraries(ch07 fft_dsp_static m)
+
+add_executable(ch08 chapters/08-fft-fundamentals.c)
 target_link_libraries(ch08 fft_dsp_static m)
+
+add_executable(ch09 chapters/09-window-functions.c)
+target_link_libraries(ch09 fft_dsp_static m)
+
+add_executable(ch10 chapters/10-digital-filters.c)
+target_link_libraries(ch10 fft_dsp_static m)
+
+add_executable(ch13 chapters/13-spectral-analysis.c)
+target_link_libraries(ch13 fft_dsp_static m)
+
+add_executable(ch30 chapters/30-putting-it-together.c)
+target_link_libraries(ch30 fft_dsp_static m)
 
 # Unit Tests (minimal framework, no external dependencies)
 add_executable(test_fft tests/test_fft.c)
@@ -91,7 +91,7 @@ add_test(NAME filter_tests COMMAND test_filter)
 
 # Build output directories
 set_target_properties(
-    ch01s ch02s ch04s ch05s ch07s ch01 ch02 ch03 ch04 ch05 ch08 test_fft test_filter
+    ch01 ch02 ch03 ch04 ch05 ch07 ch08 ch09 ch10 ch13 ch30 test_fft test_filter
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

@@ -1,5 +1,5 @@
 /**
- * @file 08-putting-it-together.c
+ * @file 30-putting-it-together.c
  * @brief Chapter 8 demo — End-to-end pipeline combining FFT + filter.
  *
  * Demonstrates:
@@ -12,7 +12,7 @@
  * Build & run:
  *   make chapters && ./build/bin/ch08
  *
- * Read alongside: chapters/08-putting-it-together.md
+ * Read alongside: chapters/30-putting-it-together.md
  */
 
 #include <stdio.h>
