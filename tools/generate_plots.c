@@ -28,6 +28,9 @@
  *   Ch13  spectral      : rect vs Hann windowed spectrum
  *   Ch14  PSD/Welch     : periodogram vs Welch, resolution trade-off
  *   Ch15  correlation   : autocorr pitch, white noise autocorr
+ *   Ch16  streaming     : OLA vs direct convolution
+ *   Ch18  fixed-point   : Q15 SQNR, float vs Q15 FIR
+ *   Ch19  advanced FFT  : Goertzel spectrum, sliding DFT
  *   Ch30  capstone      : full pipeline time + frequency domain
  */
 
@@ -45,6 +48,9 @@
 #include "convolution.h"
 #include "spectrum.h"
 #include "correlation.h"
+#include "fixed_point.h"
+#include "advanced_fft.h"
+#include "streaming.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -1368,6 +1374,134 @@ static void plot_ch15(void)
 }
 
 /* ================================================================== */
+/*  Chapter 16: Overlap-Add/Save Streaming                            */
+/* ================================================================== */
+
+static void plot_ch16(void)
+{
+    printf("  Ch16: OLA streaming ...\n");
+
+    const int N = 1024, taps = 63, blk = 128;
+    double h[63];
+    fir_lowpass(h, taps, 0.2);
+
+    double *x = (double *)malloc((size_t)N * sizeof(double));
+    gen_sine(x, N, 1.0, 300.0, 8000.0, 0.0);
+
+    /* Direct FIR */
+    double *y_dir = (double *)calloc((size_t)N, sizeof(double));
+    fir_filter(x, y_dir, N, h, taps);
+
+    /* OLA */
+    OlaState ola;
+    ola_init(&ola, h, taps, blk);
+    double *y_ola = (double *)calloc((size_t)N, sizeof(double));
+    for (int b = 0; b < N / blk; b++)
+        ola_process(&ola, x + b * blk, y_ola + b * blk);
+    ola_free(&ola);
+
+    /* Error */
+    double *err = (double *)malloc((size_t)N * sizeof(double));
+    double *idx = (double *)malloc((size_t)N * sizeof(double));
+    for (int i = 0; i < N; i++) {
+        err[i] = fabs(y_dir[i] - y_ola[i]);
+        idx[i] = (double)i;
+    }
+
+    gp_plot_multi("ch16", "ola_vs_direct",
+              "OLA vs Direct FIR Convolution",
+              "Sample", "Amplitude",
+              (GpSeries[]){
+                  {"Direct FIR", idx, y_dir, N, "lines"},
+                  {"OLA",        idx, y_ola, N, "lines"}
+              }, 2);
+
+    gp_plot_1("ch16", "ola_error",
+              "OLA Reconstruction Error",
+              "Sample", "|Error|",
+              idx, err, N, "lines");
+
+    free(x); free(y_dir); free(y_ola); free(err); free(idx);
+}
+
+/* ================================================================== */
+/*  Chapter 18: Fixed-Point Arithmetic                                */
+/* ================================================================== */
+
+static void plot_ch18(void)
+{
+    printf("  Ch18: fixed-point SQNR ...\n");
+
+    const int N = 512;
+    double *x = (double *)malloc((size_t)N * sizeof(double));
+    gen_sine(x, N, 0.9, 440.0, 8000.0, 0.0);
+
+    /* Q15 quantisation error */
+    q15_t *xq = (q15_t *)malloc((size_t)N * sizeof(q15_t));
+    double *xr = (double *)malloc((size_t)N * sizeof(double));
+    double *qerr = (double *)malloc((size_t)N * sizeof(double));
+    double *idx  = (double *)malloc((size_t)N * sizeof(double));
+
+    double_array_to_q15(x, xq, N);
+    q15_array_to_double(xq, xr, N);
+
+    for (int i = 0; i < N; i++) {
+        qerr[i] = x[i] - xr[i];
+        idx[i] = (double)i;
+    }
+
+    gp_plot_multi("ch18", "q15_quantisation",
+              "Q15 Quantisation: Signal vs Recovered",
+              "Sample", "Amplitude",
+              (GpSeries[]){
+                  {"Original (float)", idx, x,  N, "lines"},
+                  {"Q15 recovered",    idx, xr, N, "lines"}
+              }, 2);
+
+    gp_plot_1("ch18", "q15_error",
+              "Q15 Quantisation Error",
+              "Sample", "Error",
+              idx, qerr, N, "lines");
+
+    free(x); free(xq); free(xr); free(qerr); free(idx);
+}
+
+/* ================================================================== */
+/*  Chapter 19: Advanced FFT — Goertzel & Sliding DFT                 */
+/* ================================================================== */
+
+static void plot_ch19(void)
+{
+    printf("  Ch19: Goertzel spectrum ...\n");
+
+    /* Goertzel power spectrum of a DTMF tone ('5': 770+1336 Hz) */
+    const int N = 512;
+    const double fs = 8000.0;
+    double *tone = (double *)malloc((size_t)N * sizeof(double));
+    double *tmp  = (double *)malloc((size_t)N * sizeof(double));
+    gen_sine(tone, N, 0.5, 770.0,  fs, 0.0);
+    gen_sine(tmp,  N, 0.5, 1336.0, fs, 0.0);
+    signal_add(tone, tmp, N);
+
+    /* Scan 0–4000 Hz in 10 Hz steps with Goertzel */
+    int n_pts = 400;
+    double *freq = (double *)malloc((size_t)n_pts * sizeof(double));
+    double *power = (double *)malloc((size_t)n_pts * sizeof(double));
+    for (int i = 0; i < n_pts; i++) {
+        freq[i] = (double)i * 10.0;
+        Complex G = goertzel_freq(tone, N, freq[i], fs);
+        power[i] = 10.0 * log10(G.re * G.re + G.im * G.im + 1e-30);
+    }
+
+    gp_plot_1("ch19", "goertzel_dtmf",
+              "Goertzel Spectrum - DTMF 5 (770+1336 Hz)",
+              "Frequency (Hz)", "Power (dB)",
+              freq, power, n_pts, "lines");
+
+    free(tone); free(tmp); free(freq); free(power);
+}
+
+/* ================================================================== */
 /*  Main: generate all plots                                          */
 /* ================================================================== */
 
@@ -1392,6 +1526,9 @@ int main(void)
     plot_ch13();
     plot_ch14();
     plot_ch15();
+    plot_ch16();
+    plot_ch18();
+    plot_ch19();
     plot_ch30();
 
     printf("\n  Done! All plots saved to plots/\n");

@@ -14,10 +14,10 @@ LIB_DIR := $(BUILD_DIR)/lib
 OBJ_DIR := $(BUILD_DIR)/obj
 
 # Source files
-SOURCES := src/fft.c src/filter.c src/dsp_utils.c src/signal_gen.c src/convolution.c src/iir.c src/gnuplot.c src/spectrum.c src/correlation.c
+SOURCES := src/fft.c src/filter.c src/dsp_utils.c src/signal_gen.c src/convolution.c src/iir.c src/gnuplot.c src/spectrum.c src/correlation.c src/fixed_point.c src/advanced_fft.c src/streaming.c
 OBJECTS := $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
-TESTS := tests/test_fft.c tests/test_filter.c tests/test_iir.c tests/test_spectrum_corr.c
+TESTS := tests/test_fft.c tests/test_filter.c tests/test_iir.c tests/test_spectrum_corr.c tests/test_phase4.c
 
 # Chapter demos
 CHAPTER_DEMOS := chapters/01-signals-and-sequences.c \
@@ -35,6 +35,9 @@ CHAPTER_DEMOS := chapters/01-signals-and-sequences.c \
 	chapters/13-spectral-analysis.c \
 	chapters/14-psd-welch.c \
 	chapters/15-correlation.c \
+	chapters/16-overlap-add-save.c \
+	chapters/18-fixed-point.c \
+	chapters/19-advanced-fft.c \
 	chapters/30-putting-it-together.c
 
 # Targets
@@ -66,11 +69,15 @@ debug: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
 	$(BIN_DIR)/ch13 \
 	$(BIN_DIR)/ch14 \
 	$(BIN_DIR)/ch15 \
+	$(BIN_DIR)/ch16 \
+	$(BIN_DIR)/ch18 \
+	$(BIN_DIR)/ch19 \
 	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter \
 	$(BIN_DIR)/test_iir \
 	$(BIN_DIR)/test_spectrum_corr \
+	$(BIN_DIR)/test_phase4 \
 	$(BIN_DIR)/generate_plots
 
 # Release build
@@ -90,11 +97,15 @@ release: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
 	$(BIN_DIR)/ch13 \
 	$(BIN_DIR)/ch14 \
 	$(BIN_DIR)/ch15 \
+	$(BIN_DIR)/ch16 \
+	$(BIN_DIR)/ch18 \
+	$(BIN_DIR)/ch19 \
 	$(BIN_DIR)/ch30 \
 	$(BIN_DIR)/test_fft \
 	$(BIN_DIR)/test_filter \
 	$(BIN_DIR)/test_iir \
 	$(BIN_DIR)/test_spectrum_corr \
+	$(BIN_DIR)/test_phase4 \
 	$(BIN_DIR)/generate_plots
 
 # Static library
@@ -151,6 +162,15 @@ $(BIN_DIR)/ch14: chapters/14-psd-welch.c $(OBJECTS) | $(BIN_DIR)
 $(BIN_DIR)/ch15: chapters/15-correlation.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
+$(BIN_DIR)/ch16: chapters/16-overlap-add-save.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
+
+$(BIN_DIR)/ch18: chapters/18-fixed-point.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
+
+$(BIN_DIR)/ch19: chapters/19-advanced-fft.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
+
 $(BIN_DIR)/ch30: chapters/30-putting-it-together.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
@@ -159,7 +179,7 @@ $(BIN_DIR)/generate_plots: tools/generate_plots.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
 # Build only chapter demos
-chapters: $(BIN_DIR)/ch01 $(BIN_DIR)/ch02 $(BIN_DIR)/ch03 $(BIN_DIR)/ch04 $(BIN_DIR)/ch05 $(BIN_DIR)/ch06 $(BIN_DIR)/ch07 $(BIN_DIR)/ch08 $(BIN_DIR)/ch09 $(BIN_DIR)/ch10 $(BIN_DIR)/ch11 $(BIN_DIR)/ch12 $(BIN_DIR)/ch13 $(BIN_DIR)/ch14 $(BIN_DIR)/ch15 $(BIN_DIR)/ch30
+chapters: $(BIN_DIR)/ch01 $(BIN_DIR)/ch02 $(BIN_DIR)/ch03 $(BIN_DIR)/ch04 $(BIN_DIR)/ch05 $(BIN_DIR)/ch06 $(BIN_DIR)/ch07 $(BIN_DIR)/ch08 $(BIN_DIR)/ch09 $(BIN_DIR)/ch10 $(BIN_DIR)/ch11 $(BIN_DIR)/ch12 $(BIN_DIR)/ch13 $(BIN_DIR)/ch14 $(BIN_DIR)/ch15 $(BIN_DIR)/ch16 $(BIN_DIR)/ch18 $(BIN_DIR)/ch19 $(BIN_DIR)/ch30
 
 # Tests
 $(BIN_DIR)/test_fft: tests/test_fft.c $(OBJECTS) | $(BIN_DIR)
@@ -174,8 +194,11 @@ $(BIN_DIR)/test_iir: tests/test_iir.c $(OBJECTS) | $(BIN_DIR)
 $(BIN_DIR)/test_spectrum_corr: tests/test_spectrum_corr.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) -Itests $< $(OBJECTS) $(LDFLAGS) -o $@
 
+$(BIN_DIR)/test_phase4: tests/test_phase4.c $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(CFLAGS_RELEASE) -Itests $< $(OBJECTS) $(LDFLAGS) -o $@
+
 # Run tests
-test: $(BIN_DIR)/test_fft $(BIN_DIR)/test_filter $(BIN_DIR)/test_iir $(BIN_DIR)/test_spectrum_corr
+test: $(BIN_DIR)/test_fft $(BIN_DIR)/test_filter $(BIN_DIR)/test_iir $(BIN_DIR)/test_spectrum_corr $(BIN_DIR)/test_phase4
 	@echo "=== Running FFT tests ==="
 	$(BIN_DIR)/test_fft
 	@echo "\n=== Running Filter tests ==="
@@ -184,6 +207,8 @@ test: $(BIN_DIR)/test_fft $(BIN_DIR)/test_filter $(BIN_DIR)/test_iir $(BIN_DIR)/
 	$(BIN_DIR)/test_iir
 	@echo "\n=== Running Spectrum & Correlation tests ==="
 	$(BIN_DIR)/test_spectrum_corr
+	@echo "\n=== Running Phase 4 tests ==="
+	$(BIN_DIR)/test_phase4
 
 # Run chapter demos
 run: chapters
@@ -215,6 +240,12 @@ run: chapters
 	$(BIN_DIR)/ch14
 	@echo "\n=== Ch15: Correlation ==="
 	$(BIN_DIR)/ch15
+	@echo "\n=== Ch16: Overlap-Add/Save ==="
+	$(BIN_DIR)/ch16
+	@echo "\n=== Ch18: Fixed-Point ==="
+	$(BIN_DIR)/ch18
+	@echo "\n=== Ch19: Advanced FFT ==="
+	$(BIN_DIR)/ch19
 	@echo "\n=== Ch30: Putting It Together ==="
 	$(BIN_DIR)/ch30
 

@@ -93,6 +93,9 @@ All operations support:
 | **correlation** | Cross/auto-correlation (FFT-based) | fft, dsp_utils |
 | **signal_gen** | Signal generation (sine, chirp, noise) | dsp_utils |
 | **gnuplot** | Pipe-based gnuplot plotting helpers | None (ext: gnuplot) |
+| **fixed_point** | Q15/Q31 fixed-point arithmetic, FIR | dsp_utils |
+| **advanced_fft** | Goertzel, DTMF detection, sliding DFT | fft, dsp_utils |
+| **streaming** | Overlap-Add/Save block convolution | fft, dsp_utils |
 
 ## FFT Processing Sequence
 
@@ -180,10 +183,10 @@ All operations support:
    - Ch14 PSD & Welch's Method, Ch15 Correlation & Autocorrelation
    - Spectrum & correlation libraries, gnuplot integration
 
-4. **Phase 4: Advanced Transforms** (In Progress)
-   - Ch18 Fixed-point arithmetic & quantisation
-   - Ch19 Advanced FFT (Goertzel, real-FFT, Radix-4)
-   - Ch16 Overlap-add/save streaming
+4. **Phase 4: C-Specific DSP** ✓ COMPLETE
+   - Ch16 Overlap-Add/Save streaming convolution
+   - Ch18 Fixed-point arithmetic (Q15/Q31, SQNR, FIR)
+   - Ch19 Advanced FFT (Goertzel, DTMF detection, Sliding DFT)
 
 5. **Phase 5: Applications** (Planned)
    - Adaptive filters, audio effects, modulation
