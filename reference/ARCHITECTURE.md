@@ -59,7 +59,7 @@ own subdirectory under `chapters/` with `tutorial.md`, `demo.c`, `README.md`, an
 ### Tools & Visualisation
 - `gnuplot` module — Pipe-based PNG plot generation via gnuplot
 - `generate_plots` — Batch tool that generates 70+ plots across all chapters
-- PlantUML diagrams — 4 common + 4 chapter-specific architecture diagrams
+- PlantUML diagrams — 4 common + 31 chapter-specific concept diagrams
 
 ### Build System
 - GNU Make with 39 targets (30 demos + 8 test suites + generate_plots)

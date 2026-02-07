@@ -70,7 +70,7 @@ and test coverage.
 |----|----------|------|---------|-------|-------|
 | [28](../chapters/28-real-time-streaming/) | Real-time streaming | [demo.c](../chapters/28-real-time-streaming/demo.c) | [`realtime.h`](../include/realtime.h) | [plots/](../chapters/28-real-time-streaming/plots/) (3 PNGs) | `test_phase7` (18) |
 | [29](../chapters/29-optimisation/) | DSP optimisation | [demo.c](../chapters/29-optimisation/demo.c) | [`optimization.h`](../include/optimization.h) | [plots/](../chapters/29-optimisation/plots/) (3 PNGs) | `test_phase7` (18) |
-| [30](../chapters/30-putting-it-together/) | Capstone pipeline | [demo.c](../chapters/30-putting-it-together/demo.c) | All (13 modules) | [plots/](../chapters/30-putting-it-together/plots/) (2 PNGs) | — |
+| [30](../chapters/30-putting-it-together/) | Capstone pipeline | [demo.c](../chapters/30-putting-it-together/demo.c) | All (23 modules) | [plots/](../chapters/30-putting-it-together/plots/) (2 PNGs) | — |
 
 ---
 
@@ -80,7 +80,7 @@ and test coverage.
 |----------|-------------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Layered system design, module dependencies |
 | [API.md](API.md) | Complete public function reference |
-| [diagrams/](diagrams/) | 4 common PlantUML diagrams + 4 chapter-specific |
+| [diagrams/](diagrams/) | 4 common PlantUML diagrams (31 chapter-specific in chapters/) |
 
 ## Test Summary (98 tests)
 

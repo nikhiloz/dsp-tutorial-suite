@@ -121,11 +121,9 @@ dsp-tutorial-suite/
 │   │   ├── tutorial.md       Theory with equations & exercises
 │   │   ├── demo.c            Self-contained runnable demo
 │   │   └── plots/            Generated gnuplot PNGs
-│   ├── 08-fft-fundamentals/
-│   │   ├── README.md / tutorial.md / demo.c / plots/
-│   │   ├── fft_sequence.puml     Chapter-specific diagram
-│   │   └── fft_sequence.png
 │   └── ...                   (31 chapter subdirectories)
+│       Each contains: README.md, tutorial.md, demo.c, plots/,
+│       <name>.puml + <name>.png (concept diagram)
 ├── include/          ← Public headers (23 modules)
 │   ├── dsp_utils.h       Complex type, windows, helpers
 │   ├── fft.h             FFT / IFFT API
@@ -167,7 +165,7 @@ dsp-tutorial-suite/
 │   ├── ARCHITECTURE.md
 │   ├── CHAPTER_INDEX.md
 │   ├── API.md
-│   └── diagrams/     4 common PlantUML diagrams + 4 chapter-specific
+│   └── diagrams/     4 common PlantUML diagrams (31 chapter-specific in chapters/)
 ├── Makefile          ← Primary build (39 targets)
 └── CMakeLists.txt    ← Cross-platform alternative
 ```
@@ -188,12 +186,17 @@ Architecture diagrams are split between [`reference/diagrams/`](reference/diagra
 
 ### Chapter-Specific Diagrams
 
+Every chapter (00–30) includes its own conceptual PlantUML diagram.
+Each chapter's `README.md` embeds the rendered PNG. Examples:
+
 | Diagram | Location |
 |---------|----------|
+| [Course Overview](chapters/00-overview/course_overview.png) | Ch 00 — Learning path |
+| [Signal Classification](chapters/01-signals-and-sequences/signal_classification.png) | Ch 01 — Signal taxonomy |
 | [FFT Sequence](chapters/08-fft-fundamentals/fft_sequence.png) | Ch 08 — Cooley-Tukey call flow |
-| [Signal Flow](chapters/13-spectral-analysis/signal_flow.png) | Ch 13 — Processing pipeline |
+| [Adaptive Filter Loop](chapters/23-adaptive-filters/adaptive_loop.png) | Ch 23 — LMS/NLMS/RLS |
+| [MFCC Pipeline](chapters/26-cepstrum-mfcc/mfcc_pipeline.png) | Ch 26 — Feature extraction |
 | [Real-Time Architecture](chapters/28-real-time-streaming/realtime_architecture.png) | Ch 28 — Streaming pipeline |
-| [Optimisation Roadmap](chapters/29-optimisation/optimization_roadmap.png) | Ch 29 — Performance stages |
 
 To regenerate PNGs after editing `.puml` files:
 
