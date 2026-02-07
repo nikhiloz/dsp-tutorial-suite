@@ -142,7 +142,7 @@ make clean
 
 > **📊 System Architecture** — [View full-size diagram →](../reference/diagrams/architecture.png)
 
-The toolkit is organised in layers:
+The library is organised in layers:
 
 - **Application Layer** — Your code (demos, tests, and custom programs)
 - **Core Library** — `fft.c`, `filter.c`, `dsp_utils.c`, `signal_gen.c`, `convolution.c`

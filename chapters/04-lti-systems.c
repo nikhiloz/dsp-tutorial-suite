@@ -1,5 +1,6 @@
 /**
- * Chapter 4 Demo: LTI Systems & Discrete Convolution
+ * @file 04-lti-systems.c
+ * @brief Chapter 4 Demo: LTI Systems & Discrete Convolution
  *
  * Interactive demonstrations:
  *   1. Convolution with a unit impulse (identity property)
@@ -13,7 +14,7 @@
  *   9. BIBO stability check
  *  10. Signal energy and power
  *
- * Build:  make chapters && ./build/bin/ch04s
+ * Build:  make release && ./build/bin/ch04
  *
  * References:
  *   - Oppenheim & Willsky, Signals and Systems, Ch 1-2

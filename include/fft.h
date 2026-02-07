@@ -1,6 +1,6 @@
 /**
  * @file fft.h
- * @brief Cooley-Tukey Radix-2 FFT — the heart of this toolkit.
+ * @brief Cooley-Tukey Radix-2 FFT — the core transform of this library.
  *
  * Provides forward and inverse FFT for complex and real-valued signals.
  * All sizes must be powers of 2.

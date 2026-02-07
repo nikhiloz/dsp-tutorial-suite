@@ -1,6 +1,23 @@
 /**
- * Minimal C test framework - no external dependencies
- * Simple assertion macros for unit testing
+ * @file test_framework.h
+ * @brief Minimal C test framework — zero external dependencies.
+ *
+ * Provides simple assertion macros for unit testing DSP functions.
+ * Usage pattern:
+ *
+ *   TEST_SUITE("My Tests");
+ *   TEST_CASE_BEGIN("case name");
+ *   ... assertions ...
+ *   TEST_CASE_END();
+ *   TEST_SUMMARY();
+ *
+ * Macros:
+ *   TEST_SUITE(name)        — Print suite header, reset counters.
+ *   TEST_CASE_BEGIN(name)   — Start a named test case.
+ *   TEST_CASE_END()         — Mark current test as passed.
+ *   TEST_ASSERT(cond)       — Fail if cond is false.
+ *   TEST_ASSERT_NEAR(a,b,e) — Fail if |a-b| > epsilon.
+ *   TEST_SUMMARY()          — Print pass/fail totals + exit code.
  */
 
 #ifndef TEST_FRAMEWORK_H

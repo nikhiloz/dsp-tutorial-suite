@@ -8,7 +8,7 @@ Complete architectural overview of the DSP Tutorial Suite based on PlantUML diag
 >
 > *Source: [architecture.puml](diagrams/architecture.puml)*
 
-The toolkit is organized in four layers:
+The library is organized in four layers:
 
 ### Application Layer
 - Audio Processing pipelines

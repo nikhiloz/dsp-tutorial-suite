@@ -30,7 +30,7 @@ typedef struct {
 typedef double (*window_fn)(int n, int i);
 ```
 
-`Complex` is the fundamental type used throughout the toolkit.
+`Complex` is the fundamental type used throughout the library.
 `window_fn` is a function pointer for any window function with the
 signature `double f(int window_length, int sample_index)`.
 
@@ -230,7 +230,7 @@ cc -Iinclude -o my_app my_app.c build/obj/fft.o build/obj/filter.o build/obj/dsp
 
 ```cmake
 add_subdirectory(dsp-tutorial-suite)
-target_link_libraries(my_app PRIVATE fft_dsp_static)
+target_link_libraries(my_app PRIVATE dsp_core_static)
 ```
 
 ---

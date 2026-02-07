@@ -1,5 +1,6 @@
 /**
- * Chapter 5 Demo: The Z-Transform
+ * @file 05-z-transform.c
+ * @brief Chapter 5 Demo: The Z-Transform
  *
  * Interactive demonstrations:
  *   1. Z-Transform of an FIR filter (polynomial evaluation)
@@ -10,7 +11,7 @@
  *   6. Difference equation → impulse response via Z-domain
  *   7. Time delay property: z^{-k} in action
  *
- * Build:  make chapters && ./build/bin/ch05s
+ * Build:  make release && ./build/bin/ch05
  *
  * References:
  *   - Oppenheim & Willsky, Signals and Systems, Ch 10

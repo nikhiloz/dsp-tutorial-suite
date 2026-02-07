@@ -1,5 +1,6 @@
 /**
- * Chapter 7 Demo: The Discrete Fourier Transform (DFT)
+ * @file 07-dft-theory.c
+ * @brief Chapter 7 Demo: The Discrete Fourier Transform (DFT)
  *
  * Interactive demonstrations:
  *   1. Manual 4-point DFT (matrix multiply, O(N²))
@@ -11,7 +12,7 @@
  *   7. DFT of standard signals
  *   8. Time-shift property
  *
- * Build:  make chapters && ./build/bin/ch07s
+ * Build:  make release && ./build/bin/ch07
  *
  * References:
  *   - Oppenheim & Schafer, Discrete-Time Signal Processing, Ch 4-5

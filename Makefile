@@ -77,11 +77,11 @@ release: $(OBJ_DIR) $(BIN_DIR) $(LIB_DIR) \
 	$(BIN_DIR)/test_filter
 
 # Static library
-$(LIB_DIR)/libfft_dsp.a: $(OBJECTS)
+$(LIB_DIR)/libdsp_core.a: $(OBJECTS)
 	ar rcs $@ $^
 
 # Shared library
-$(LIB_DIR)/libfft_dsp.so: $(OBJECTS)
+$(LIB_DIR)/libdsp_core.so: $(OBJECTS)
 	$(CC) -shared -fPIC $(OBJECTS) $(LDFLAGS) -o $@
 
 # Chapter demos
@@ -189,8 +189,8 @@ distclean: clean
 # Install
 install: release
 	@echo "Installing to /usr/local..."
-	mkdir -p /usr/local/include/fft_dsp /usr/local/lib
-	cp include/*.h /usr/local/include/fft_dsp/
+	mkdir -p /usr/local/include/dsp_core /usr/local/lib
+	cp include/*.h /usr/local/include/dsp_core/
 	cp $(LIB_DIR)/* /usr/local/lib/
 	ldconfig
 

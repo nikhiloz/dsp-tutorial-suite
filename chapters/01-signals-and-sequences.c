@@ -1,5 +1,6 @@
 /**
- * Chapter 1 Demo: Discrete-Time Signals & Sequences
+ * @file 01-signals-and-sequences.c
+ * @brief Chapter 1 Demo: Discrete-Time Signals & Sequences
  *
  * Generates and displays the fundamental signal types:
  *   1. Unit impulse (Kronecker delta)
@@ -11,7 +12,7 @@
  *   7. Linear chirp
  *   8. White noise + Gaussian noise
  *
- * Build:  make chapters && ./build/bin/ch01s
+ * Build:  make release && ./build/bin/ch01
  *
  * References:
  *   - Oppenheim & Willsky, Signals and Systems, Ch 1-2

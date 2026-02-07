@@ -12,8 +12,17 @@
 #include <string.h>
 
 /* ── Linear convolution ─────────────────────────────────────────── */
-
-int convolve(const double *x, int x_len,
+/*
+ * Full linear convolution: y[n] = Σ h[k] * x[n-k]
+ *
+ * Output length = x_len + h_len - 1.
+ * Direct O(N·M) implementation — educational, not FFT-accelerated.
+ *
+ *   x: [████████]          len=8
+ *   h: [▓▓▓]                len=3
+ *   y: [░░░░░░░░░░]        len=10  (= 8+3-1)
+ *       ^ h slides across x, summing element-wise products
+ */int convolve(const double *x, int x_len,
              const double *h, int h_len,
              double *y)
 {
@@ -35,6 +44,10 @@ int convolve(const double *x, int x_len,
     return y_len;
 }
 
+/*
+ * Causal convolution: like convolve() but only outputs the first x_len samples.
+ * Models a real-time FIR filter — no "future" samples used.
+ */
 void convolve_causal(const double *x, int x_len,
                      const double *h, int h_len,
                      double *y)
@@ -53,8 +66,11 @@ void convolve_causal(const double *x, int x_len,
 }
 
 /* ── Cross-correlation ──────────────────────────────────────────── */
-
-int cross_correlate(const double *x, int x_len,
+/*
+ * Cross-correlation: r_xy[lag] = Σ x[k] * y[k + lag]
+ * Used for delay estimation: the peak of r_xy gives the time offset
+ * between x and y.  Output length = x_len + y_len - 1.
+ */int cross_correlate(const double *x, int x_len,
                     const double *y, int y_len,
                     double *r)
 {
@@ -81,14 +97,14 @@ int cross_correlate(const double *x, int x_len,
     return r_len;
 }
 
+/* Auto-correlation: r_xx[lag] = cross_correlate(x, x). Peak is always at lag=0. */
 int auto_correlate(const double *x, int x_len, double *r)
 {
     return cross_correlate(x, x_len, x, x_len, r);
 }
 
 /* ── LTI system properties ──────────────────────────────────────── */
-
-int is_bibo_stable(const double *h, int h_len)
+/* BIBO stable iff Σ|h[k]| < ∞.  For finite-length h, always true unless NaN/Inf. */int is_bibo_stable(const double *h, int h_len)
 {
     double sum = 0.0;
     for (int i = 0; i < h_len; i++) {
@@ -99,6 +115,7 @@ int is_bibo_stable(const double *h, int h_len)
     return isfinite(sum) ? 1 : 0;
 }
 
+/* Signal energy E = Σ x[n]² (finite-length) */
 double signal_energy(const double *x, int x_len)
 {
     double e = 0.0;
@@ -108,6 +125,7 @@ double signal_energy(const double *x, int x_len)
     return e;
 }
 
+/* Signal power P = E / N (average energy per sample) */
 double signal_power(const double *x, int x_len)
 {
     if (x_len <= 0) return 0.0;

@@ -37,7 +37,7 @@ package "  Application Layer  " <<app>> {
     [<b>Sensor Fusion</b>\n<size:10>IMU, Accelerometer, Gyroscope</size>] as SF
 }
 
-package "  FFT-DSP Core Library  (libfft_dsp)  " <<core>> {
+package "  DSP Core Library  (libdsp_core)  " <<core>> {
     package "Signal Processing" #FFECB3 {
         [<b>FFT / IFFT</b>\n<size:10>Radix-2, Radix-4</size>\n<size:10>Real & Complex modes</size>] as FFT
         [<b>Digital Filters</b>\n<size:10>FIR & IIR</size>\n<size:10>Configurable order</size>] as FILT

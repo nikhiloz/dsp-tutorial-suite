@@ -31,62 +31,62 @@ set(DSP_SOURCES
 )
 
 # Create shared library
-add_library(fft_dsp_shared SHARED ${DSP_SOURCES})
-set_target_properties(fft_dsp_shared PROPERTIES
-    OUTPUT_NAME fft_dsp
+add_library(dsp_core_shared SHARED ${DSP_SOURCES})
+set_target_properties(dsp_core_shared PROPERTIES
+    OUTPUT_NAME dsp_core
     VERSION 1.0.0
     SOVERSION 1
 )
 
 # Create static library
-add_library(fft_dsp_static STATIC ${DSP_SOURCES})
-set_target_properties(fft_dsp_static PROPERTIES
-    OUTPUT_NAME fft_dsp
+add_library(dsp_core_static STATIC ${DSP_SOURCES})
+set_target_properties(dsp_core_static PROPERTIES
+    OUTPUT_NAME dsp_core
 )
 
 # Chapter demos
 add_executable(ch01 chapters/01-signals-and-sequences.c)
-target_link_libraries(ch01 fft_dsp_static m)
+target_link_libraries(ch01 dsp_core_static m)
 
 add_executable(ch02 chapters/02-sampling-and-aliasing.c)
-target_link_libraries(ch02 fft_dsp_static m)
+target_link_libraries(ch02 dsp_core_static m)
 
 add_executable(ch03 chapters/03-complex-numbers.c)
-target_link_libraries(ch03 fft_dsp_static m)
+target_link_libraries(ch03 dsp_core_static m)
 
 add_executable(ch04 chapters/04-lti-systems.c)
-target_link_libraries(ch04 fft_dsp_static m)
+target_link_libraries(ch04 dsp_core_static m)
 
 add_executable(ch05 chapters/05-z-transform.c)
-target_link_libraries(ch05 fft_dsp_static m)
+target_link_libraries(ch05 dsp_core_static m)
 
 add_executable(ch07 chapters/07-dft-theory.c)
-target_link_libraries(ch07 fft_dsp_static m)
+target_link_libraries(ch07 dsp_core_static m)
 
 add_executable(ch08 chapters/08-fft-fundamentals.c)
-target_link_libraries(ch08 fft_dsp_static m)
+target_link_libraries(ch08 dsp_core_static m)
 
 add_executable(ch09 chapters/09-window-functions.c)
-target_link_libraries(ch09 fft_dsp_static m)
+target_link_libraries(ch09 dsp_core_static m)
 
 add_executable(ch10 chapters/10-digital-filters.c)
-target_link_libraries(ch10 fft_dsp_static m)
+target_link_libraries(ch10 dsp_core_static m)
 
 add_executable(ch13 chapters/13-spectral-analysis.c)
-target_link_libraries(ch13 fft_dsp_static m)
+target_link_libraries(ch13 dsp_core_static m)
 
 add_executable(ch30 chapters/30-putting-it-together.c)
-target_link_libraries(ch30 fft_dsp_static m)
+target_link_libraries(ch30 dsp_core_static m)
 
 # Unit Tests (minimal framework, no external dependencies)
 add_executable(test_fft tests/test_fft.c)
 target_include_directories(test_fft PRIVATE tests)
-target_link_libraries(test_fft fft_dsp_static m)
+target_link_libraries(test_fft dsp_core_static m)
 add_test(NAME fft_tests COMMAND test_fft)
 
 add_executable(test_filter tests/test_filter.c)
 target_include_directories(test_filter PRIVATE tests)
-target_link_libraries(test_filter fft_dsp_static m)
+target_link_libraries(test_filter dsp_core_static m)
 add_test(NAME filter_tests COMMAND test_filter)
 
 # Build output directories
@@ -97,14 +97,14 @@ set_target_properties(
 )
 
 set_target_properties(
-    fft_dsp_shared fft_dsp_static
+    dsp_core_shared dsp_core_static
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
 # Installation
-install(TARGETS fft_dsp_shared fft_dsp_static
+install(TARGETS dsp_core_shared dsp_core_static
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
 )

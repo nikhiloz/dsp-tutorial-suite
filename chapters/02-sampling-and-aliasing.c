@@ -1,5 +1,6 @@
 /**
- * Chapter 2 Demo: Sampling, Aliasing & the Nyquist Theorem
+ * @file 02-sampling-and-aliasing.c
+ * @brief Chapter 2 Demo: Sampling, Aliasing & the Nyquist Theorem
  *
  * Interactive demonstrations:
  *   1. Sampling a "continuous" sine at different rates
@@ -10,7 +11,7 @@
  *   6. Quantization effects (bit-depth reduction)
  *   7. Sinc reconstruction from samples
  *
- * Build:  make chapters && ./build/bin/ch02s
+ * Build:  make release && ./build/bin/ch02
  *
  * References:
  *   - Oppenheim & Willsky, Signals and Systems, Ch 7

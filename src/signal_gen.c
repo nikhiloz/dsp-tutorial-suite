@@ -60,6 +60,7 @@ void gen_cosine(double *out, int n, double amplitude,
     }
 }
 
+/* x[n] = A * sin(ωn + φ) */
 void gen_sine(double *out, int n, double amplitude,
               double freq_hz, double sample_rate, double phase_rad)
 {
@@ -69,6 +70,7 @@ void gen_sine(double *out, int n, double amplitude,
     }
 }
 
+/* x[n] = A * e^{j(ωn + φ)} — complex exponential on the unit circle */
 void gen_complex_exp(Complex *out, int n, double amplitude,
                      double freq_hz, double sample_rate, double phase_rad)
 {
@@ -111,8 +113,7 @@ void gen_multi_tone(double *out, int n,
 }
 
 /* ── Noise ───────────────────────────────────────────────────────── */
-
-void gen_white_noise(double *out, int n, double amplitude, unsigned int seed)
+/* Uniform white noise in [-A, +A] */void gen_white_noise(double *out, int n, double amplitude, unsigned int seed)
 {
     if (seed == 0) seed = (unsigned int)time(NULL);
     srand(seed);
@@ -154,14 +155,14 @@ void gen_gaussian_noise(double *out, int n, double mean, double stddev,
 }
 
 /* ── Utility ─────────────────────────────────────────────────────── */
-
-void signal_add(double *a, const double *b, int n)
+/* Element-wise addition: a[i] += b[i] */void signal_add(double *a, const double *b, int n)
 {
     for (int i = 0; i < n; i++) {
         a[i] += b[i];
     }
 }
 
+/* Scalar multiply: x[i] *= scale */
 void signal_scale(double *x, int n, double scale)
 {
     for (int i = 0; i < n; i++) {
