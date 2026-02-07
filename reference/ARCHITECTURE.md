@@ -50,9 +50,9 @@ Four integrated subsystems:
 
 ## Signal Processing Pipeline
 
-> **📊 Signal Processing Pipeline** — [View full-size diagram →](diagrams/signal_flow.png)
+> **📊 Signal Processing Pipeline** — [View full-size diagram →](../chapters/13-spectral-analysis/signal_flow.png)
 >
-> *Source: [signal_flow.puml](diagrams/signal_flow.puml)*
+> *Source: [signal_flow.puml](../chapters/13-spectral-analysis/signal_flow.puml)*
 
 Typical DSP workflow flows through two domains:
 
@@ -110,9 +110,9 @@ All operations support:
 
 ## FFT Processing Sequence
 
-![FFT Processing Sequence](diagrams/fft_sequence.png)
+![FFT Processing Sequence](../chapters/08-fft-fundamentals/fft_sequence.png)
 
-*Source: [fft_sequence.puml](diagrams/fft_sequence.puml)*
+*Source: [fft_sequence.puml](../chapters/08-fft-fundamentals/fft_sequence.puml)*
 
 ### Key Features
 
@@ -124,9 +124,9 @@ All operations support:
 
 ## Real-Time Streaming Architecture
 
-![Real-Time Streaming Architecture](diagrams/realtime_architecture.png)
+![Real-Time Streaming Architecture](../chapters/28-real-time-streaming/realtime_architecture.png)
 
-*Source: [realtime_architecture.puml](diagrams/realtime_architecture.puml)*
+*Source: [realtime_architecture.puml](../chapters/28-real-time-streaming/realtime_architecture.puml)*
 
 ### Real-Time Guarantees
 
@@ -145,9 +145,9 @@ All operations support:
 
 ## Performance Optimization Strategy
 
-![Performance Optimization Roadmap](diagrams/optimization_roadmap.png)
+![Performance Optimization Roadmap](../chapters/29-optimisation/optimization_roadmap.png)
 
-*Source: [optimization_roadmap.puml](diagrams/optimization_roadmap.puml)*
+*Source: [optimization_roadmap.puml](../chapters/29-optimisation/optimization_roadmap.puml)*
 
 ### Five-Stage Optimization Approach
 
@@ -176,9 +176,7 @@ All operations support:
 
 ## Project Development Roadmap
 
-> **📊 Development Roadmap** — [View full-size diagram →](diagrams/roadmap.png)
 >
-> *Source: [roadmap.puml](diagrams/roadmap.puml)*
 
 ### 6-Phase Development Plan
 
@@ -247,9 +245,7 @@ All operations support:
 
 ## Performance Benchmarks
 
-> **📊 Performance Benchmarks** — [View full-size diagram →](diagrams/benchmarks.png)
 >
-> *Source: [benchmarks.puml](diagrams/benchmarks.puml)*
 
 ### Latency Comparison (1024-point FFT)
 

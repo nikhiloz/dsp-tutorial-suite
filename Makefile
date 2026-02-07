@@ -20,36 +20,36 @@ OBJECTS := $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 TESTS := tests/test_fft.c tests/test_filter.c tests/test_iir.c tests/test_spectrum_corr.c tests/test_phase4.c tests/test_phase5.c tests/test_phase6.c tests/test_phase7.c
 
 # Chapter demos
-CHAPTER_DEMOS := chapters/01-signals-and-sequences.c \
-	chapters/02-sampling-and-aliasing.c \
-	chapters/03-complex-numbers.c \
-	chapters/04-lti-systems.c \
-	chapters/05-z-transform.c \
-	chapters/06-frequency-response.c \
-	chapters/07-dft-theory.c \
-	chapters/08-fft-fundamentals.c \
-	chapters/09-window-functions.c \
-	chapters/10-digital-filters.c \
-	chapters/11-iir-filter-design.c \
-	chapters/12-filter-structures.c \
-	chapters/13-spectral-analysis.c \
-	chapters/14-psd-welch.c \
-	chapters/15-correlation.c \
-	chapters/16-overlap-add-save.c \
-	chapters/18-fixed-point.c \
-	chapters/19-advanced-fft.c \
-	chapters/20-hilbert-transform.c \
-	chapters/21-signal-averaging.c \
-	chapters/22-advanced-fir.c \
-	chapters/17-multirate-dsp.c \
-	chapters/23-adaptive-filters.c \
-	chapters/24-linear-prediction.c \
-	chapters/25-parametric-spectral.c \
-	chapters/26-cepstrum-mfcc.c \
-	chapters/27-2d-dsp.c \
-	chapters/28-real-time-streaming.c \
-	chapters/29-optimisation.c \
-	chapters/30-putting-it-together.c
+CHAPTER_DEMOS := chapters/01-signals-and-sequences/demo.c \
+	chapters/02-sampling-and-aliasing/demo.c \
+	chapters/03-complex-numbers/demo.c \
+	chapters/04-lti-systems/demo.c \
+	chapters/05-z-transform/demo.c \
+	chapters/06-frequency-response/demo.c \
+	chapters/07-dft-theory/demo.c \
+	chapters/08-fft-fundamentals/demo.c \
+	chapters/09-window-functions/demo.c \
+	chapters/10-digital-filters/demo.c \
+	chapters/11-iir-filter-design/demo.c \
+	chapters/12-filter-structures/demo.c \
+	chapters/13-spectral-analysis/demo.c \
+	chapters/14-psd-welch/demo.c \
+	chapters/15-correlation/demo.c \
+	chapters/16-overlap-add-save/demo.c \
+	chapters/18-fixed-point/demo.c \
+	chapters/19-advanced-fft/demo.c \
+	chapters/20-hilbert-transform/demo.c \
+	chapters/21-signal-averaging/demo.c \
+	chapters/22-advanced-fir/demo.c \
+	chapters/17-multirate-dsp/demo.c \
+	chapters/23-adaptive-filters/demo.c \
+	chapters/24-linear-prediction/demo.c \
+	chapters/25-parametric-spectral/demo.c \
+	chapters/26-cepstrum-mfcc/demo.c \
+	chapters/27-2d-dsp/demo.c \
+	chapters/28-real-time-streaming/demo.c \
+	chapters/29-optimisation/demo.c \
+	chapters/30-putting-it-together/demo.c
 
 # Targets
 all: release
@@ -156,94 +156,94 @@ $(LIB_DIR)/libdsp_core.so: $(OBJECTS)
 	$(CC) -shared -fPIC $(OBJECTS) $(LDFLAGS) -o $@
 
 # Chapter demos
-$(BIN_DIR)/ch01: chapters/01-signals-and-sequences.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch01: chapters/01-signals-and-sequences/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch02: chapters/02-sampling-and-aliasing.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch02: chapters/02-sampling-and-aliasing/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch03: chapters/03-complex-numbers.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch03: chapters/03-complex-numbers/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch04: chapters/04-lti-systems.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch04: chapters/04-lti-systems/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch05: chapters/05-z-transform.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch05: chapters/05-z-transform/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch06: chapters/06-frequency-response.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch06: chapters/06-frequency-response/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch07: chapters/07-dft-theory.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch07: chapters/07-dft-theory/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch08: chapters/08-fft-fundamentals.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch08: chapters/08-fft-fundamentals/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch09: chapters/09-window-functions.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch09: chapters/09-window-functions/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch10: chapters/10-digital-filters.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch10: chapters/10-digital-filters/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch11: chapters/11-iir-filter-design.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch11: chapters/11-iir-filter-design/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch12: chapters/12-filter-structures.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch12: chapters/12-filter-structures/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch13: chapters/13-spectral-analysis.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch13: chapters/13-spectral-analysis/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch14: chapters/14-psd-welch.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch14: chapters/14-psd-welch/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch15: chapters/15-correlation.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch15: chapters/15-correlation/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch16: chapters/16-overlap-add-save.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch16: chapters/16-overlap-add-save/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch18: chapters/18-fixed-point.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch18: chapters/18-fixed-point/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch19: chapters/19-advanced-fft.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch19: chapters/19-advanced-fft/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch17: chapters/17-multirate-dsp.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch17: chapters/17-multirate-dsp/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch20: chapters/20-hilbert-transform.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch20: chapters/20-hilbert-transform/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch21: chapters/21-signal-averaging.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch21: chapters/21-signal-averaging/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch22: chapters/22-advanced-fir.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch22: chapters/22-advanced-fir/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch23: chapters/23-adaptive-filters.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch23: chapters/23-adaptive-filters/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch24: chapters/24-linear-prediction.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch24: chapters/24-linear-prediction/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch25: chapters/25-parametric-spectral.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch25: chapters/25-parametric-spectral/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch26: chapters/26-cepstrum-mfcc.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch26: chapters/26-cepstrum-mfcc/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch27: chapters/27-2d-dsp.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch27: chapters/27-2d-dsp/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch28: chapters/28-real-time-streaming.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch28: chapters/28-real-time-streaming/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch29: chapters/29-optimisation.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch29: chapters/29-optimisation/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/ch30: chapters/30-putting-it-together.c $(OBJECTS) | $(BIN_DIR)
+$(BIN_DIR)/ch30: chapters/30-putting-it-together/demo.c $(OBJECTS) | $(BIN_DIR)
 	$(CC) $(CFLAGS_RELEASE) $< $(OBJECTS) $(LDFLAGS) -o $@
 
 # Plot generator
@@ -365,7 +365,7 @@ plots: $(BIN_DIR)/generate_plots
 
 # Code formatting
 format:
-	clang-format -i src/*.c include/*.h chapters/*.c tests/test_*.c
+	clang-format -i src/*.c include/*.h chapters/*/demo.c tests/test_*.c
 
 # Static analysis
 lint:

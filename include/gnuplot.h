@@ -3,7 +3,7 @@
  *
  * Provides a minimal C99 interface to generate PNG plots via gnuplot.
  * Each chapter demo calls these functions to produce publication-quality
- * visualizations stored in plots/chXX/.
+ * visualizations stored in chapters/<topic>/plots/.
  *
  * Architecture:
  *   +----------+    popen("gnuplot","w")   +---------+
@@ -11,8 +11,8 @@
  *   +----------+    inline '-' data        +---------+
  *
  * Usage:
- *   gp_init("ch01");                                // mkdir -p plots/ch01/
- *   FILE *gp = gp_open("ch01", "impulse", 800, 500);
+ *   gp_init("01-signals-and-sequences");   // mkdir -p chapters/.../plots/
+ *   FILE *gp = gp_open("01-signals-and-sequences", "impulse", 800, 500);
  *   fprintf(gp, "set title 'Unit Impulse'\n");
  *   fprintf(gp, "plot '-' w impulses lw 2 notitle\n");
  *   gp_send_y(gp, y, 16);

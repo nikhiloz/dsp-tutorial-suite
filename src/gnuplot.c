@@ -25,8 +25,9 @@
 #include <sys/types.h>
 #include <errno.h>
 
-/* ── Output directory base (relative to project root) ── */
-#define GP_BASE_DIR  "plots"
+/* ── Output directory structure ── */
+#define GP_BASE_DIR    "chapters"
+#define GP_PLOT_SUBDIR "plots"
 
 /* ── Default plot styling ── */
 #define GP_FONT      "Arial,11"
@@ -55,7 +56,8 @@ static void build_path(char *buf, int sz,
                        const char *chapter, const char *name,
                        const char *ext)
 {
-    snprintf(buf, (size_t)sz, "%s/%s/%s%s", GP_BASE_DIR, chapter, name, ext);
+    snprintf(buf, (size_t)sz, "%s/%s/%s/%s%s",
+             GP_BASE_DIR, chapter, GP_PLOT_SUBDIR, name, ext);
 }
 
 /* ── Helper: recursive mkdir (like mkdir -p) ── */
@@ -97,7 +99,7 @@ static void setup_defaults(FILE *gp)
 int gp_init(const char *chapter)
 {
     char dir[512];
-    snprintf(dir, sizeof(dir), "%s/%s", GP_BASE_DIR, chapter);
+    snprintf(dir, sizeof(dir), "%s/%s/%s", GP_BASE_DIR, chapter, GP_PLOT_SUBDIR);
     return mkdirs(dir);
 }
 

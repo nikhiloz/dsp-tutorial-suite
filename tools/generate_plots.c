@@ -145,13 +145,13 @@ static double sinc_val(double x)
 static void plot_ch01(void)
 {
     printf("  Ch01: signals ...\n");
-    gp_init("ch01");
+    gp_init("01-signals-and-sequences");
 
     /* 1. Unit impulse */
     {
         double sig[32];
         gen_impulse(sig, 32, 0);
-        gp_plot_1("ch01", "impulse", "Unit Impulse {/Symbol d}[n]",
+        gp_plot_1("01-signals-and-sequences", "impulse", "Unit Impulse {/Symbol d}[n]",
                   "Sample n", "Amplitude", NULL, sig, 32, "impulses");
     }
 
@@ -166,7 +166,7 @@ static void plot_ch01(void)
             { "Growing (1.15)^n",  NULL, grow,  20, "linespoints" },
             { "Alternating (-0.9)^n", NULL, alt, 20, "linespoints" },
         };
-        gp_plot_multi("ch01", "exponentials",
+        gp_plot_multi("01-signals-and-sequences", "exponentials",
                       "Real Exponential Signals",
                       "Sample n", "x[n]", s, 3);
     }
@@ -175,7 +175,7 @@ static void plot_ch01(void)
     {
         double sig[40];
         gen_cosine(sig, 40, 1.0, 100.0, 1000.0, 0.0);
-        gp_plot_1("ch01", "cosine", "Cosine: 100 Hz at f_s = 1000 Hz",
+        gp_plot_1("01-signals-and-sequences", "cosine", "Cosine: 100 Hz at f_s = 1000 Hz",
                   "Sample n", "x[n]", NULL, sig, 40, "linespoints");
     }
 
@@ -183,7 +183,7 @@ static void plot_ch01(void)
     {
         double sig[128];
         gen_chirp(sig, 128, 1.0, 50.0, 450.0, 1000.0);
-        gp_plot_1("ch01", "chirp", "Linear Chirp: 50 {/Symbol \\256} 450 Hz",
+        gp_plot_1("01-signals-and-sequences", "chirp", "Linear Chirp: 50 {/Symbol \\256} 450 Hz",
                   "Sample n", "x[n]", NULL, sig, 128, "lines");
     }
 
@@ -193,7 +193,7 @@ static void plot_ch01(void)
         double freqs[] = { 100.0, 250.0, 400.0 };
         double amps[]  = { 1.0,   0.5,   0.3  };
         gen_multi_tone(sig, 128, freqs, amps, 3, 1000.0);
-        gp_plot_1("ch01", "multitone",
+        gp_plot_1("01-signals-and-sequences", "multitone",
                   "Multi-tone: 100 + 250 + 400 Hz",
                   "Sample n", "x[n]", NULL, sig, 128, "lines");
     }
@@ -206,7 +206,7 @@ static void plot_ch01(void)
 static void plot_ch02(void)
 {
     printf("  Ch02: sampling ...\n");
-    gp_init("ch02");
+    gp_init("02-sampling-and-aliasing");
 
     /* 1. Aliasing: 300 Hz vs 700 Hz vs 1300 Hz at fs=1000 */
     {
@@ -219,7 +219,7 @@ static void plot_ch02(void)
             { "700 Hz (alias)",      NULL, s2, 64, "linespoints" },
             { "1300 Hz (alias)",     NULL, s3, 64, "linespoints" },
         };
-        gp_plot_multi("ch02", "aliasing",
+        gp_plot_multi("02-sampling-and-aliasing", "aliasing",
                       "Aliasing: Three Frequencies, Same Samples (f_s = 1000 Hz)",
                       "Sample n", "x[n]", s, 3);
     }
@@ -237,7 +237,7 @@ static void plot_ch02(void)
             { "4-bit Quantized",  NULL, quant, 64, "linespoints" },
             { "Quant. Error",     NULL, noise, 64, "impulses" },
         };
-        gp_plot_multi("ch02", "quantization",
+        gp_plot_multi("02-sampling-and-aliasing", "quantization",
                       "4-bit Quantization (16 levels)",
                       "Sample n", "Amplitude", s, 3);
     }
@@ -266,7 +266,7 @@ static void plot_ch02(void)
             { "Sinc Reconstruction", x_recon, recon,  nr, "lines" },
             { "True Signal",     x_recon, true_sig, nr, "lines" },
         };
-        gp_plot_multi("ch02", "reconstruction",
+        gp_plot_multi("02-sampling-and-aliasing", "reconstruction",
                       "Sinc Interpolation Reconstruction",
                       "Sample Index", "Amplitude", s, 3);
     }
@@ -279,7 +279,7 @@ static void plot_ch02(void)
 static void plot_ch03(void)
 {
     printf("  Ch03: complex numbers ...\n");
-    gp_init("ch03");
+    gp_init("03-complex-numbers");
 
     /* Twiddle factors W_8^k on unit circle */
     {
@@ -290,7 +290,7 @@ static void plot_ch03(void)
             xi[k] = sin(angle);
         }
 
-        FILE *gp = gp_open("ch03", "twiddle_factors", 600, 600);
+        FILE *gp = gp_open("03-complex-numbers", "twiddle_factors", 600, 600);
         if (gp) {
             fprintf(gp, "set title 'Twiddle Factors W_8^k on the Unit Circle'\n");
             fprintf(gp, "set xlabel 'Real'\n");
@@ -318,7 +318,7 @@ static void plot_ch03(void)
 static void plot_ch04(void)
 {
     printf("  Ch04: LTI systems ...\n");
-    gp_init("ch04");
+    gp_init("04-lti-systems");
 
     /* 1. Moving average convolution: input rect → smoothed output */
     {
@@ -331,7 +331,7 @@ static void plot_ch04(void)
             { "Input (rect pulse)",  NULL, x, 8,  "impulses" },
             { "3-pt Moving Average", NULL, y, 10, "linespoints" },
         };
-        gp_plot_multi("ch04", "convolution",
+        gp_plot_multi("04-lti-systems", "convolution",
                       "Convolution: Rectangular Pulse * Moving Average",
                       "Sample n", "Amplitude", s, 2);
     }
@@ -356,7 +356,7 @@ static void plot_ch04(void)
         GpSeries s[] = {
             { "Cross-Correlation", lags, rval, rlen, "lines" },
         };
-        gp_plot_multi("ch04", "cross_correlation",
+        gp_plot_multi("04-lti-systems", "cross_correlation",
                       "Cross-Correlation: Delay = 10 Samples",
                       "Lag (samples)", "R_{xy}[l]", s, 1);
     }
@@ -369,7 +369,7 @@ static void plot_ch04(void)
 static void plot_ch05(void)
 {
     printf("  Ch05: z-transform ...\n");
-    gp_init("ch05");
+    gp_init("05-z-transform");
 
     /* 1. Frequency response of 2-point average lowpass */
     {
@@ -384,7 +384,7 @@ static void plot_ch05(void)
             double m = complex_mag(Hz);
             mag[i] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
         }
-        gp_plot_spectrum("ch05", "lowpass_response",
+        gp_plot_spectrum("05-z-transform", "lowpass_response",
                          "Frequency Response: (1 + z^{-1})/2  (2-Point Average)",
                          freq, mag, np);
     }
@@ -420,7 +420,7 @@ static void plot_ch05(void)
             { labels[2], freq, mag2, np, "lines" },
             { labels[3], freq, mag3, np, "lines" },
         };
-        gp_plot_multi("ch05", "resonance",
+        gp_plot_multi("05-z-transform", "resonance",
                       "Resonance Sharpness vs Pole Radius ({/Symbol q} = {/Symbol p}/4)",
                       "Normalised Frequency ({/Symbol w}/{/Symbol p})",
                       "Magnitude (dB)", s, 4);
@@ -434,7 +434,7 @@ static void plot_ch05(void)
 static void plot_ch06(void)
 {
     printf("  Ch06: frequency response ...\n");
-    gp_init("ch06");
+    gp_init("06-frequency-response");
 
     /* 1. FIR vs IIR magnitude + phase */
     {
@@ -466,7 +466,7 @@ static void plot_ch06(void)
             { "FIR 5-tap",    freq, fir_mag, np, "lines" },
             { "IIR 1st-order", freq, iir_mag, np, "lines" },
         };
-        gp_plot_multi("ch06", "fir_vs_iir_magnitude",
+        gp_plot_multi("06-frequency-response", "fir_vs_iir_magnitude",
                       "FIR vs IIR: Magnitude Response",
                       "Normalised Frequency ({/Symbol w}/{/Symbol p})",
                       "Magnitude (dB)", sm, 2);
@@ -476,7 +476,7 @@ static void plot_ch06(void)
             { "FIR 5-tap",    freq, fir_phase, np, "lines" },
             { "IIR 1st-order", freq, iir_phase, np, "lines" },
         };
-        gp_plot_multi("ch06", "fir_vs_iir_phase",
+        gp_plot_multi("06-frequency-response", "fir_vs_iir_phase",
                       "FIR vs IIR: Phase Response",
                       "Normalised Frequency ({/Symbol w}/{/Symbol p})",
                       "Phase (degrees)", sp, 2);
@@ -512,7 +512,7 @@ static void plot_ch06(void)
             { labels[2], freq, m2, np, "lines" },
             { labels[3], freq, m3, np, "lines" },
         };
-        gp_plot_multi("ch06", "pole_radius_q",
+        gp_plot_multi("06-frequency-response", "pole_radius_q",
                       "Resonance Q Factor: Effect of Pole Radius",
                       "Normalised Frequency ({/Symbol w}/{/Symbol p})",
                       "Magnitude (dB)", s, 4);
@@ -556,7 +556,7 @@ static void plot_ch06(void)
             { "FIR (symmetric, constant)", freq, gd_fir, np, "lines" },
             { "IIR (1st-order, varying)",  freq, gd_iir, np, "lines" },
         };
-        gp_plot_multi("ch06", "group_delay",
+        gp_plot_multi("06-frequency-response", "group_delay",
                       "Group Delay: FIR vs IIR",
                       "Normalised Frequency ({/Symbol w}/{/Symbol p})",
                       "Group Delay (samples)", s, 2);
@@ -570,7 +570,7 @@ static void plot_ch06(void)
 static void plot_ch07(void)
 {
     printf("  Ch07: DFT theory ...\n");
-    gp_init("ch07");
+    gp_init("07-dft-theory");
 
     /* 1. DFT spectrum of 250 Hz sine at fs=2000, N=16 */
     {
@@ -586,7 +586,7 @@ static void plot_ch07(void)
             bins[k] = (double)k;
             mag[k]  = complex_mag(X[k]) / (N / 2.0);
         }
-        gp_plot_1("ch07", "dft_spectrum",
+        gp_plot_1("07-dft-theory", "dft_spectrum",
                   "16-point DFT of 250 Hz Sine (f_s = 2000 Hz)",
                   "Frequency Bin k", "|X[k]| (normalised)",
                   bins, mag, N / 2 + 1, "impulses");
@@ -622,7 +622,7 @@ static void plot_ch07(void)
             { "N = 8 (coarse)",     b8,  m8,  5,  "linespoints" },
             { "N = 32 (zero-padded)", b32, m32, 17, "linespoints" },
         };
-        gp_plot_multi("ch07", "zero_padding",
+        gp_plot_multi("07-dft-theory", "zero_padding",
                       "Zero-Padding: Spectral Interpolation",
                       "Normalised Frequency (f/f_s)",
                       "|X[k]|", s, 2);
@@ -642,7 +642,7 @@ static void plot_ch07(void)
         fft_real(alt, Xa, N);
         fft_real(cos_sig, Xc, N);
 
-        FILE *gp = gp_open("ch07", "standard_signals_dft", 900, 700);
+        FILE *gp = gp_open("07-dft-theory", "standard_signals_dft", 900, 700);
         if (gp) {
             fprintf(gp, "set multiplot layout 2,2 title "
                         "'DFT of Standard Signals (N = 16)'\n");
@@ -671,7 +671,7 @@ static void plot_ch07(void)
 static void plot_ch08(void)
 {
     printf("  Ch08: FFT fundamentals ...\n");
-    gp_init("ch08");
+    gp_init("08-fft-fundamentals");
 
     /* Two-tone: 440 Hz + 1000 Hz at fs=4000, N=256 */
     {
@@ -692,7 +692,7 @@ static void plot_ch08(void)
             mag_db[k] = (m > 1e-10) ? 20.0 * log10(m) : -100.0;
         }
 
-        FILE *gp = gp_open("ch08", "fft_two_tones", 800, 500);
+        FILE *gp = gp_open("08-fft-fundamentals", "fft_two_tones", 800, 500);
         if (gp) {
             fprintf(gp, "set title '256-Point FFT: 440 Hz + 1000 Hz'\n");
             fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
@@ -713,7 +713,7 @@ static void plot_ch08(void)
 static void plot_ch09(void)
 {
     printf("  Ch09: windows ...\n");
-    gp_init("ch09");
+    gp_init("09-window-functions");
 
     int N = 64;
     double rect[64], hann[64], hamm[64], black[64];
@@ -735,7 +735,7 @@ static void plot_ch09(void)
             { "Hamming",     NULL, hamm,  N, "lines" },
             { "Blackman",    NULL, black, N, "lines" },
         };
-        gp_plot_multi("ch09", "window_shapes",
+        gp_plot_multi("09-window-functions", "window_shapes",
                       "Window Functions (N = 64)",
                       "Sample n", "w[n]", s, 4);
     }
@@ -780,7 +780,7 @@ static void plot_ch09(void)
             { wnames[3], freq, m3, nb, "lines" },
         };
 
-        FILE *gp = gp_open("ch09", "spectral_leakage", 900, 500);
+        FILE *gp = gp_open("09-window-functions", "spectral_leakage", 900, 500);
         if (gp) {
             fprintf(gp, "set title 'Spectral Leakage: 440 Hz with Different Windows'\n");
             fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
@@ -807,14 +807,14 @@ static void plot_ch09(void)
 static void plot_ch10(void)
 {
     printf("  Ch10: FIR filters ...\n");
-    gp_init("ch10");
+    gp_init("10-digital-filters");
 
     /* 1. 31-tap lowpass kernel */
     {
         int ntaps = 31;
         double h[31];
         fir_lowpass(h, ntaps, 0.2);
-        gp_plot_1("ch10", "lowpass_kernel",
+        gp_plot_1("10-digital-filters", "lowpass_kernel",
                   "31-Tap Lowpass FIR Kernel (f_c = 0.2)",
                   "Tap n", "h[n]", NULL, h, ntaps, "impulses");
     }
@@ -837,7 +837,7 @@ static void plot_ch10(void)
             { "Noisy Signal",  NULL, noisy,    N, "lines" },
             { "Filtered (FIR)", NULL, filtered, N, "lines" },
         };
-        gp_plot_multi("ch10", "noise_reduction",
+        gp_plot_multi("10-digital-filters", "noise_reduction",
                       "FIR Lowpass Noise Reduction",
                       "Sample n", "Amplitude", s, 3);
     }
@@ -850,7 +850,7 @@ static void plot_ch10(void)
 static void plot_ch11(void)
 {
     printf("  Ch11: IIR design ...\n");
-    gp_init("ch11");
+    gp_init("11-iir-filter-design");
 
     /* 1. Butterworth LP: orders 2, 4, 6 */
     {
@@ -877,7 +877,7 @@ static void plot_ch11(void)
             { labels[1], freq, m1, np, "lines" },
             { labels[2], freq, m2, np, "lines" },
         };
-        FILE *gp = gp_open("ch11", "butterworth_orders", 800, 500);
+        FILE *gp = gp_open("11-iir-filter-design", "butterworth_orders", 800, 500);
         if (gp) {
             fprintf(gp, "set title 'Butterworth Lowpass: Order Comparison (f_c = 0.2)'\n");
             fprintf(gp, "set xlabel 'Normalised Frequency (f/f_s)'\n");
@@ -922,7 +922,7 @@ static void plot_ch11(void)
             { labels[1], freq, m1, np, "lines" },
             { labels[2], freq, m2, np, "lines" },
         };
-        FILE *gp = gp_open("ch11", "chebyshev_ripple", 800, 500);
+        FILE *gp = gp_open("11-iir-filter-design", "chebyshev_ripple", 800, 500);
         if (gp) {
             fprintf(gp, "set title 'Chebyshev Type I (Order 4, f_c = 0.2): "
                         "Ripple Comparison'\n");
@@ -959,7 +959,7 @@ static void plot_ch11(void)
             { "Noisy",   NULL, noisy,    N, "lines" },
             { "IIR Filtered", NULL, filtered, N, "lines" },
         };
-        gp_plot_multi("ch11", "iir_filtering",
+        gp_plot_multi("11-iir-filter-design", "iir_filtering",
                       "IIR Butterworth Noise Reduction (Order 4)",
                       "Sample n", "Amplitude", s, 3);
     }
@@ -972,7 +972,7 @@ static void plot_ch11(void)
 static void plot_ch12(void)
 {
     printf("  Ch12: filter structures ...\n");
-    gp_init("ch12");
+    gp_init("12-filter-structures");
 
     /* 1. DF1 vs DF2T impulse response */
     {
@@ -996,7 +996,7 @@ static void plot_ch12(void)
             { "Direct Form I",   NULL, y1, N, "linespoints" },
             { "Direct Form II Transposed", NULL, y2, N, "linespoints" },
         };
-        gp_plot_multi("ch12", "df1_vs_df2t",
+        gp_plot_multi("12-filter-structures", "df1_vs_df2t",
                       "Biquad Impulse Response: DF1 vs DF2T",
                       "Sample n", "y[n]", s, 2);
     }
@@ -1030,7 +1030,7 @@ static void plot_ch12(void)
             { "Original Coefficients",    freq, mag_orig, np, "lines" },
             { "Perturbed (+0.1%)",        freq, mag_pert, np, "lines" },
         };
-        gp_plot_multi("ch12", "coefficient_sensitivity",
+        gp_plot_multi("12-filter-structures", "coefficient_sensitivity",
                       "Coefficient Sensitivity: 0.1% Perturbation",
                       "Normalised Frequency (f/f_s)",
                       "Magnitude (dB)", s, 2);
@@ -1044,7 +1044,7 @@ static void plot_ch12(void)
 static void plot_ch13(void)
 {
     printf("  Ch13: spectral analysis ...\n");
-    gp_init("ch13");
+    gp_init("13-spectral-analysis");
 
     /* Windowed vs unwindowed spectrum: 440 + 1000 + 2500 Hz */
     {
@@ -1091,7 +1091,7 @@ static void plot_ch13(void)
             { "Rectangular (no window)", freq_axis, mag_rect, nb, "lines" },
             { "Hann Window",             freq_axis, mag_hann, nb, "lines" },
         };
-        FILE *gp = gp_open("ch13", "windowed_spectrum", 900, 500);
+        FILE *gp = gp_open("13-spectral-analysis", "windowed_spectrum", 900, 500);
         if (gp) {
             fprintf(gp, "set title 'Spectral Analysis: Rectangular vs "
                         "Hann Window'\n");
@@ -1119,7 +1119,7 @@ static void plot_ch13(void)
 static void plot_ch30(void)
 {
     printf("  Ch30: capstone pipeline ...\n");
-    gp_init("ch30");
+    gp_init("30-putting-it-together");
 
     int N = 512;
     double clean[512], noisy[512], noise[512], filtered[512];
@@ -1148,7 +1148,7 @@ static void plot_ch30(void)
             { "Noisy",    NULL, noisy,    200, "lines" },
             { "Filtered", NULL, filtered, 200, "lines" },
         };
-        gp_plot_multi("ch30", "pipeline_time",
+        gp_plot_multi("30-putting-it-together", "pipeline_time",
                       "End-to-End Pipeline: Time Domain",
                       "Sample n", "Amplitude", s, 3);
     }
@@ -1174,7 +1174,7 @@ static void plot_ch30(void)
             { "Before Filtering", freq_axis, mag_before, nb, "lines" },
             { "After Filtering",  freq_axis, mag_after,  nb, "lines" },
         };
-        FILE *gp = gp_open("ch30", "pipeline_spectrum", 900, 500);
+        FILE *gp = gp_open("30-putting-it-together", "pipeline_spectrum", 900, 500);
         if (gp) {
             fprintf(gp, "set title 'Spectrum: Before vs After Lowpass "
                         "Filtering'\n");
@@ -1256,7 +1256,7 @@ static void plot_ch14(void)
     s[1].n     = n_bins_w;
     s[1].style = "lines";
 
-    gp_plot_multi("ch14", "periodogram_vs_welch",
+    gp_plot_multi("14-psd-welch", "periodogram_vs_welch",
                   "Periodogram vs Welch PSD (500 Hz + Noise)",
                   "Frequency (Hz)", "PSD (dB)",
                   s, 2);
@@ -1265,7 +1265,7 @@ static void plot_ch14(void)
     int seg_lens[3]     = {128, 512, 2048};
     const char *labs[3] = {"128-pt", "512-pt", "2048-pt"};
 
-    FILE *gp = gp_open("ch14", "resolution_tradeoff", 900, 500);
+    FILE *gp = gp_open("14-psd-welch", "resolution_tradeoff", 900, 500);
     if (gp) {
         fprintf(gp, "set title 'Welch PSD — Segment Length vs Resolution'\n");
         fprintf(gp, "set xlabel 'Frequency (Hz)'\n");
@@ -1359,7 +1359,7 @@ static void plot_ch15(void)
         rpos[i] = r[centre + i];
     }
 
-    gp_plot_1("ch15", "autocorr_pitch",
+    gp_plot_1("15-correlation", "autocorr_pitch",
               "Autocorrelation — Pitch Detection (A4 = 440 Hz)",
               "Lag (samples)", "Normalised Autocorrelation",
               lags, rpos, plot_len, "lines");
@@ -1385,7 +1385,7 @@ static void plot_ch15(void)
         wrp[i]   = rw[cw + i - ph];
     }
 
-    gp_plot_1("ch15", "noise_autocorr",
+    gp_plot_1("15-correlation", "noise_autocorr",
               "Autocorrelation of White Noise — Impulse at Lag 0",
               "Lag (samples)", "Normalised Autocorrelation",
               wlags, wrp, pw_len, "impulses");
@@ -1428,7 +1428,7 @@ static void plot_ch16(void)
         idx[i] = (double)i;
     }
 
-    gp_plot_multi("ch16", "ola_vs_direct",
+    gp_plot_multi("16-overlap-add-save", "ola_vs_direct",
               "OLA vs Direct FIR Convolution",
               "Sample", "Amplitude",
               (GpSeries[]){
@@ -1436,7 +1436,7 @@ static void plot_ch16(void)
                   {"OLA",        idx, y_ola, N, "lines"}
               }, 2);
 
-    gp_plot_1("ch16", "ola_error",
+    gp_plot_1("16-overlap-add-save", "ola_error",
               "OLA Reconstruction Error",
               "Sample", "|Error|",
               idx, err, N, "lines");
@@ -1470,7 +1470,7 @@ static void plot_ch18(void)
         idx[i] = (double)i;
     }
 
-    gp_plot_multi("ch18", "q15_quantisation",
+    gp_plot_multi("18-fixed-point", "q15_quantisation",
               "Q15 Quantisation: Signal vs Recovered",
               "Sample", "Amplitude",
               (GpSeries[]){
@@ -1478,7 +1478,7 @@ static void plot_ch18(void)
                   {"Q15 recovered",    idx, xr, N, "lines"}
               }, 2);
 
-    gp_plot_1("ch18", "q15_error",
+    gp_plot_1("18-fixed-point", "q15_error",
               "Q15 Quantisation Error",
               "Sample", "Error",
               idx, qerr, N, "lines");
@@ -1513,7 +1513,7 @@ static void plot_ch19(void)
         power[i] = 10.0 * log10(G.re * G.re + G.im * G.im + 1e-30);
     }
 
-    gp_plot_1("ch19", "goertzel_dtmf",
+    gp_plot_1("19-advanced-fft", "goertzel_dtmf",
               "Goertzel Spectrum - DTMF 5 (770+1336 Hz)",
               "Frequency (Hz)", "Power (dB)",
               freq, power, n_pts, "lines");
@@ -1545,7 +1545,7 @@ static void plot_ch17(void)
     decimate(x, N, M, y_dec);
     for (int i = 0; i < out_len; i++) idx_dec[i] = (double)(i * M);
 
-    gp_plot_multi("ch17", "decimation",
+    gp_plot_multi("17-multirate-dsp", "decimation",
               "Decimation by 4: 300 Hz @ 8 kHz",
               "Sample", "Amplitude",
               (GpSeries[]){
@@ -1561,7 +1561,7 @@ static void plot_ch17(void)
     interpolate(x, N, L, y_int);
     for (int i = 0; i < int_len; i++) idx_int[i] = (double)i / (double)L;
 
-    gp_plot_multi("ch17", "interpolation",
+    gp_plot_multi("17-multirate-dsp", "interpolation",
               "Interpolation by 4: 300 Hz @ 8 kHz",
               "Sample (original rate)", "Amplitude",
               (GpSeries[]){
@@ -1593,7 +1593,7 @@ static void plot_ch17(void)
                                      complex_mag(H_poly[i]) + 1e-30);
     }
 
-    gp_plot_1("ch17", "polyphase_spectrum",
+    gp_plot_1("17-multirate-dsp", "polyphase_spectrum",
               "Polyphase Decimated Spectrum",
               "Normalised Frequency", "Magnitude (dB)",
               freq_ax, mag_poly, nfft / 2, "lines");
@@ -1629,7 +1629,7 @@ static void plot_ch20(void)
 
     envelope(x, N, env_hilb, 65);
 
-    gp_plot_multi("ch20", "am_envelope",
+    gp_plot_multi("20-hilbert-transform", "am_envelope",
               "Hilbert Envelope Detection — AM Signal (fc=100, fm=5 Hz)",
               "Time (ms)", "Amplitude",
               (GpSeries[]){
@@ -1650,7 +1650,7 @@ static void plot_ch20(void)
         idx[i] = (double)i / fs * 1000.0;
     }
 
-    gp_plot_multi("ch20", "inst_frequency",
+    gp_plot_multi("20-hilbert-transform", "inst_frequency",
               "Instantaneous Frequency — Linear Chirp (50→200 Hz)",
               "Time (ms)", "Frequency / Amplitude",
               (GpSeries[]){
@@ -1691,7 +1691,7 @@ static void plot_ch21(void)
     double *idx = (double *)malloc((size_t)N * sizeof(double));
     for (int i = 0; i < N; i++) idx[i] = (double)i;
 
-    gp_plot_multi("ch21", "coherent_averaging",
+    gp_plot_multi("21-signal-averaging", "coherent_averaging",
               "Coherent Averaging (32 trials, σ_noise=0.5)",
               "Sample", "Amplitude",
               (GpSeries[]){
@@ -1710,7 +1710,7 @@ static void plot_ch21(void)
     ema_filter(noisy, N, 0.1, y_ema);
     moving_average(noisy, N, 15, y_ma);
 
-    gp_plot_multi("ch21", "ema_vs_ma",
+    gp_plot_multi("21-signal-averaging", "ema_vs_ma",
               "EMA (α=0.1) vs Moving Average (M=15)",
               "Sample", "Amplitude",
               (GpSeries[]){
@@ -1729,7 +1729,7 @@ static void plot_ch21(void)
     double *y_med = (double *)malloc((size_t)N * sizeof(double));
     median_filter(corrupted, N, 5, y_med);
 
-    gp_plot_multi("ch21", "median_filter",
+    gp_plot_multi("21-signal-averaging", "median_filter",
               "Median Filter (M=5) — Impulse Noise Removal",
               "Sample", "Amplitude",
               (GpSeries[]){
@@ -1786,7 +1786,7 @@ static void plot_ch22(void)
         mag_w[i] = 20.0 * log10(mw + 1e-30);
     }
 
-    gp_plot_multi("ch22", "remez_vs_window",
+    gp_plot_multi("22-advanced-fir", "remez_vs_window",
               "Remez vs Window-Method Lowpass (51 taps, fc≈0.25)",
               "Normalised Frequency (0–0.5)", "Magnitude (dB)",
               (GpSeries[]){
@@ -1810,7 +1810,7 @@ static void plot_ch22(void)
         mag_bp[i] = 20.0 * log10(m + 1e-30);
     }
 
-    gp_plot_1("ch22", "remez_bandpass",
+    gp_plot_1("22-advanced-fir", "remez_bandpass",
               "Remez Bandpass FIR (51 taps, pass=0.2–0.35)",
               "Normalised Frequency (0–0.5)", "Magnitude (dB)",
               freq, mag_bp, half, "lines");
@@ -1826,7 +1826,7 @@ static void plot_ch22(void)
 static void plot_ch23(void)
 {
     printf("  Ch23: adaptive filters ...\n");
-    gp_init("ch23");
+    gp_init("23-adaptive-filters");
 
     /* LMS system identification — learning curve */
     {
@@ -1858,7 +1858,7 @@ static void plot_ch23(void)
                 if (j >= 0) { e2s[i] += e2[j]; cnt++; }
             e2s[i] /= cnt;
         }
-        gp_plot_1("ch23", "lms_learning",
+        gp_plot_1("23-adaptive-filters", "lms_learning",
                   "LMS Learning Curve (System Identification)",
                   "Iteration", "MSE (smoothed)", NULL, e2s, N, "lines");
         free(x); free(d); free(y); free(e); free(e2); free(e2s);
@@ -1894,7 +1894,7 @@ static void plot_ch23(void)
             { "LMS",  NULL, el2, N, "lines" },
             { "NLMS", NULL, en2, N, "lines" },
         };
-        gp_plot_multi("ch23", "lms_vs_nlms",
+        gp_plot_multi("23-adaptive-filters", "lms_vs_nlms",
                       "LMS vs NLMS Convergence",
                       "Iteration", "Squared Error", s, 2);
         free(x); free(d); free(y_l); free(y_n);
@@ -1909,7 +1909,7 @@ static void plot_ch23(void)
 static void plot_ch24(void)
 {
     printf("  Ch24: linear prediction ...\n");
-    gp_init("ch24");
+    gp_init("24-linear-prediction");
 
     /* AR spectrum at different model orders */
     {
@@ -1956,7 +1956,7 @@ static void plot_ch24(void)
             { "Order 10", freq, db10, half, "lines" },
             { "Order 20", freq, db20, half, "lines" },
         };
-        gp_plot_multi("ch24", "ar_spectrum",
+        gp_plot_multi("24-linear-prediction", "ar_spectrum",
                       "AR Spectral Envelope (Two-Tone Signal)",
                       "Normalised Frequency", "Power (dB)", s, 3);
         free(x); free(freq); free(s4); free(s10); free(s20);
@@ -1982,7 +1982,7 @@ static void plot_ch24(void)
             { "Original",      NULL, x,   N, "lines" },
             { "Reconstructed", NULL, rec, N, "lines" },
         };
-        gp_plot_multi("ch24", "lpc_roundtrip",
+        gp_plot_multi("24-linear-prediction", "lpc_roundtrip",
                       "LPC Analysis/Synthesis Round-Trip (order=10)",
                       "Sample n", "x[n]", s, 2);
         free(x); free(res); free(rec);
@@ -1996,7 +1996,7 @@ static void plot_ch24(void)
 static void plot_ch25(void)
 {
     printf("  Ch25: parametric spectral ...\n");
-    gp_init("ch25");
+    gp_init("25-parametric-spectral");
 
     /* MUSIC super-resolution */
     {
@@ -2016,7 +2016,7 @@ static void plot_ch25(void)
             freq[i] = (double)i / (double)nfft;
             spec[i] = 10.0 * log10(spec[i] + 1e-30);
         }
-        gp_plot_1("ch25", "music_spectrum",
+        gp_plot_1("25-parametric-spectral", "music_spectrum",
                   "MUSIC Pseudospectrum (f1=0.12, f2=0.14)",
                   "Normalised Frequency", "MUSIC (dB)",
                   freq, spec, half, "lines");
@@ -2055,7 +2055,7 @@ static void plot_ch25(void)
             { "Capon (MVDR)", freq, capon,  half, "lines" },
             { "FFT Periodogram", freq, fft_db, half, "lines" },
         };
-        gp_plot_multi("ch25", "capon_vs_fft",
+        gp_plot_multi("25-parametric-spectral", "capon_vs_fft",
                       "Capon vs FFT Spectrum",
                       "Normalised Frequency", "Power (dB)", s, 2);
         free(x); free(capon); free(freq); free(X); free(fft_db);
@@ -2069,7 +2069,7 @@ static void plot_ch25(void)
 static void plot_ch26(void)
 {
     printf("  Ch26: cepstrum & MFCC ...\n");
-    gp_init("ch26");
+    gp_init("26-cepstrum-mfcc");
 
     /* Real cepstrum and liftered envelope */
     {
@@ -2087,7 +2087,7 @@ static void plot_ch26(void)
         double *cep = (double *)malloc((size_t)N * sizeof(double));
         cepstrum_real(x, N, cep, N);
 
-        gp_plot_1("ch26", "cepstrum_real",
+        gp_plot_1("26-cepstrum-mfcc", "cepstrum_real",
                   "Real Cepstrum (Pulse Train + Formant Filter)",
                   "Quefrency (samples)", "Cepstral Value",
                   NULL, cep, N / 2, "lines");  /* show first half */
@@ -2100,7 +2100,7 @@ static void plot_ch26(void)
             { "Full Cepstrum", NULL, cep,      N / 2, "lines" },
             { "Liftered (L=30)", NULL, liftered, N / 2, "lines" },
         };
-        gp_plot_multi("ch26", "cepstrum_lifter",
+        gp_plot_multi("26-cepstrum-mfcc", "cepstrum_lifter",
                       "Cepstrum vs Liftered (Spectral Envelope)",
                       "Quefrency (samples)", "Value", s, 2);
 
@@ -2116,7 +2116,7 @@ static void plot_ch26(void)
         for (int i = 0; i < half; i++)
             freq[i] = (double)i * fs / (double)nfft;
 
-        FILE *gp = gp_open("ch26", "mel_filterbank", 800, 400);
+        FILE *gp = gp_open("26-cepstrum-mfcc", "mel_filterbank", 800, 400);
         if (gp) {
             fprintf(gp, "set title 'Mel Filterbank (%d filters, fs=%.0f Hz)'\n",
                     n_filters, fs);
@@ -2156,7 +2156,7 @@ static void plot_ch26(void)
 static void plot_ch27(void)
 {
     printf("  Ch27: 2D DSP ...\n");
-    gp_init("ch27");
+    gp_init("27-2d-dsp");
 
     /* 2D test image: gradient + circle */
     int rows = 64, cols = 64;
@@ -2175,7 +2175,7 @@ static void plot_ch27(void)
         double *out = (double *)malloc((size_t)(rows * cols) * sizeof(double));
         conv2d(img, rows, cols, kernel, 5, 5, out);
 
-        FILE *gp = gp_open("ch27", "gaussian_blur", 600, 500);
+        FILE *gp = gp_open("27-2d-dsp", "gaussian_blur", 600, 500);
         if (gp) {
             fprintf(gp, "set title 'Gaussian Blur (5x5, σ=1.5)'\n");
             fprintf(gp, "set pm3d map\nset palette grey\n");
@@ -2197,7 +2197,7 @@ static void plot_ch27(void)
         double *mag = (double *)malloc((size_t)(rows * cols) * sizeof(double));
         sobel_magnitude(img, rows, cols, mag);
 
-        FILE *gp = gp_open("ch27", "sobel_edges", 600, 500);
+        FILE *gp = gp_open("27-2d-dsp", "sobel_edges", 600, 500);
         if (gp) {
             fprintf(gp, "set title 'Sobel Edge Detection'\n");
             fprintf(gp, "set pm3d map\nset palette grey\n");
@@ -2222,7 +2222,7 @@ static void plot_ch27(void)
 static void plot_ch28(void)
 {
     printf("  Ch28: Real-Time Streaming ...\n");
-    gp_init("ch28");
+    gp_init("28-real-time-streaming");
 
     /* Ring buffer fill level over time */
     {
@@ -2244,7 +2244,7 @@ static void plot_ch28(void)
             x[i] = (double)i;
             y[i] = (double)ring_buffer_available(rb);
         }
-        gp_plot_1("ch28", "ring_buffer_fill",
+        gp_plot_1("28-real-time-streaming", "ring_buffer_fill",
                   "Ring Buffer Fill Level Over Time",
                   "Iteration", "Samples in Buffer",
                   x, y, n_pts, "lines");
@@ -2270,7 +2270,7 @@ static void plot_ch28(void)
                 fi++;
             }
         }
-        gp_plot_1("ch28", "streaming_fft_peak",
+        gp_plot_1("28-real-time-streaming", "streaming_fft_peak",
                   "Streaming FFT: Peak Frequency per Frame",
                   "Frame", "Frequency (Hz)",
                   fx, fy, fi, "linespoints");
@@ -2284,7 +2284,7 @@ static void plot_ch28(void)
 static void plot_ch29(void)
 {
     printf("  Ch29: Optimisation ...\n");
-    gp_init("ch29");
+    gp_init("29-optimisation");
 
     /* Benchmark: radix-2 vs radix-4 throughput across sizes */
     {
@@ -2298,7 +2298,7 @@ static void plot_ch29(void)
             y_r2[i] = r2.mflops;
             y_r4[i] = r4.mflops;
         }
-        FILE *gp = gp_open("ch29", "radix_comparison", 640, 480);
+        FILE *gp = gp_open("29-optimisation", "radix_comparison", 640, 480);
         if (gp) {
             fprintf(gp, "set title 'FFT Throughput: Radix-2 vs Radix-4'\n");
             fprintf(gp, "set xlabel 'log2(N)'\nset ylabel 'MFLOP/s'\n");
@@ -2336,7 +2336,7 @@ static void plot_ch29(void)
         twiddle_destroy(tt);
         free(buf);
 
-        gp_plot_1("ch29", "twiddle_speedup",
+        gp_plot_1("29-optimisation", "twiddle_speedup",
                   "FFT Timing: Direct sin/cos vs Twiddle Table (N=1024)",
                   "Method (0=Direct, 1=Twiddle)", "Average Time (us)",
                   x_vals, y_vals, 2, "boxes");

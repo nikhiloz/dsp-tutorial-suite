@@ -3,7 +3,7 @@
 Quick-reference linking each chapter to its tutorial, demo, library modules, plots,
 and test coverage.
 
-> Regenerate plot PNGs with `make plots`. Rebuild all demos with `make release`.
+> Rebuild all demos with `make release`. Run tests with `make test`.
 
 ---
 
@@ -11,66 +11,66 @@ and test coverage.
 
 | Ch | Tutorial | Demo | Library | Plots | Tests |
 |----|----------|------|---------|-------|-------|
-| [01](../chapters/01-signals-and-sequences.md) | Discrete-time signals | [`ch01`](../chapters/01-signals-and-sequences.c) | [`signal_gen.h`](../include/signal_gen.h) | [plots/ch01/](../plots/ch01/) (5 PNGs) | — |
-| [02](../chapters/02-sampling-and-aliasing.md) | Sampling & aliasing | [`ch02`](../chapters/02-sampling-and-aliasing.c) | — | [plots/ch02/](../plots/ch02/) (3 PNGs) | — |
-| [03](../chapters/03-complex-numbers.md) | Complex numbers | [`ch03`](../chapters/03-complex-numbers.c) | [`dsp_utils.h`](../include/dsp_utils.h) | [plots/ch03/](../plots/ch03/) (1 PNG) | — |
-| [04](../chapters/04-lti-systems.md) | LTI systems | [`ch04`](../chapters/04-lti-systems.c) | [`convolution.h`](../include/convolution.h) | [plots/ch04/](../plots/ch04/) (2 PNGs) | — |
+| [01](../chapters/01-signals-and-sequences/) | Discrete-time signals | [demo.c](../chapters/01-signals-and-sequences/demo.c) | [`signal_gen.h`](../include/signal_gen.h) | [plots/](../chapters/01-signals-and-sequences/plots/) (5 PNGs) | — |
+| [02](../chapters/02-sampling-and-aliasing/) | Sampling & aliasing | [demo.c](../chapters/02-sampling-and-aliasing/demo.c) | — | [plots/](../chapters/02-sampling-and-aliasing/plots/) (3 PNGs) | — |
+| [03](../chapters/03-complex-numbers/) | Complex numbers | [demo.c](../chapters/03-complex-numbers/demo.c) | [`dsp_utils.h`](../include/dsp_utils.h) | [plots/](../chapters/03-complex-numbers/plots/) (1 PNG) | — |
+| [04](../chapters/04-lti-systems/) | LTI systems | [demo.c](../chapters/04-lti-systems/demo.c) | [`convolution.h`](../include/convolution.h) | [plots/](../chapters/04-lti-systems/plots/) (2 PNGs) | — |
 
 ## Part II — Transform Domain
 
 | Ch | Tutorial | Demo | Library | Plots | Tests |
 |----|----------|------|---------|-------|-------|
-| [05](../chapters/05-z-transform.md) | Z-Transform | [`ch05`](../chapters/05-z-transform.c) | — | [plots/ch05/](../plots/ch05/) (2 PNGs) | — |
-| [06](../chapters/06-frequency-response.md) | Frequency response | [`ch06`](../chapters/06-frequency-response.c) | [`iir.h`](../include/iir.h) | [plots/ch06/](../plots/ch06/) (4 PNGs) | — |
-| [07](../chapters/07-dft-theory.md) | DFT theory | [`ch07`](../chapters/07-dft-theory.c) | — | [plots/ch07/](../plots/ch07/) (3 PNGs) | — |
-| [08](../chapters/08-fft-fundamentals.md) | FFT algorithms | [`ch08`](../chapters/08-fft-fundamentals.c) | [`fft.h`](../include/fft.h) | [plots/ch08/](../plots/ch08/) (1 PNG) | `test_fft` (6) |
-| [09](../chapters/09-window-functions.md) | Window functions | [`ch09`](../chapters/09-window-functions.c) | [`dsp_utils.h`](../include/dsp_utils.h) | [plots/ch09/](../plots/ch09/) (2 PNGs) | — |
+| [05](../chapters/05-z-transform/) | Z-Transform | [demo.c](../chapters/05-z-transform/demo.c) | — | [plots/](../chapters/05-z-transform/plots/) (2 PNGs) | — |
+| [06](../chapters/06-frequency-response/) | Frequency response | [demo.c](../chapters/06-frequency-response/demo.c) | [`iir.h`](../include/iir.h) | [plots/](../chapters/06-frequency-response/plots/) (4 PNGs) | — |
+| [07](../chapters/07-dft-theory/) | DFT theory | [demo.c](../chapters/07-dft-theory/demo.c) | — | [plots/](../chapters/07-dft-theory/plots/) (3 PNGs) | — |
+| [08](../chapters/08-fft-fundamentals/) | FFT algorithms | [demo.c](../chapters/08-fft-fundamentals/demo.c) | [`fft.h`](../include/fft.h) | [plots/](../chapters/08-fft-fundamentals/plots/) (1 PNG) | `test_fft` (6) |
+| [09](../chapters/09-window-functions/) | Window functions | [demo.c](../chapters/09-window-functions/demo.c) | [`dsp_utils.h`](../include/dsp_utils.h) | [plots/](../chapters/09-window-functions/plots/) (2 PNGs) | — |
 
 ## Part III — Filter Design
 
 | Ch | Tutorial | Demo | Library | Plots | Tests |
 |----|----------|------|---------|-------|-------|
-| [10](../chapters/10-digital-filters.md) | FIR filter design | [`ch10`](../chapters/10-digital-filters.c) | [`filter.h`](../include/filter.h) | [plots/ch10/](../plots/ch10/) (2 PNGs) | `test_filter` (6) |
-| [11](../chapters/11-iir-filter-design.md) | IIR filter design | [`ch11`](../chapters/11-iir-filter-design.c) | [`iir.h`](../include/iir.h) | [plots/ch11/](../plots/ch11/) (3 PNGs) | `test_iir` (10) |
-| [12](../chapters/12-filter-structures.md) | Filter structures | [`ch12`](../chapters/12-filter-structures.c) | — | [plots/ch12/](../plots/ch12/) (2 PNGs) | — |
+| [10](../chapters/10-digital-filters/) | FIR filter design | [demo.c](../chapters/10-digital-filters/demo.c) | [`filter.h`](../include/filter.h) | [plots/](../chapters/10-digital-filters/plots/) (2 PNGs) | `test_filter` (6) |
+| [11](../chapters/11-iir-filter-design/) | IIR filter design | [demo.c](../chapters/11-iir-filter-design/demo.c) | [`iir.h`](../include/iir.h) | [plots/](../chapters/11-iir-filter-design/plots/) (3 PNGs) | `test_iir` (10) |
+| [12](../chapters/12-filter-structures/) | Filter structures | [demo.c](../chapters/12-filter-structures/demo.c) | — | [plots/](../chapters/12-filter-structures/plots/) (2 PNGs) | — |
 
 ## Part IV — Analysis
 
 | Ch | Tutorial | Demo | Library | Plots | Tests |
 |----|----------|------|---------|-------|-------|
-| [13](../chapters/13-spectral-analysis.md) | Spectral analysis | [`ch13`](../chapters/13-spectral-analysis.c) | [`spectrum.h`](../include/spectrum.h) | [plots/ch13/](../plots/ch13/) (1 PNG) | — |
-| [14](../chapters/14-psd-welch.md) | PSD & Welch's method | [`ch14`](../chapters/14-psd-welch.c) | [`spectrum.h`](../include/spectrum.h) | [plots/ch14/](../plots/ch14/) (7 PNGs) | `test_spectrum_corr` (12) |
-| [15](../chapters/15-correlation.md) | Correlation | [`ch15`](../chapters/15-correlation.c) | [`correlation.h`](../include/correlation.h) | [plots/ch15/](../plots/ch15/) (5 PNGs) | `test_spectrum_corr` (12) |
+| [13](../chapters/13-spectral-analysis/) | Spectral analysis | [demo.c](../chapters/13-spectral-analysis/demo.c) | [`spectrum.h`](../include/spectrum.h) | [plots/](../chapters/13-spectral-analysis/plots/) (1 PNG) | — |
+| [14](../chapters/14-psd-welch/) | PSD & Welch's method | [demo.c](../chapters/14-psd-welch/demo.c) | [`spectrum.h`](../include/spectrum.h) | [plots/](../chapters/14-psd-welch/plots/) (7 PNGs) | `test_spectrum_corr` (12) |
+| [15](../chapters/15-correlation/) | Correlation | [demo.c](../chapters/15-correlation/demo.c) | [`correlation.h`](../include/correlation.h) | [plots/](../chapters/15-correlation/plots/) (5 PNGs) | `test_spectrum_corr` (12) |
 
 ## Part V — Advanced UG
 
 | Ch | Tutorial | Demo | Library | Plots | Tests |
 |----|----------|------|---------|-------|-------|
-| [16](../chapters/16-overlap-add-save.md) | Overlap-Add/Save | [`ch16`](../chapters/16-overlap-add-save.c) | [`streaming.h`](../include/streaming.h) | [plots/ch16/](../plots/ch16/) (3 PNGs) | `test_phase4` (12) |
-| [17](../chapters/17-multirate-dsp.md) | Multirate DSP | [`ch17`](../chapters/17-multirate-dsp.c) | [`multirate.h`](../include/multirate.h) | [plots/ch17/](../plots/ch17/) (3 PNGs) | `test_phase5` (15) |
-| [18](../chapters/18-fixed-point.md) | Fixed-point arithmetic | [`ch18`](../chapters/18-fixed-point.c) | [`fixed_point.h`](../include/fixed_point.h) | [plots/ch18/](../plots/ch18/) (5 PNGs) | `test_phase4` (12) |
-| [19](../chapters/19-advanced-fft.md) | Advanced FFT | [`ch19`](../chapters/19-advanced-fft.c) | [`advanced_fft.h`](../include/advanced_fft.h) | [plots/ch19/](../plots/ch19/) (3 PNGs) | `test_phase4` (12) |
-| [20](../chapters/20-hilbert-transform.md) | Hilbert transform | [`ch20`](../chapters/20-hilbert-transform.c) | [`hilbert.h`](../include/hilbert.h) | [plots/ch20/](../plots/ch20/) (2 PNGs) | `test_phase5` (15) |
-| [21](../chapters/21-signal-averaging.md) | Signal averaging | [`ch21`](../chapters/21-signal-averaging.c) | [`averaging.h`](../include/averaging.h) | [plots/ch21/](../plots/ch21/) (3 PNGs) | `test_phase5` (15) |
-| [22](../chapters/22-advanced-fir.md) | Advanced FIR (Remez) | [`ch22`](../chapters/22-advanced-fir.c) | [`remez.h`](../include/remez.h) | [plots/ch22/](../plots/ch22/) (2 PNGs) | `test_phase5` (15) |
+| [16](../chapters/16-overlap-add-save/) | Overlap-Add/Save | [demo.c](../chapters/16-overlap-add-save/demo.c) | [`streaming.h`](../include/streaming.h) | [plots/](../chapters/16-overlap-add-save/plots/) (3 PNGs) | `test_phase4` (12) |
+| [17](../chapters/17-multirate-dsp/) | Multirate DSP | [demo.c](../chapters/17-multirate-dsp/demo.c) | [`multirate.h`](../include/multirate.h) | [plots/](../chapters/17-multirate-dsp/plots/) (3 PNGs) | `test_phase5` (15) |
+| [18](../chapters/18-fixed-point/) | Fixed-point arithmetic | [demo.c](../chapters/18-fixed-point/demo.c) | [`fixed_point.h`](../include/fixed_point.h) | [plots/](../chapters/18-fixed-point/plots/) (5 PNGs) | `test_phase4` (12) |
+| [19](../chapters/19-advanced-fft/) | Advanced FFT | [demo.c](../chapters/19-advanced-fft/demo.c) | [`advanced_fft.h`](../include/advanced_fft.h) | [plots/](../chapters/19-advanced-fft/plots/) (3 PNGs) | `test_phase4` (12) |
+| [20](../chapters/20-hilbert-transform/) | Hilbert transform | [demo.c](../chapters/20-hilbert-transform/demo.c) | [`hilbert.h`](../include/hilbert.h) | [plots/](../chapters/20-hilbert-transform/plots/) (2 PNGs) | `test_phase5` (15) |
+| [21](../chapters/21-signal-averaging/) | Signal averaging | [demo.c](../chapters/21-signal-averaging/demo.c) | [`averaging.h`](../include/averaging.h) | [plots/](../chapters/21-signal-averaging/plots/) (3 PNGs) | `test_phase5` (15) |
+| [22](../chapters/22-advanced-fir/) | Advanced FIR (Remez) | [demo.c](../chapters/22-advanced-fir/demo.c) | [`remez.h`](../include/remez.h) | [plots/](../chapters/22-advanced-fir/plots/) (2 PNGs) | `test_phase5` (15) |
 
 ## Part VI — Postgraduate
 
 | Ch | Tutorial | Demo | Library | Plots | Tests |
 |----|----------|------|---------|-------|-------|
-| [23](../chapters/23-adaptive-filters.md) | Adaptive filters | [`ch23`](../chapters/23-adaptive-filters.c) | [`adaptive.h`](../include/adaptive.h) | [plots/ch23/](../plots/ch23/) (2 PNGs) | `test_phase6` (19) |
-| [24](../chapters/24-linear-prediction.md) | Linear prediction | [`ch24`](../chapters/24-linear-prediction.c) | [`lpc.h`](../include/lpc.h) | [plots/ch24/](../plots/ch24/) (2 PNGs) | `test_phase6` (19) |
-| [25](../chapters/25-parametric-spectral.md) | Parametric spectral | [`ch25`](../chapters/25-parametric-spectral.c) | [`spectral_est.h`](../include/spectral_est.h) | [plots/ch25/](../plots/ch25/) (2 PNGs) | `test_phase6` (19) |
-| [26](../chapters/26-cepstrum-mfcc.md) | Cepstrum & MFCC | [`ch26`](../chapters/26-cepstrum-mfcc.c) | [`cepstrum.h`](../include/cepstrum.h) | [plots/ch26/](../plots/ch26/) (3 PNGs) | `test_phase6` (19) |
-| [27](../chapters/27-2d-dsp.md) | 2-D DSP | [`ch27`](../chapters/27-2d-dsp.c) | [`dsp2d.h`](../include/dsp2d.h) | [plots/ch27/](../plots/ch27/) (2 PNGs) | `test_phase6` (19) |
+| [23](../chapters/23-adaptive-filters/) | Adaptive filters | [demo.c](../chapters/23-adaptive-filters/demo.c) | [`adaptive.h`](../include/adaptive.h) | [plots/](../chapters/23-adaptive-filters/plots/) (2 PNGs) | `test_phase6` (19) |
+| [24](../chapters/24-linear-prediction/) | Linear prediction | [demo.c](../chapters/24-linear-prediction/demo.c) | [`lpc.h`](../include/lpc.h) | [plots/](../chapters/24-linear-prediction/plots/) (2 PNGs) | `test_phase6` (19) |
+| [25](../chapters/25-parametric-spectral/) | Parametric spectral | [demo.c](../chapters/25-parametric-spectral/demo.c) | [`spectral_est.h`](../include/spectral_est.h) | [plots/](../chapters/25-parametric-spectral/plots/) (2 PNGs) | `test_phase6` (19) |
+| [26](../chapters/26-cepstrum-mfcc/) | Cepstrum & MFCC | [demo.c](../chapters/26-cepstrum-mfcc/demo.c) | [`cepstrum.h`](../include/cepstrum.h) | [plots/](../chapters/26-cepstrum-mfcc/plots/) (3 PNGs) | `test_phase6` (19) |
+| [27](../chapters/27-2d-dsp/) | 2-D DSP | [demo.c](../chapters/27-2d-dsp/demo.c) | [`dsp2d.h`](../include/dsp2d.h) | [plots/](../chapters/27-2d-dsp/plots/) (2 PNGs) | `test_phase6` (19) |
 
 ## Part VII — Applied / Capstone
 
 | Ch | Tutorial | Demo | Library | Plots | Tests |
 |----|----------|------|---------|-------|-------|
-| [28](../chapters/28-real-time-streaming.md) | Real-time streaming | [`ch28`](../chapters/28-real-time-streaming.c) | [`realtime.h`](../include/realtime.h) | [plots/ch28/](../plots/ch28/) (2 PNGs) | `test_phase7` (18) |
-| [29](../chapters/29-optimisation.md) | DSP optimisation | [`ch29`](../chapters/29-optimisation.c) | [`optimization.h`](../include/optimization.h) | [plots/ch29/](../plots/ch29/) (2 PNGs) | `test_phase7` (18) |
-| [30](../chapters/30-putting-it-together.md) | Capstone pipeline | [`ch30`](../chapters/30-putting-it-together.c) | All (13 modules) | [plots/ch30/](../plots/ch30/) (2 PNGs) | — |
+| [28](../chapters/28-real-time-streaming/) | Real-time streaming | [demo.c](../chapters/28-real-time-streaming/demo.c) | [`realtime.h`](../include/realtime.h) | [plots/](../chapters/28-real-time-streaming/plots/) (3 PNGs) | `test_phase7` (18) |
+| [29](../chapters/29-optimisation/) | DSP optimisation | [demo.c](../chapters/29-optimisation/demo.c) | [`optimization.h`](../include/optimization.h) | [plots/](../chapters/29-optimisation/plots/) (3 PNGs) | `test_phase7` (18) |
+| [30](../chapters/30-putting-it-together/) | Capstone pipeline | [demo.c](../chapters/30-putting-it-together/demo.c) | All (13 modules) | [plots/](../chapters/30-putting-it-together/plots/) (2 PNGs) | — |
 
 ---
 
@@ -78,9 +78,9 @@ and test coverage.
 
 | Document | Description |
 |----------|-------------|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Layered system design, module dependencies, roadmap |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Layered system design, module dependencies |
 | [API.md](API.md) | Complete public function reference |
-| [diagrams/](diagrams/) | 10 PlantUML system diagrams (architecture, signal flow, modules, etc.) |
+| [diagrams/](diagrams/) | 4 common PlantUML diagrams + 4 chapter-specific |
 
 ## Test Summary (98 tests)
 

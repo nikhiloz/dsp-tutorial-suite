@@ -2,192 +2,216 @@
 
 skinparam backgroundColor #FEFEFE
 skinparam defaultFontName "Segoe UI"
-skinparam defaultFontSize 12
+skinparam defaultFontSize 11
 skinparam shadowing true
 skinparam roundcorner 10
 
 skinparam class {
-    BorderThickness 2
+    BorderThickness 1.5
     FontColor #263238
-    AttributeFontSize 11
+    AttributeFontSize 10
 }
 
-title <size:20><b>Public API Reference</b></size>\n<size:14><color:#546E7A>Complete C API — all public types and functions</color></size>
+title <size:20><b>Public API Reference</b></size>\n<size:14><color:#546E7A>Complete C API — 23 headers, ~150 public functions</color></size>
 
-package "fft.h — Transform Module" #E3F2FD {
-    class "<size:14><b>Complex</b></size>" as Complex #BBDEFB {
-        <b>Fields</b>
+package "Foundation (Phase 1)" #E8F5E9 {
+    class "<b>dsp_utils.h</b>" as UTILS #C8E6C9 {
+        <b>Types</b>: Complex, window_fn
         --
-        double real
-        double imag
+        complex_add / sub / mul / mag / phase
+        complex_from_polar
+        hann_window / hamming_window / blackman_window
+        apply_window
+        next_power_of_2 / db_from_magnitude / rms
     }
 
-    class "<size:14><b>FFT Functions</b></size>" as FFTFuncs #BBDEFB {
-        <b>Core Transforms</b>
-        --
-        + void fft(Complex* x, int n)
-        + void ifft(Complex* x, int n)
-        + void fft_real(double* in, Complex* out, int n)
-        ..
-        <b>Feature Extraction</b>
-        --
-        + void fft_magnitude(Complex* x, double* mag, int n)
-        + void fft_phase(Complex* x, double* phase, int n)
-        + void fft_power(Complex* x, double* power, int n)
-        ..
-        <b>Utilities</b>
-        --
-        + int fft_next_pow2(int n)
-        + void fft_shift(Complex* x, int n)
-    }
-}
-
-package "filter.h — Filter Module" #FFF3E0 {
-    class "<size:14><b>FIRFilter</b></size>" as FIR #FFECB3 {
-        <b>Fields</b>
-        --
-        double* coefficients
-        double* delay_line
-        int order
-        int write_idx
+    class "<b>signal_gen.h</b>" as SIGGEN #C8E6C9 {
+        gen_impulse / gen_step / gen_exponential
+        gen_cosine / gen_sine / gen_complex_exp
+        gen_chirp / gen_multi_tone
+        gen_white_noise / gen_gaussian_noise
+        signal_add / signal_scale
     }
 
-    class "<size:14><b>IIRFilter</b></size>" as IIR #FFECB3 {
-        <b>Fields</b>
-        --
-        double* b_coeffs  // numerator
-        double* a_coeffs  // denominator
-        double* state
-        int order
-    }
-
-    class "<size:14><b>Filter Functions</b></size>" as FilterFuncs #FFECB3 {
-        <b>FIR Operations</b>
-        --
-        + void fir_filter(double* in, double* out, int n, double* h, int order)
-        + FIRFilter* fir_create(double* coeffs, int order)
-        + double fir_process_sample(FIRFilter* f, double x)
-        + void fir_destroy(FIRFilter* f)
-        ..
-        <b>IIR Operations</b>
-        --
-        + IIRFilter* iir_create(double* b, double* a, int order)
-        + double iir_process_sample(IIRFilter* f, double x)
-        + void iir_destroy(IIRFilter* f)
-        ..
-        <b>Filter Design</b>
-        --
-        + void lowpass_coeffs(double* h, int order, double fc, double fs)
-        + void highpass_coeffs(double* h, int order, double fc, double fs)
-        + void bandpass_coeffs(double* h, int order, double f1, double f2, double fs)
+    class "<b>convolution.h</b>" as CONV #C8E6C9 {
+        convolve / convolve_causal
+        cross_correlate / auto_correlate
+        is_bibo_stable / signal_energy / signal_power
     }
 }
 
-package "dsp_utils.h — Utilities" #E8F5E9 {
-    enum "<size:14><b>WindowType</b></size>" as WinType #C8E6C9 {
-        WINDOW_HANN
-        WINDOW_HAMMING
-        WINDOW_BLACKMAN
-        WINDOW_KAISER
-        WINDOW_RECTANGULAR
+package "Transforms (Phase 2)" #E3F2FD {
+    class "<b>fft.h</b>" as FFT #BBDEFB {
+        fft / ifft / fft_real
+        fft_magnitude / fft_phase
     }
 
-    class "<size:14><b>Window Functions</b></size>" as WinFuncs #C8E6C9 {
-        <b>Individual Windows</b>
+    class "<b>advanced_fft.h</b>" as AFFT #BBDEFB {
+        <b>Types</b>: SlidingDFT
         --
-        + double hann_window(int n, int i)
-        + double hamming_window(int n, int i)
-        + double blackman_window(int n, int i)
-        + double kaiser_window(int n, int i, double beta)
-        ..
-        <b>Batch Apply</b>
-        --
-        + void apply_window(double* signal, int n, WindowType type)
-        + void generate_window(double* w, int n, WindowType type)
-        ..
-        <b>Utilities</b>
-        --
-        + int next_power_of_2(int n)
-        + double db_to_linear(double db)
-        + double linear_to_db(double linear)
-        + double rms(double* signal, int n)
+        goertzel / goertzel_magnitude_sq / goertzel_freq
+        dtmf_detect
+        sliding_dft_init / update / free
     }
 }
 
-package "spectrum.h — Analysis" #F3E5F5 {
-    class "<size:14><b>SpectrumConfig</b></size>" as SpecCfg #E1BEE7 {
-        <b>Fields</b>
-        --
-        int fft_size
-        int overlap
-        WindowType window
-        double sample_rate
+package "Spectral Analysis (Phase 2-4)" #F3E5F5 {
+    class "<b>spectrum.h</b>" as SPEC #E1BEE7 {
+        periodogram / periodogram_windowed
+        welch_psd / cross_psd
+        psd_to_db / psd_freq_axis
     }
 
-    class "<size:14><b>SpectralPeak</b></size>" as Peak #E1BEE7 {
-        <b>Fields</b>
-        --
-        double frequency
-        double magnitude_db
-        int bin_index
+    class "<b>spectral_est.h</b>" as SEST #E1BEE7 {
+        correlation_matrix / eigen_symmetric
+        music_spectrum / music_frequencies
+        capon_spectrum
     }
 
-    class "<size:14><b>Spectrum Functions</b></size>" as SpecFuncs #E1BEE7 {
-        <b>Spectral Analysis</b>
-        --
-        + void power_spectrum(double* x, double* psd, int n, SpectrumConfig* cfg)
-        + void welch_psd(double* x, int total_n, double* psd, SpectrumConfig* cfg)
-        + int peak_detect(double* psd, int n, SpectralPeak* peaks, int max_peaks, double threshold_db)
-        ..
-        <b>Frequency Utilities</b>
-        --
-        + double bin_to_freq(int bin, int fft_size, double fs)
-        + int freq_to_bin(double freq, int fft_size, double fs)
-        + double spectral_centroid(double* psd, int n, double fs)
+    class "<b>cepstrum.h</b>" as CEPS #E1BEE7 {
+        cepstrum_real / cepstrum_complex
+        cepstrum_lifter
+        hz_to_mel / mel_to_hz
+        mel_filterbank / compute_mfcc / dct_ii
     }
 }
 
-package "ring_buffer.h — Streaming" #E0F7FA {
-    class "<size:14><b>RingBuffer</b></size>" as RBuf #B2EBF2 {
-        <b>Fields (opaque)</b>
-        --
-        double* buffer
-        size_t capacity
-        _Atomic size_t read_pos
-        _Atomic size_t write_pos
+package "Filters (Phase 3)" #FFF3E0 {
+    class "<b>filter.h</b>" as FILT #FFECB3 {
+        fir_filter / fir_moving_average / fir_lowpass
     }
 
-    class "<size:14><b>RingBuffer Functions</b></size>" as RBFuncs #B2EBF2 {
-        <b>Lifecycle</b>
+    class "<b>iir.h</b>" as IIR #FFECB3 {
+        <b>Types</b>: Biquad, BiquadDF1State,
+        BiquadDF2TState, SOSCascade
         --
-        + RingBuffer* ringbuf_create(size_t capacity)
-        + void ringbuf_destroy(RingBuffer* rb)
-        + void ringbuf_reset(RingBuffer* rb)
-        ..
-        <b>Operations</b>
+        iir_filter / iir_impulse_response
+        biquad_df1_init / biquad_df2t_init
+        biquad_process_df1 / biquad_process_df2t
+        biquad_process_block
+        sos_init / sos_process_sample / sos_process_block
+        butterworth_lowpass / butterworth_highpass
+        chebyshev1_lowpass
+        freq_response / biquad_freq_response
+        sos_freq_response / group_delay_at
+    }
+
+    class "<b>remez.h</b>" as REMEZ #FFECB3 {
+        <b>Types</b>: RemezBand
         --
-        + size_t ringbuf_write(RingBuffer* rb, double* data, size_t n)
-        + size_t ringbuf_read(RingBuffer* rb, double* data, size_t n)
-        + size_t ringbuf_peek(RingBuffer* rb, double* data, size_t n)
-        ..
-        <b>Status</b>
+        remez_fir / remez_lowpass / remez_bandpass
+    }
+
+    class "<b>adaptive.h</b>" as ADAPT #FFECB3 {
+        <b>Types</b>: LmsState, NlmsState, RlsState
         --
-        + size_t ringbuf_available(RingBuffer* rb)
-        + size_t ringbuf_free_space(RingBuffer* rb)
-        + bool ringbuf_is_full(RingBuffer* rb)
-        + bool ringbuf_is_empty(RingBuffer* rb)
+        lms_init / lms_update / lms_free / lms_filter
+        nlms_init / nlms_update / nlms_free / nlms_filter
+        rls_init / rls_update / rls_free / rls_filter
     }
 }
 
-' Relationships
-FFTFuncs --> Complex : uses
-FilterFuncs --> FIR : creates
-FilterFuncs --> IIR : creates
-WinFuncs --> WinType : uses
-SpecFuncs --> SpecCfg : configured by
-SpecFuncs --> Peak : produces
-SpecFuncs ..> FFTFuncs : calls internally
-SpecFuncs ..> WinFuncs : applies windows
-RBFuncs --> RBuf : manages
+package "Multirate & Streaming (Phase 3)" #E0F7FA {
+    class "<b>multirate.h</b>" as MULTI #B2EBF2 {
+        decimate / interpolate / resample
+        polyphase_decimate
+    }
+
+    class "<b>streaming.h</b>" as STREAM #B2EBF2 {
+        <b>Types</b>: OlaState, OlsState
+        --
+        ola_init / ola_process / ola_free
+        ols_init / ols_process / ols_free
+    }
+}
+
+package "Analysis (Phase 4)" #FCE4EC {
+    class "<b>correlation.h</b>" as CORR #F8BBD0 {
+        xcorr / xcorr_normalized
+        autocorr / autocorr_normalized
+        xcorr_peak_lag
+    }
+
+    class "<b>hilbert.h</b>" as HILB #F8BBD0 {
+        hilbert_design / analytic_signal
+        analytic_signal_fft
+        envelope / inst_frequency
+    }
+
+    class "<b>lpc.h</b>" as LPC #F8BBD0 {
+        lpc_autocorrelation / levinson_durbin
+        lpc_coefficients / lpc_residual
+        lpc_synthesise / lpc_spectrum
+    }
+
+    class "<b>averaging.h</b>" as AVG #F8BBD0 {
+        coherent_average / ema_filter
+        moving_average / median_filter
+        compute_snr_improvement
+    }
+}
+
+package "Numeric (Phase 5-6)" #FFF9C4 {
+    class "<b>fixed_point.h</b>" as FIXPT #FFF176 {
+        <b>Types</b>: q15_t, q31_t
+        --
+        double_to_q15 / q15_to_double
+        q15_add / sub / mul / neg / abs
+        double_to_q31 / q31_to_double
+        q31_add / sub / mul
+        double_array_to_q15 / q15_array_to_double
+        fir_filter_q15 / compute_sqnr
+    }
+
+    class "<b>dsp2d.h</b>" as DSP2D #FFF176 {
+        conv2d / kernel_gaussian / kernel_sobel
+        kernel_log / kernel_sharpen
+        sobel_magnitude
+        fft2d / ifft2d / filter2d_freq / lpf2d_ideal
+    }
+}
+
+package "Real-Time & Optimisation (Phase 7)" #FFCCBC {
+    class "<b>realtime.h</b>" as RT #FFAB91 {
+        <b>Types</b>: RingBuffer, FrameProcessor,
+        LatencyStats
+        --
+        ring_buffer_create / destroy / write / read
+        ring_buffer_available / space / peek / skip / reset
+        frame_processor_create / destroy / feed
+        frame_processor_peak_bin / peak_freq
+        timer_usec / latency_init / latency_record / latency_avg
+    }
+
+    class "<b>optimization.h</b>" as OPT #FFAB91 {
+        <b>Types</b>: BenchResult, TwiddleTable
+        --
+        bench_fft_radix2 / bench_fft_radix4 / bench_print
+        fft_radix4 / ifft_radix4
+        twiddle_create / twiddle_destroy / fft_with_twiddles
+        aligned_alloc_dsp / aligned_free_dsp
+    }
+}
+
+package "Visualisation" #ECEFF1 {
+    class "<b>gnuplot.h</b>" as GP #CFD8DC {
+        <b>Types</b>: GpSeries
+        --
+        gp_init / gp_open / gp_close
+        gp_send_y / gp_send_xy
+        gp_plot_1 / gp_plot_multi / gp_plot_spectrum
+    }
+}
+
+' Key relationships
+FFT ..> UTILS : Complex
+AFFT ..> UTILS : Complex
+SPEC ..> UTILS : window_fn
+IIR ..> UTILS : Complex
+HILB ..> UTILS : Complex
+SIGGEN ..> UTILS : Complex
+STREAM ..> UTILS : Complex
+RT ..> UTILS : Complex
+OPT ..> UTILS : Complex
 
 @enduml

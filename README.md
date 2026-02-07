@@ -15,66 +15,66 @@ sections, and diagrams. Zero external dependencies — just C99 and `math.h`.
 
 | Ch | Topic | Demo | Key Files |
 |----|-------|------|-----------|
-| [01](chapters/01-signals-and-sequences.md) | Discrete-time signals & sequences | `ch01` | [`signal_gen.h`](include/signal_gen.h) |
-| [02](chapters/02-sampling-and-aliasing.md) | Sampling, aliasing & Nyquist theorem | `ch02` | — |
-| [03](chapters/03-complex-numbers.md) | Complex numbers & Euler's formula | `ch03` | [`dsp_utils.h`](include/dsp_utils.h) |
-| [04](chapters/04-lti-systems.md) | LTI systems & discrete convolution | `ch04` | [`convolution.h`](include/convolution.h) |
+| [01](chapters/01-signals-and-sequences/) | Discrete-time signals & sequences | `ch01` | [`signal_gen.h`](include/signal_gen.h) |
+| [02](chapters/02-sampling-and-aliasing/) | Sampling, aliasing & Nyquist theorem | `ch02` | — |
+| [03](chapters/03-complex-numbers/) | Complex numbers & Euler's formula | `ch03` | [`dsp_utils.h`](include/dsp_utils.h) |
+| [04](chapters/04-lti-systems/) | LTI systems & discrete convolution | `ch04` | [`convolution.h`](include/convolution.h) |
 
 ### Part II — Transform Domain
 
 | Ch | Topic | Demo | Key Files |
 |----|-------|------|-----------|
-| [05](chapters/05-z-transform.md) | The Z-Transform | `ch05` | — |
-| [06](chapters/06-frequency-response.md) | Frequency response, poles & zeros | `ch06` | [`iir.h`](include/iir.h) |
-| [07](chapters/07-dft-theory.md) | The DFT — theory & properties | `ch07` | — |
-| [08](chapters/08-fft-fundamentals.md) | FFT algorithms (Cooley-Tukey Radix-2) | `ch08` | [`fft.h`](include/fft.h), [`fft.c`](src/fft.c) |
-| [09](chapters/09-window-functions.md) | Window functions & spectral leakage | `ch09` | [`dsp_utils.c`](src/dsp_utils.c) |
+| [05](chapters/05-z-transform/) | The Z-Transform | `ch05` | — |
+| [06](chapters/06-frequency-response/) | Frequency response, poles & zeros | `ch06` | [`iir.h`](include/iir.h) |
+| [07](chapters/07-dft-theory/) | The DFT — theory & properties | `ch07` | — |
+| [08](chapters/08-fft-fundamentals/) | FFT algorithms (Cooley-Tukey Radix-2) | `ch08` | [`fft.h`](include/fft.h) |
+| [09](chapters/09-window-functions/) | Window functions & spectral leakage | `ch09` | [`dsp_utils.h`](include/dsp_utils.h) |
 
 ### Part III — Filter Design
 
 | Ch | Topic | Demo | Key Files |
 |----|-------|------|-----------|
-| [10](chapters/10-digital-filters.md) | FIR filter design | `ch10` | [`filter.h`](include/filter.h), [`filter.c`](src/filter.c) |
-| [11](chapters/11-iir-filter-design.md) | IIR filter design (Butterworth, Chebyshev) | `ch11` | [`iir.h`](include/iir.h), [`iir.c`](src/iir.c) |
-| [12](chapters/12-filter-structures.md) | Filter structures (biquads, SOS cascades) | `ch12` | — |
+| [10](chapters/10-digital-filters/) | FIR filter design | `ch10` | [`filter.h`](include/filter.h) |
+| [11](chapters/11-iir-filter-design/) | IIR filter design (Butterworth, Chebyshev) | `ch11` | [`iir.h`](include/iir.h) |
+| [12](chapters/12-filter-structures/) | Filter structures (biquads, SOS cascades) | `ch12` | — |
 
 ### Part IV — Analysis
 
 | Ch | Topic | Demo | Key Files |
 |----|-------|------|-----------|
-| [13](chapters/13-spectral-analysis.md) | Spectral analysis | `ch13` | [`spectrum.h`](include/spectrum.h) |
-| [14](chapters/14-psd-welch.md) | Power spectral density (Welch's method) | `ch14` | [`spectrum.c`](src/spectrum.c) |
-| [15](chapters/15-correlation.md) | Correlation & autocorrelation | `ch15` | [`correlation.h`](include/correlation.h) |
+| [13](chapters/13-spectral-analysis/) | Spectral analysis | `ch13` | [`spectrum.h`](include/spectrum.h) |
+| [14](chapters/14-psd-welch/) | Power spectral density (Welch's method) | `ch14` | [`spectrum.h`](include/spectrum.h) |
+| [15](chapters/15-correlation/) | Correlation & autocorrelation | `ch15` | [`correlation.h`](include/correlation.h) |
 
 ### Part V — C-Specific & Advanced UG
 
 | Ch | Topic | Demo | Key Files |
 |----|-------|------|-----------|
-| [16](chapters/16-overlap-add-save.md) | Overlap-Add/Save streaming convolution | `ch16` | [`streaming.h`](include/streaming.h) |
-| [17](chapters/17-multirate-dsp.md) | Multirate DSP (decimation, interpolation, polyphase) | `ch17` | [`multirate.h`](include/multirate.h) |
-| [18](chapters/18-fixed-point.md) | Fixed-point arithmetic (Q15/Q31, SQNR) | `ch18` | [`fixed_point.h`](include/fixed_point.h) |
-| [19](chapters/19-advanced-fft.md) | Advanced FFT (Goertzel, DTMF, Sliding DFT) | `ch19` | [`advanced_fft.h`](include/advanced_fft.h) |
-| [20](chapters/20-hilbert-transform.md) | Quadrature signals & Hilbert transform | `ch20` | [`hilbert.h`](include/hilbert.h) |
-| [21](chapters/21-signal-averaging.md) | Signal averaging & noise reduction | `ch21` | [`averaging.h`](include/averaging.h) |
-| [22](chapters/22-advanced-fir.md) | Advanced FIR design (Parks-McClellan / IRLS) | `ch22` | [`remez.h`](include/remez.h) |
+| [16](chapters/16-overlap-add-save/) | Overlap-Add/Save streaming convolution | `ch16` | [`streaming.h`](include/streaming.h) |
+| [17](chapters/17-multirate-dsp/) | Multirate DSP (decimation, interpolation, polyphase) | `ch17` | [`multirate.h`](include/multirate.h) |
+| [18](chapters/18-fixed-point/) | Fixed-point arithmetic (Q15/Q31, SQNR) | `ch18` | [`fixed_point.h`](include/fixed_point.h) |
+| [19](chapters/19-advanced-fft/) | Advanced FFT (Goertzel, DTMF, Sliding DFT) | `ch19` | [`advanced_fft.h`](include/advanced_fft.h) |
+| [20](chapters/20-hilbert-transform/) | Quadrature signals & Hilbert transform | `ch20` | [`hilbert.h`](include/hilbert.h) |
+| [21](chapters/21-signal-averaging/) | Signal averaging & noise reduction | `ch21` | [`averaging.h`](include/averaging.h) |
+| [22](chapters/22-advanced-fir/) | Advanced FIR design (Parks-McClellan / IRLS) | `ch22` | [`remez.h`](include/remez.h) |
 
 ### Part VI — Postgraduate
 
 | Ch | Topic | Demo | Key Files |
 |----|-------|------|----------|
-| [23](chapters/23-adaptive-filters.md) | Adaptive filters (LMS / NLMS / RLS) | `ch23` | [`adaptive.h`](include/adaptive.h) |
-| [24](chapters/24-linear-prediction.md) | Linear prediction & AR modelling | `ch24` | [`lpc.h`](include/lpc.h) |
-| [25](chapters/25-parametric-spectral.md) | Parametric spectral estimation (MUSIC, Capon) | `ch25` | [`spectral_est.h`](include/spectral_est.h) |
-| [26](chapters/26-cepstrum-mfcc.md) | Cepstrum analysis & MFCCs | `ch26` | [`cepstrum.h`](include/cepstrum.h) |
+| [23](chapters/23-adaptive-filters/) | Adaptive filters (LMS / NLMS / RLS) | `ch23` | [`adaptive.h`](include/adaptive.h) |
+| [24](chapters/24-linear-prediction/) | Linear prediction & AR modelling | `ch24` | [`lpc.h`](include/lpc.h) |
+| [25](chapters/25-parametric-spectral/) | Parametric spectral estimation (MUSIC, Capon) | `ch25` | [`spectral_est.h`](include/spectral_est.h) |
+| [26](chapters/26-cepstrum-mfcc/) | Cepstrum analysis & MFCCs | `ch26` | [`cepstrum.h`](include/cepstrum.h) |
 
 ### Part VII — Applied / Capstone
 
 | Ch | Topic | Demo | Key Files |
 |----|-------|------|----------|
-| [27](chapters/27-2d-dsp.md) | 2-D DSP & image processing | `ch27` | [`dsp2d.h`](include/dsp2d.h) |
-| [28](chapters/28-real-time-streaming.md) | Real-time system design | `ch28` | [`realtime.h`](include/realtime.h) |
-| [29](chapters/29-optimisation.md) | DSP optimisation (radix-4, twiddles, aligned mem) | `ch29` | [`optimization.h`](include/optimization.h) |
-| [30](chapters/30-putting-it-together.md) | End-to-end capstone project | `ch30` | ✅ (13 modules) |
+| [27](chapters/27-2d-dsp/) | 2-D DSP & image processing | `ch27` | [`dsp2d.h`](include/dsp2d.h) |
+| [28](chapters/28-real-time-streaming/) | Real-time system design | `ch28` | [`realtime.h`](include/realtime.h) |
+| [29](chapters/29-optimisation/) | DSP optimisation (radix-4, twiddles, aligned mem) | `ch29` | [`optimization.h`](include/optimization.h) |
+| [30](chapters/30-putting-it-together/) | End-to-end capstone project | `ch30` | all (13 modules) |
 
 ## Quick Start
 
@@ -113,7 +113,20 @@ make plots
 
 ```
 dsp-tutorial-suite/
-├── include/          ← Public headers (start reading here)
+├── chapters/         ← START HERE — 30 progressive tutorials
+│   ├── 00-overview/
+│   │   └── tutorial.md       Course overview
+│   ├── 01-signals-and-sequences/
+│   │   ├── README.md         Landing page (GitHub auto-renders)
+│   │   ├── tutorial.md       Theory with equations & exercises
+│   │   ├── demo.c            Self-contained runnable demo
+│   │   └── plots/            Generated gnuplot PNGs
+│   ├── 08-fft-fundamentals/
+│   │   ├── README.md / tutorial.md / demo.c / plots/
+│   │   ├── fft_sequence.puml     Chapter-specific diagram
+│   │   └── fft_sequence.png
+│   └── ...                   (31 chapter subdirectories)
+├── include/          ← Public headers (23 modules)
 │   ├── dsp_utils.h       Complex type, windows, helpers
 │   ├── fft.h             FFT / IFFT API
 │   ├── filter.h          FIR filter API
@@ -137,31 +150,8 @@ dsp-tutorial-suite/
 │   ├── dsp2d.h           2-D convolution, FFT, image kernels
 │   ├── realtime.h        Ring buffer, frame processor, latency
 │   └── optimization.h    Radix-4 FFT, twiddle tables, benchmarks
-├── src/              ← Reusable library (builds to libdsp_core.a)
-│   ├── fft.c             Cooley-Tukey Radix-2 DIT
-│   ├── filter.c          Direct convolution + sinc design
-│   ├── dsp_utils.c       Complex arithmetic, 3 window functions
-│   ├── signal_gen.c      Signal generators (Box-Muller noise, chirp)
-│   ├── convolution.c     Linear/causal conv, cross/auto-correlation
-│   ├── iir.c             IIR design + SOS cascade processing
-│   ├── spectrum.c        Periodogram, Welch PSD, cross-PSD
-│   ├── correlation.c     FFT-based xcorr/autocorr
-│   ├── gnuplot.c         Gnuplot pipe helpers (pngcairo)
-│   ├── fixed_point.c     Q15/Q31 conversion, saturating ops, FIR
-│   ├── advanced_fft.c    Goertzel, DTMF, sliding DFT
-│   ├── streaming.c       OLA/OLS block FFT convolution
-│   ├── multirate.c       Multirate processing & polyphase
-│   ├── hilbert.c         Hilbert FIR design, envelope, inst freq
-│   ├── averaging.c       Coherent avg, EMA, MA, median filter
-│   ├── remez.c           IRLS-based equiripple FIR design
-│   ├── adaptive.c        LMS/NLMS/RLS implementations
-│   ├── lpc.c             Levinson-Durbin, AR spectrum
-│   ├── spectral_est.c    Jacobi eigendecomp, MUSIC, Capon
-│   ├── cepstrum.c        Cepstrum, Mel scale, MFCC pipeline
-│   ├── dsp2d.c           2-D conv, FFT, Sobel, Gaussian
-│   ├── realtime.c        Ring buffer, frame processor, latency timer
-│   └── optimization.c    Radix-4 FFT, twiddle table, benchmarks, aligned alloc
-├── tests/            ← Unit tests (zero-dependency framework)
+├── src/              ← Reusable library (builds to libdsp_core.a, 23 modules)
+├── tests/            ← Unit tests (98 assertions, zero-dependency framework)
 │   ├── test_framework.h  Lightweight test macros
 │   ├── test_fft.c        6 FFT tests
 │   ├── test_filter.c     6 FIR filter tests
@@ -171,43 +161,44 @@ dsp-tutorial-suite/
 │   ├── test_phase5.c     15 multirate, Hilbert, averaging, Remez tests
 │   ├── test_phase6.c     19 adaptive, LPC, spectral est, cepstrum, 2D tests
 │   └── test_phase7.c     18 real-time, radix-4, twiddle, aligned memory tests
-├── chapters/         ← START HERE — progressive tutorial (30 chapters)
-│   ├── NN-topic.c        Demo code with ASCII art & rich comments
-│   └── NN-topic.md       Theory tutorial with equations & exercises
 ├── tools/            ← Utilities
-│   └── generate_plots.c  Generates 60+ gnuplot PNGs for all chapters
-├── plots/            ← Generated visualisations (by chapter)
+│   └── generate_plots.c  Generates 70+ gnuplot PNGs for all chapters
 ├── reference/        ← Architecture, API reference, diagrams
 │   ├── ARCHITECTURE.md
+│   ├── CHAPTER_INDEX.md
 │   ├── API.md
-│   └── diagrams/     PlantUML sources + rendered PNGs
-├── Makefile          ← Primary build (30+ targets)
+│   └── diagrams/     4 common PlantUML diagrams + 4 chapter-specific
+├── Makefile          ← Primary build (39 targets)
 └── CMakeLists.txt    ← Cross-platform alternative
 ```
 
 ## Diagrams
 
-All architecture diagrams live in [`reference/diagrams/`](reference/diagrams/). They are
-rendered from PlantUML source as high-resolution PNGs. Click any link below to
-view the full-size image:
+Architecture diagrams are split between [`reference/diagrams/`](reference/diagrams/)
+(common, cross-cutting) and individual chapter folders (chapter-specific).
+
+### Common Diagrams
 
 | Diagram | Description |
 |---------|-------------|
 | [System Architecture](reference/diagrams/architecture.png) | Four-layer system design |
-| [Signal Flow](reference/diagrams/signal_flow.png) | Time → Frequency domain pipeline |
-| [Module Dependencies](reference/diagrams/modules.png) | Source file dependency graph |
-| [FFT Sequence](reference/diagrams/fft_sequence.png) | Runtime call sequence |
-| [Real-Time Architecture](reference/diagrams/realtime_architecture.png) | Streaming pipeline |
-| [Optimisation Roadmap](reference/diagrams/optimization_roadmap.png) | 5-stage speedup plan |
-| [API Reference](reference/diagrams/api_reference.png) | Public function map |
-| [Project Roadmap](reference/diagrams/roadmap.png) | 6-phase development plan |
-| [Benchmarks](reference/diagrams/benchmarks.png) | Latency comparison |
+| [Module Dependencies](reference/diagrams/modules.png) | 23-module dependency graph |
+| [API Reference](reference/diagrams/api_reference.png) | ~150 public functions |
 | [Use Cases](reference/diagrams/use_cases.png) | Target applications |
+
+### Chapter-Specific Diagrams
+
+| Diagram | Location |
+|---------|----------|
+| [FFT Sequence](chapters/08-fft-fundamentals/fft_sequence.png) | Ch 08 — Cooley-Tukey call flow |
+| [Signal Flow](chapters/13-spectral-analysis/signal_flow.png) | Ch 13 — Processing pipeline |
+| [Real-Time Architecture](chapters/28-real-time-streaming/realtime_architecture.png) | Ch 28 — Streaming pipeline |
+| [Optimisation Roadmap](chapters/29-optimisation/optimization_roadmap.png) | Ch 29 — Performance stages |
 
 To regenerate PNGs after editing `.puml` files:
 
 ```bash
-java -jar ~/tools/plantuml.jar -tpng reference/diagrams/*.puml
+java -jar ~/tools/plantuml.jar -tpng reference/diagrams/*.puml chapters/*/*.puml
 ```
 
 ## Test Output (98 tests)

@@ -2,10 +2,9 @@
 
 skinparam backgroundColor #FEFEFE
 skinparam defaultFontName "Segoe UI"
-skinparam defaultFontSize 13
+skinparam defaultFontSize 12
 skinparam shadowing true
 skinparam roundcorner 10
-skinparam linetype ortho
 
 skinparam package {
     BackgroundColor #FFFFFF
@@ -14,147 +13,93 @@ skinparam package {
     BorderThickness 2
 }
 
-skinparam class {
+skinparam component {
     BorderColor #37474F
     FontColor #263238
-    HeaderBackgroundColor #E0E0E0
     BorderThickness 1.5
 }
 
-title <size:20><b>Module Dependency Graph</b></size>\n<size:14><color:#546E7A>Source file dependencies and public interfaces</color></size>
+title <size:20><b>Module Dependency Graph</b></size>\n<size:14><color:#546E7A>23 source modules — include/ headers and src/ implementations</color></size>
 
-package "include/" #ECEFF1 {
-    class "<b>fft.h</b>" as fft_h #E3F2FD {
-        Complex (typedef)
-        --
-        fft(Complex* x, int n)
-        ifft(Complex* x, int n)
-        fft_real(double* in, Complex* out, int n)
-        fft_magnitude(Complex* x, double* mag, int n)
-        fft_phase(Complex* x, double* ph, int n)
-    }
-
-    class "<b>filter.h</b>" as filter_h #FFF3E0 {
-        FIRFilter (struct)
-        IIRFilter (struct)
-        --
-        fir_filter(double* in, double* out, ...)
-        fir_create(double* coeffs, int order)
-        iir_create(double* b, double* a, int order)
-        filter_process(Filter* f, double sample)
-    }
-
-    class "<b>dsp_utils.h</b>" as utils_h #E8F5E9 {
-        WindowType (enum)
-        --
-        hann_window(int n, int i)
-        hamming_window(int n, int i)
-        blackman_window(int n, int i)
-        apply_window(double* sig, int n, WindowType)
-        next_power_of_2(int n)
-    }
-
-    class "<b>spectrum.h</b>" as spec_h #E1BEE7 {
-        SpectrumConfig (struct)
-        --
-        power_spectrum(double* x, ...)
-        welch_psd(double* x, ...)
-        peak_detect(double* psd, ...)
-    }
-
-    class "<b>convolution.h</b>" as conv_h #FFCDD2 {
-        ..
-        convolve(double* x, double* h, ...)
-        correlate(double* x, double* y, ...)
-        fft_convolve(double* x, double* h, ...)
-    }
-
-    class "<b>ring_buffer.h</b>" as rbuf_h #B2DFDB {
-        RingBuffer (struct)
-        --
-        ringbuf_create(size_t capacity)
-        ringbuf_write(RingBuffer*, ...)
-        ringbuf_read(RingBuffer*, ...)
-        ringbuf_destroy(RingBuffer*)
-    }
+package "Foundation" #E8F5E9 {
+    component "<b>dsp_utils.h</b>\n<size:10>Complex, windows, helpers\n13 functions</size>" as UTILS #C8E6C9
+    component "<b>signal_gen.h</b>\n<size:10>Impulse, cosine, chirp, noise\n12 functions</size>" as SIGGEN #C8E6C9
+    component "<b>convolution.h</b>\n<size:10>Convolve, correlate, energy\n7 functions</size>" as CONV #C8E6C9
 }
 
-package "src/" #F5F5F5 {
-    class "<b>fft.c</b>" as fft_c #BBDEFB {
-        __butterfly_radix2()__
-        __bit_reverse_copy()__
-        --
-        Cooley-Tukey implementation
-        In-place computation
-        Twiddle factor caching
-    }
-
-    class "<b>filter.c</b>" as filter_c #FFE0B2 {
-        __direct_form_I()__
-        __direct_form_II()__
-        --
-        FIR: Direct convolution
-        IIR: Cascade biquad
-    }
-
-    class "<b>dsp_utils.c</b>" as utils_c #C8E6C9 {
-        __compute_window_coeff()__
-        --
-        Window generation
-        Utility functions
-        _GNU_SOURCE for M_PI
-    }
-
-    class "<b>spectrum.c</b>" as spec_c #CE93D8 {
-        __segment_and_overlap()__
-        --
-        Calls FFT internally
-        Welch's averaging
-    }
-
-    class "<b>convolution.c</b>" as conv_c #EF9A9A {
-        __overlap_add_kernel()__
-        --
-        Linear + circular conv
-        FFT-based fast path
-    }
-
-    class "<b>ring_buffer.c</b>" as rbuf_c #80CBC4 {
-        __atomic_fence()__
-        --
-        Lock-free SPSC
-        Memory barriers
-    }
+package "Transforms" #E3F2FD {
+    component "<b>fft.h</b>\n<size:10>Radix-2 FFT/IFFT, real FFT\n5 functions</size>" as FFT #BBDEFB
+    component "<b>advanced_fft.h</b>\n<size:10>Goertzel, sliding DFT, DTMF\n7 functions</size>" as AFFT #BBDEFB
 }
 
-' Header to source
-fft_h -[#1565C0,bold]--> fft_c : implements
-filter_h -[#E65100,bold]--> filter_c : implements
-utils_h -[#2E7D32,bold]--> utils_c : implements
-spec_h -[#6A1B9A,bold]--> spec_c : implements
-conv_h -[#C62828,bold]--> conv_c : implements
-rbuf_h -[#00695C,bold]--> rbuf_c : implements
+package "Spectral Analysis" #F3E5F5 {
+    component "<b>spectrum.h</b>\n<size:10>Periodogram, Welch PSD\n6 functions</size>" as SPEC #E1BEE7
+    component "<b>spectral_est.h</b>\n<size:10>MUSIC, Capon, eigendecomp\n5 functions</size>" as SEST #E1BEE7
+    component "<b>cepstrum.h</b>\n<size:10>Cepstrum, MFCCs, DCT-II\n8 functions</size>" as CEPS #E1BEE7
+}
 
-' Cross-module dependencies
-fft_c .[#546E7A,dashed].> utils_c : window funcs
-spec_c .[#546E7A,dashed].> fft_c : FFT calls
-conv_c .[#546E7A,dashed].> fft_c : FFT convolution
-filter_c .[#546E7A,dashed].> utils_c : utility funcs
-spec_c .[#546E7A,dashed].> utils_c : windowing
+package "Filters" #FFF3E0 {
+    component "<b>filter.h</b>\n<size:10>FIR filter, moving avg, lowpass\n3 functions</size>" as FILT #FFECB3
+    component "<b>iir.h</b>\n<size:10>Biquad, SOS, Butterworth, Chebyshev\n17 functions</size>" as IIR #FFECB3
+    component "<b>remez.h</b>\n<size:10>Parks-McClellan equiripple FIR\n3 functions</size>" as REMEZ #FFECB3
+    component "<b>adaptive.h</b>\n<size:10>LMS, NLMS, RLS\n12 functions</size>" as ADAPT #FFECB3
+}
 
-note bottom of fft_c #FFFDE7
-  <b>Core dependency</b>: Most analysis
-  modules depend on FFT routines
+package "Multirate & Streaming" #E0F7FA {
+    component "<b>multirate.h</b>\n<size:10>Decimate, interpolate, polyphase\n4 functions</size>" as MULTI #B2EBF2
+    component "<b>streaming.h</b>\n<size:10>Overlap-Add / Overlap-Save\n6 functions</size>" as STREAM #B2EBF2
+}
+
+package "Analysis" #FCE4EC {
+    component "<b>correlation.h</b>\n<size:10>FFT-based xcorr, autocorr\n5 functions</size>" as CORR #F8BBD0
+    component "<b>hilbert.h</b>\n<size:10>Analytic signal, envelope\n5 functions</size>" as HILB #F8BBD0
+    component "<b>lpc.h</b>\n<size:10>Levinson-Durbin, AR model\n6 functions</size>" as LPC #F8BBD0
+    component "<b>averaging.h</b>\n<size:10>Coherent, EMA, median filter\n5 functions</size>" as AVG #F8BBD0
+}
+
+package "Numeric" #FFF9C4 {
+    component "<b>fixed_point.h</b>\n<size:10>Q15/Q31, SQNR, FIR-Q15\n16 functions</size>" as FIXPT #FFF176
+    component "<b>dsp2d.h</b>\n<size:10>2D conv, Sobel, FFT2D\n10 functions</size>" as DSP2D #FFF176
+}
+
+package "Real-Time & Optimisation" #FFCCBC {
+    component "<b>realtime.h</b>\n<size:10>Ring buffer, frame proc, latency\n17 functions</size>" as RT #FFAB91
+    component "<b>optimization.h</b>\n<size:10>Radix-4 FFT, twiddle tables\n10 functions</size>" as OPT #FFAB91
+}
+
+package "Visualisation" #ECEFF1 {
+    component "<b>gnuplot.h</b>\n<size:10>Pipe-based PNG plot output\n8 functions</size>" as GP #CFD8DC
+}
+
+' === Dependencies on dsp_utils.h ===
+SIGGEN .[#2E7D32,dashed].> UTILS : Complex
+FFT .[#1565C0,dashed].> UTILS : Complex
+AFFT .[#1565C0,dashed].> UTILS : Complex
+IIR .[#E65100,dashed].> UTILS : Complex
+HILB .[#C62828,dashed].> UTILS : Complex
+SPEC .[#6A1B9A,dashed].> UTILS : window_fn
+STREAM .[#00838F,dashed].> UTILS : Complex
+RT .[#BF360C,dashed].> UTILS : Complex
+OPT .[#BF360C,dashed].> UTILS : Complex
+
+note bottom of UTILS #FFFDE7
+  <b>Root dependency</b>: 9 of 23 modules
+  depend on dsp_utils.h for Complex
+  type and window functions
 end note
 
 legend right
-  |= Color |= Module |
-  | <#E3F2FD> | FFT / Transforms |
-  | <#FFF3E0> | Digital Filters  |
-  | <#E8F5E9> | DSP Utilities    |
-  | <#E1BEE7> | Spectral Analysis|
-  | <#FFCDD2> | Convolution      |
-  | <#B2DFDB> | Ring Buffer      |
+  |= Color |= Group |= Modules |
+  | <#C8E6C9> | Foundation | 3 |
+  | <#BBDEFB> | Transforms | 2 |
+  | <#E1BEE7> | Spectral | 3 |
+  | <#FFECB3> | Filters | 4 |
+  | <#B2EBF2> | Multirate | 2 |
+  | <#F8BBD0> | Analysis | 4 |
+  | <#FFF176> | Numeric | 2 |
+  | <#FFAB91> | Real-Time | 2 |
+  | <#CFD8DC> | Visualisation | 1 |
+  |  | <b>Total</b> | <b>23</b> |
 endlegend
 
 @enduml

@@ -14,12 +14,12 @@ skinparam package {
     BackgroundColor<<core>> #FFF3E0
     BorderColor<<core>> #E65100
     FontColor<<core>> #BF360C
-    BackgroundColor<<sys>> #E8F5E9
-    BorderColor<<sys>> #2E7D32
-    FontColor<<sys>> #1B5E20
-    BackgroundColor<<plat>> #F3E5F5
-    BorderColor<<plat>> #6A1B9A
-    FontColor<<plat>> #4A148C
+    BackgroundColor<<tool>> #E8F5E9
+    BorderColor<<tool>> #2E7D32
+    FontColor<<tool>> #1B5E20
+    BackgroundColor<<build>> #F3E5F5
+    BorderColor<<build>> #6A1B9A
+    FontColor<<build>> #4A148C
 }
 
 skinparam component {
@@ -29,80 +29,104 @@ skinparam component {
     BorderThickness 1.5
 }
 
-title <size:20><b>DSP Tutorial Suite</b></size>\n<size:14><color:#546E7A>System Architecture Overview</color></size>\n<size:11><i>C99 | Zero External Dependencies | Real-Time Capable</i></size>
+title <size:20><b>DSP Tutorial Suite</b></size>\n<size:14><color:#546E7A>System Architecture Overview</color></size>\n<size:11><i>C99 | Zero External Dependencies | POSIX</i></size>
 
-package "  Application Layer  " <<app>> {
-    [<b>Audio Processing</b>\n<size:10>EQ, Effects, Compression</size>] as AP
-    [<b>Signal Analysis</b>\n<size:10>Spectrum, Features, Classification</size>] as SA
-    [<b>Sensor Fusion</b>\n<size:10>IMU, Accelerometer, Gyroscope</size>] as SF
+package "  Chapter Demos (30 binaries)  " <<app>> {
+    [<b>Ch 01-03</b>\n<size:10>Signals, Sampling,\nComplex Numbers</size>] as PH1
+    [<b>Ch 04-09</b>\n<size:10>LTI, Z-Transform, DFT,\nFFT, Windows</size>] as PH2
+    [<b>Ch 10-18</b>\n<size:10>FIR, IIR, Structures,\nMultirate, Fixed-Point</size>] as PH3
+    [<b>Ch 19-27</b>\n<size:10>Goertzel, Hilbert, LPC,\nMUSIC, MFCC, 2D-DSP</size>] as PH4
+    [<b>Ch 28-30</b>\n<size:10>Real-Time, Optimisation,\nCapstone</size>] as PH5
 }
 
-package "  DSP Core Library  (libdsp_core)  " <<core>> {
-    package "Signal Processing" #FFECB3 {
-        [<b>FFT / IFFT</b>\n<size:10>Radix-2, Radix-4</size>\n<size:10>Real & Complex modes</size>] as FFT
-        [<b>Digital Filters</b>\n<size:10>FIR & IIR</size>\n<size:10>Configurable order</size>] as FILT
-        [<b>Window Functions</b>\n<size:10>Hann, Hamming</size>\n<size:10>Blackman, Kaiser</size>] as WIN
+package "  DSP Core Library (libdsp_core.a — 23 modules)  " <<core>> {
+    package "Foundation" #FFECB3 {
+        [<b>dsp_utils</b>\n<size:10>Complex, windows, helpers</size>] as UTILS
+        [<b>signal_gen</b>\n<size:10>Impulse, cosine, chirp, noise</size>] as SIGGEN
+        [<b>convolution</b>\n<size:10>Linear, circular, energy</size>] as CONV
+    }
+
+    package "Transforms & Spectral" #FFECB3 {
+        [<b>fft</b>\n<size:10>Radix-2 FFT/IFFT</size>] as FFT
+        [<b>advanced_fft</b>\n<size:10>Goertzel, sliding DFT</size>] as AFFT
+        [<b>spectrum</b>\n<size:10>Periodogram, Welch PSD</size>] as SPEC
+        [<b>spectral_est</b>\n<size:10>MUSIC, Capon</size>] as SEST
+        [<b>cepstrum</b>\n<size:10>MFCC, Mel filterbank</size>] as CEPS
+    }
+
+    package "Filters" #FFECB3 {
+        [<b>filter</b>\n<size:10>FIR filter, lowpass</size>] as FILT
+        [<b>iir</b>\n<size:10>Biquad, SOS, Butterworth</size>] as IIR
+        [<b>remez</b>\n<size:10>Parks-McClellan</size>] as REMEZ
+        [<b>adaptive</b>\n<size:10>LMS, NLMS, RLS</size>] as ADAPT
+        [<b>multirate</b>\n<size:10>Decimate, interpolate</size>] as MULTI
+        [<b>streaming</b>\n<size:10>Overlap-Add/Save</size>] as STREAM
     }
 
     package "Analysis" #FFECB3 {
-        [<b>Spectral Analysis</b>\n<size:10>PSD, Welch's Method</size>\n<size:10>Peak Detection</size>] as SPEC
-        [<b>Correlation</b>\n<size:10>Auto & Cross</size>\n<size:10>Lag Estimation</size>] as CORR
-        [<b>Statistics</b>\n<size:10>RMS, THD, SNR</size>\n<size:10>Histogram, Percentile</size>] as STAT
+        [<b>correlation</b>\n<size:10>FFT-based xcorr</size>] as CORR
+        [<b>hilbert</b>\n<size:10>Analytic signal, envelope</size>] as HILB
+        [<b>lpc</b>\n<size:10>Levinson-Durbin, AR</size>] as LPC
+        [<b>averaging</b>\n<size:10>EMA, median filter</size>] as AVG
     }
 
-    package "Real-Time Engine" #FFECB3 {
-        [<b>Ring Buffer</b>\n<size:10>Lock-free FIFO</size>\n<size:10>Zero-copy Transfers</size>] as RBUF
-        [<b>Overlap-Add / Save</b>\n<size:10>Streaming FFT</size>\n<size:10>50% Overlap</size>] as OLA
-        [<b>Stream Manager</b>\n<size:10>Pipeline Control</size>\n<size:10>Latency Monitoring</size>] as STR
+    package "Numeric & 2-D" #FFECB3 {
+        [<b>fixed_point</b>\n<size:10>Q15/Q31 arithmetic</size>] as FIXPT
+        [<b>dsp2d</b>\n<size:10>2D conv, Sobel, FFT2D</size>] as DSP2D
     }
 
-    package "Optimization Layer" #FFECB3 {
-        [<b>SIMD Kernels</b>\n<size:10>SSE4.2/AVX2 (x86)</size>\n<size:10>NEON (ARM)</size>] as SIMD
-        [<b>Multithreading</b>\n<size:10>OpenMP Parallel</size>\n<size:10>Task Scheduling</size>] as MT
-        [<b>Memory Manager</b>\n<size:10>Pool Allocator</size>\n<size:10>Cache-Aligned Buffers</size>] as MEM
+    package "Real-Time & Optimisation" #FFECB3 {
+        [<b>realtime</b>\n<size:10>Ring buffer, frame proc</size>] as RT
+        [<b>optimization</b>\n<size:10>Radix-4 FFT, twiddle</size>] as OPT
     }
 }
 
-package "  System Interface  " <<sys>> {
-    [<b>ALSA Audio</b>\n<size:10>Capture & Playback</size>\n<size:10>Low-Latency</size>] as ALSA
-    [<b>File I/O</b>\n<size:10>WAV, RAW, CSV</size>\n<size:10>Batch Processing</size>] as FIO
-    [<b>Network</b>\n<size:10>Socket Streaming</size>\n<size:10>Remote DSP</size>] as NET
+package "  Tools & Visualisation  " <<tool>> {
+    [<b>gnuplot</b>\n<size:10>Pipe-based PNG plotting</size>] as GP
+    [<b>generate_plots</b>\n<size:10>Batch plot generation</size>] as GENPLOT
+    [<b>PlantUML</b>\n<size:10>Architecture diagrams</size>] as PUML
 }
 
-package "  Platform Abstraction (POSIX)  " <<plat>> {
-    [<b>POSIX API</b>\n<size:10>pthread, mmap</size>\n<size:10>clock, timer</size>] as POSIX
-    [<b>Thread Pool</b>\n<size:10>Work Stealing</size>\n<size:10>CPU Affinity</size>] as TPOOL
-    [<b>Memory</b>\n<size:10>mmap, mlock</size>\n<size:10>Huge Pages</size>] as PMEM
+package "  Build System  " <<build>> {
+    [<b>GNU Make</b>\n<size:10>39 targets, debug/release</size>] as MAKE
+    [<b>Static Library</b>\n<size:10>libdsp_core.a (23 .o)</size>] as LIB
+    [<b>8 Test Suites</b>\n<size:10>98 assertions</size>] as TEST
 }
 
-AP -[#1565C0,bold]-> FFT
-AP -[#1565C0,bold]-> FILT
-SA -[#1565C0,bold]-> SPEC
-SF -[#1565C0,bold]-> CORR
+' Demo → Library
+PH1 -[#1565C0,bold]-> UTILS
+PH1 -[#1565C0,bold]-> SIGGEN
+PH2 -[#1565C0,bold]-> FFT
+PH2 -[#1565C0,bold]-> SPEC
+PH3 -[#1565C0,bold]-> FILT
+PH3 -[#1565C0,bold]-> IIR
+PH4 -[#1565C0,bold]-> HILB
+PH4 -[#1565C0,bold]-> SEST
+PH5 -[#1565C0,bold]-> RT
+PH5 -[#1565C0,bold]-> OPT
 
-WIN -[#E65100]-> FFT
-STAT -[#E65100]-> SPEC
-FFT -[#E65100,dashed]-> SIMD
-FILT -[#E65100,dashed]-> SIMD
-RBUF -[#E65100]-> FFT
-OLA -[#E65100]-> FILT
-STR -[#E65100]-> RBUF
+' Internal deps
+FFT .[#E65100,dashed].> UTILS
+SPEC .[#E65100,dashed].> UTILS
+IIR .[#E65100,dashed].> UTILS
+STREAM .[#E65100,dashed].> UTILS
+RT .[#E65100,dashed].> UTILS
+OPT .[#E65100,dashed].> UTILS
 
-ALSA -[#2E7D32]-> STR
-FIO -[#2E7D32]-> FFT
-NET -[#2E7D32]-> STR
+' Tools
+GENPLOT -[#2E7D32]-> GP
+PH1 -[#2E7D32,dashed]-> GP : plots
 
-SIMD -[#6A1B9A]-> MT
-MT -[#6A1B9A]-> MEM
-MEM -[#6A1B9A]-> POSIX
-MT -[#6A1B9A]-> TPOOL
+' Build
+MAKE -[#6A1B9A]-> LIB
+MAKE -[#6A1B9A]-> TEST
 
 legend right
   |= Color |= Layer |= Description |
-  | <#E3F2FD> | Application | User-facing programs |
-  | <#FFF3E0> | Core Library | DSP algorithms |
-  | <#E8F5E9> | System I/O | Hardware & network |
-  | <#F3E5F5> | Platform | OS abstraction |
+  | <#E3F2FD> | Application | 30 chapter demos |
+  | <#FFF3E0> | Core Library | 23 DSP modules |
+  | <#E8F5E9> | Tools | Plotting & diagrams |
+  | <#F3E5F5> | Build | Make + tests |
 endlegend
 
 @enduml
