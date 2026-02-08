@@ -9,6 +9,20 @@ sections, and diagrams. Zero external dependencies — just C99 and `math.h`.
 
 ---
 
+## 🔗 Companion Repositories
+
+This project is part of an integrated learning ecosystem. See how it relates to other projects:
+
+| Repository | Purpose | Type | Content |
+|-----------|---------|------|----------|
+| **dsp-tutorial-suite** (this repo) | Foundation DSP algorithms & theory | Executable code | 30 chapters: signals, transforms, filters, analysis, adaptive filters |
+| [wireless-comms-suite](https://github.com/nikhiloz/wireless-comms-suite) | Wireless communication systems | Executable code | 24 chapters: modulation, channel coding, real protocols (WiFi, Bluetooth, LoRa) |
+| [SDR_Notes](https://github.com/nikhiloz/SDR_Notes) | SDR hardware & software reference | Documentation | 9 sections: RF fundamentals, hardware comparison, software tools, protocols |
+
+**Learning Path**: Start here → [wireless-comms-suite](https://github.com/nikhiloz/wireless-comms-suite) (applies DSP to comms) → [SDR_Notes](https://github.com/nikhiloz/SDR_Notes) (hardware/protocol context)
+
+---
+
 ## What You'll Learn
 
 ### Part I — Foundations
